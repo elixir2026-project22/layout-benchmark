@@ -21,6 +21,77 @@ def _glyph_for(node_id: str, glyphs) -> str | None:
     return None
 
 
+def _local(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1]
+
+
+def _sbgn_processes(path: str | Path) -> dict[str, set[str]]:
+    """Per glyph id: the process glyphs it is connected to by an arc (ports resolved to their process)."""
+    root = ET.parse(path).getroot()
+    owner = {}  # port id -> glyph id
+    kind = {}
+    for el in root.iter():
+        if _local(el.tag) == "glyph" and el.get("id"):
+            kind[el.get("id")] = el.get("class")
+            for c in el:
+                if _local(c.tag) == "port" and c.get("id"):
+                    owner[c.get("id")] = el.get("id")
+    links: dict[str, set[str]] = {}
+    for el in root.iter():
+        if _local(el.tag) != "arc":
+            continue
+        a, b = (owner.get(el.get(k), el.get(k)) for k in ("source", "target"))
+        for x, y in ((a, b), (b, a)):
+            if kind.get(y) == "process":
+                links.setdefault(x, set()).add(y)
+    return links
+
+
+def match_glyphs(pathway: Pathway, sbgn: str | Path) -> dict[str, str]:
+    """The SBGN glyph of each pathway node it can be matched to.
+
+    - The gallery's own scheme: SBML ``s_<glyph>`` / ``re_<glyph>`` (a component of a complex: ``s_n2_n0`` is
+      glyph ``n2__n0``), or the same id.
+    - Otherwise (e.g. MINERVA exports: reactions keep their ids, species become ``species_0``): reactions by id,
+      species by name (the SBML name is the glyph's label); a name used more than once is told apart by the
+      reactions the species takes part in.
+    """
+    glyphs = read_sbgn_glyphs(sbgn)
+    by_scheme = {}
+    for n in pathway.graph:
+        glyph = n if n in glyphs else _glyph_for(n, glyphs)
+        if glyph:
+            by_scheme[n] = glyph
+    if len(by_scheme) >= 0.5 * pathway.graph.number_of_nodes():
+        return by_scheme
+
+    from .graph import REACTION
+
+    match = {n: n for n, d in pathway.graph.nodes(data=True) if d["kind"] == REACTION and n in glyphs}
+    processes = _sbgn_processes(sbgn)
+    by_label: dict[str, list[str]] = {}
+    for gid, (cls, label) in glyphs.items():
+        if cls not in ("process", "compartment") and label:
+            by_label.setdefault(label.strip().lower(), []).append(gid)
+    used = set()
+    for n, d in pathway.graph.nodes(data=True):
+        if d["kind"] == REACTION:
+            continue
+        candidates = [g for g in by_label.get(d["label"].strip().lower(), []) if g not in used]
+        if not candidates:
+            continue
+        reactions = {r for r in _neighbours(pathway, n) if r in match}
+        best = max(candidates, key=lambda g: len(processes.get(g, set()) & reactions))
+        match[n] = best
+        used.add(best)
+    return match
+
+
+def _neighbours(pathway: Pathway, node: str) -> set[str]:
+    g = pathway.graph
+    return set(g.predecessors(node)) | set(g.successors(node))
+
+
 def read_sbgn_glyphs(path: str | Path) -> dict[str, tuple[str, str]]:
     """(class, label) of each glyph of an SBGN-ML map, by glyph id."""
     root = ET.parse(path).getroot()
@@ -40,9 +111,10 @@ def apply_gallery_classes(pathway: Pathway, sbgn: str | Path) -> int:
     from .graph import SBGN_ML_CLASSES, SPECIES, set_class
 
     glyphs = read_sbgn_glyphs(sbgn)
+    match = match_glyphs(pathway, sbgn)
     n = 0
     for node, d in pathway.graph.nodes(data=True):
-        glyph = _glyph_for(node, glyphs)
+        glyph = match.get(node)
         if not glyph:
             continue
         cls, label = glyphs[glyph]
@@ -70,12 +142,7 @@ def read_sbgn_positions(path: str | Path) -> dict[str, tuple[float, float]]:
 
 
 def gallery_reference(pathway: Pathway, sbgn: str | Path) -> Positions:
-    """The reference layout of a metabolismregulation gallery map: SBML species ``s_<glyph>`` and reactions
-    ``re_<glyph>`` are the SBGN glyphs ``<glyph>``. In the map's own coordinates (y up)."""
+    """The reference layout of a gallery map, from its SBGN map (nodes matched by ``match_glyphs``). In the map's
+    own coordinates (y up)."""
     glyphs = read_sbgn_positions(sbgn)
-    pos = {}
-    for n in pathway.graph:
-        glyph = _glyph_for(n, glyphs)
-        if glyph:
-            pos[n] = glyphs[glyph]
-    return pos
+    return {n: glyphs[g] for n, g in match_glyphs(pathway, sbgn).items() if g in glyphs}
