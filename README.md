@@ -31,7 +31,7 @@ each modifier its SBGN arc (catalysis, inhibition, stimulation, …).
 |---|---|
 | [MetaCarto](https://github.com/forxhunter/MetaCarto) | constructive layout of metabolic maps (whole-model canvas) |
 | [sbml2escher](https://github.com/elixir2026-project22/sbml2escher) | constraint-based, on a grid |
-| cytoscape.js | fCoSE and CoSE-Bilkent (also with compartments as groups), CoSE, cola, dagre, klay, ELK (layered, stress, force, mrtree) |
+| cytoscape.js | fCoSE and CoSE-Bilkent (also with compartments as groups: reactions are placed in the compartment of their reactants and products, or their SBML Level 3 compartment where set; transports stay between), CoSE, cola, dagre, klay, ELK (layered, stress, force, mrtree) |
 | [SBMLNetwork](https://github.com/sys-bio/SBMLNetwork) | its auto layout |
 | Graphviz | dot, neato, fdp, sfdp, twopi, circo |
 | igraph | Fruchterman–Reingold, Kamada–Kawai, DrL, graphopt, LGL, MDS, Sugiyama |

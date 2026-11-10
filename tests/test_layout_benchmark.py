@@ -224,3 +224,15 @@ def test_append_replaces_only_given_layouts(tmp_path, tiny_sbml):
     rows = list(csv.DictReader((out / "results.csv").open()))
     assert sorted(r["layout"] for r in rows) == ["graphviz-dot", "graphviz-neato"]
     assert next(r for r in rows if r["layout"] == "graphviz-dot")["seconds"] == first["graphviz-dot"]["seconds"]
+
+
+def test_reaction_compartment(tmp_path):
+    """For the compound layouts: a reaction within one compartment gets it, a transport gets none, an SBML
+    reaction compartment wins."""
+    from layout_benchmark.graph import reaction_compartment
+
+    p = _two_compartments(tmp_path)  # r1: A -> B (both cyt); r2: B (cyt) -> X (nuc)
+    assert reaction_compartment(p, "r1") == "cyt"
+    assert reaction_compartment(p, "r2") is None
+    p.graph.nodes["r2"]["compartment"] = "nuc"  # as read from an SBML Level 3 reaction compartment
+    assert reaction_compartment(p, "r2") == "nuc"

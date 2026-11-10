@@ -166,6 +166,20 @@ def _add_reaction(g, rid, label, compartment=None):
     g.add_node(rid, kind=REACTION, label=label or rid, compartment=compartment, width=w, height=h, sbgn=PROCESS)
 
 
+def reaction_compartment(pathway: Pathway, reaction: str) -> str | None:
+    """The compartment a reaction can be placed in, for layout tools that lay out compartments: the SBML reaction
+    compartment (an optional attribute in Level 3), else the one compartment all its reactants and products share,
+    else None (a transport between compartments). Modifiers don't count. An assumption on the input: SBML doesn't
+    require reactions to have a compartment."""
+    g = pathway.graph
+    if g.nodes[reaction].get("compartment"):
+        return g.nodes[reaction]["compartment"]
+    sides = [u for u, _, d in g.in_edges(reaction, data=True) if d.get("role") == REACTANT]
+    sides += [v for _, v, d in g.out_edges(reaction, data=True) if d.get("role") == PRODUCT]
+    compartments = {g.nodes[s].get("compartment") for s in sides}
+    return compartments.pop() if len(compartments) == 1 else None
+
+
 def read_sbml(path: str | Path, name: str | None = None) -> Pathway:
     """Read an SBML file (core reactions, or SBML-qual transitions) into a Pathway."""
     path = Path(path)

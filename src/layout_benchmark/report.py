@@ -134,7 +134,8 @@ def write_report(out: Path, rows: list[dict], sources: dict[str, Path], local: b
             "tool's own, drawn at a common scale (nearest neighbours 1.5 node widths apart); the layouts themselves "
             "are not changed. Species are coloured by compartment (models with more than one; legend in each "
             "picture). Compartment boxes are drawn only where the reference or the tool has them: the references, "
-            "and cytoscape.js's compound layouts (with compartments); MetaCarto and sbml2escher have none. "
+            "and cytoscape.js's compound layouts (with compartments: reactions are placed in the compartment of "
+            "their reactants and products, transports between). MetaCarto and sbml2escher have none. "
             "Click a picture to open it full size.</p>"
         ),
     ]

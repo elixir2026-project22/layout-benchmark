@@ -17,7 +17,7 @@ import igraph as ig
 import networkx as nx
 
 from .drawing import Drawing, Positions
-from .graph import Pathway
+from .graph import REACTION, Pathway, reaction_compartment
 
 # --- Graphviz ------------------------------------------------------------------------------------------------
 
@@ -94,22 +94,31 @@ def _networkx(name: str) -> Callable[[Pathway, int], Positions]:
 JS_DIR = Path(__file__).parent / "js"
 
 
-def _cytoscape(algorithm: str, compound: bool = False) -> Callable[[Pathway, int], Positions]:
+def _cytoscape(algorithm: str, compound: bool = False, reactions: bool = True) -> Callable[[Pathway, int], Positions]:
     """A cytoscape.js layout run by ``js/layout.mjs`` (needs Node and ``npm ci`` in ``js/``). With ``compound``,
-    the species' compartments are compound parent nodes."""
+    compartments are compound parent nodes holding their species; with ``reactions`` (the option, on by default),
+    reactions are placed in a compartment too (``graph.reaction_compartment``: their SBML compartment, else that of
+    their reactants and products; transports stay between the compartments). The compound algorithms expect every
+    node in a compartment: left outside, reactions stretch their edges across the picture."""
 
     def run(pathway: Pathway, seed: int) -> Positions:
         if not (JS_DIR / "node_modules").exists():
             raise RuntimeError(f"cytoscape.js layouts need: cd {JS_DIR} && npm ci")
         g = pathway.graph
         parents = sorted({d["compartment"] for _, d in g.nodes(data=True) if d.get("compartment")})
+
+        def parent(n, d):
+            if compound and reactions and d["kind"] == REACTION:
+                return reaction_compartment(pathway, n)
+            return d.get("compartment")
+
         payload = {
             "algorithm": algorithm,
             "seed": seed,
             "compound": compound and len(parents) > 1,
             "parents": parents,
             "nodes": [
-                {"id": n, "width": d["width"], "height": d["height"], "parent": d.get("compartment")}
+                {"id": n, "width": d["width"], "height": d["height"], "parent": parent(n, d)}
                 for n, d in g.nodes(data=True)
             ],
             "edges": [{"source": u, "target": v} for u, v in g.edges() if u != v],
