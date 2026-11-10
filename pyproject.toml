@@ -1,0 +1,68 @@
+# This section describes the requirements of the build/installation
+# process itself. Being able to do this was the original reason to
+# introduce pyproject.toml
+[build-system]
+requires = [
+    "setuptools >=61",
+]
+build-backend = "setuptools.build_meta"
+
+# This section provides general project metadata that is used across
+# a variety of build tools. Notably, the version specified here is the
+# single source of truth for layout_benchmark's version
+[project]
+name = "layout-benchmark"
+description = "Benchmark of automatic layout algorithms for pathway maps in SBML"
+readme = "README.md"
+maintainers = [
+    { name = "Carissa Bleker", email = "carissarobyn.bleker@nib.si" },
+]
+version = "0.0.1"
+requires-python = ">=3.11"
+license-files = ["LICEN[CS]E*"]
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "click",
+    "python-libsbml>=5.20",
+    "networkx>=3.2",
+    "igraph>=0.11",
+    "pygraphviz>=1.12",
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "shapely>=2.0",
+    "gdmetrix>=0.0.5",
+]
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    "pytest-cov",
+]
+docs = [
+    "sphinx",
+    "sphinx_mdinclude",
+    "sphinx_rtd_theme",
+]
+
+# Command line scripts installed as part of the installation
+[project.scripts]
+layout-benchmark = "layout_benchmark.__main__:main"
+
+# The following section contains setuptools-specific configuration
+# options. For a full reference of available options, check the overview
+# at https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# The following is the configuration for the pytest test suite
+[tool.pytest.ini_options]
+testpaths = [
+    "tests",
+]
+
+[tool.ruff]
+line-length = 120

@@ -1,0 +1,151 @@
+"""The HTML report: per model, the reference layout in its own box and the computed layouts in a scrolling strip
+next to it, with links to the source files."""
+
+from __future__ import annotations
+
+import json
+import re
+import subprocess
+from html import escape
+from pathlib import Path
+
+from .layouts import GROUP, expected_rank
+
+REFERENCE = "reference"
+
+CSS = """
+:root { --ref: #b5651d; --line: #d0d7de; --muted: #57606a; --bg: #f6f8fa; }
+body { font-family: system-ui, sans-serif; margin: 16px; color: #1f2328; background: #fff; }
+h1 { font-size: 20px; } h2 { font-size: 16px; margin: 0 0 4px; }
+section { border-top: 1px solid var(--line); padding: 14px 0 18px; }
+.meta { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+.meta a { margin-right: 12px; }
+.row { display: flex; gap: 14px; align-items: flex-start; padding: 3px; }
+.ref { box-shadow: 0 0 0 3px var(--ref); background: #fffaf3; }  /* an outline: no change to the size */
+.ref figcaption b { color: var(--ref); }
+.ref.none { box-shadow: none; border-style: dashed; color: var(--muted); font-size: 13px; display: flex; align-items: center; justify-content: center; height: 560px; }
+.strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; }
+figure { flex: 0 0 600px; box-sizing: border-box; margin: 0; border: 1px solid var(--line); border-radius: 6px; padding: 6px;
+         background: var(--bg); scroll-snap-align: start; }
+figure img { width: 100%; height: 520px; object-fit: contain; background: #fff; display: block; }
+figcaption { font-size: 12px; margin-top: 4px; }
+figcaption .t { color: var(--muted); }
+.error { height: 520px; display: flex; align-items: center; justify-content: center; text-align: center;
+         font-size: 12px; color: #a40e26; background: #fff; padding: 8px; box-sizing: border-box; }
+"""
+
+
+def source_links(model: Path, local: bool = True) -> dict[str, str]:
+    """Links to a model's source: from ``<model>.source.json`` (written by the dataset fetchers), else GitHub
+    links when the file is in a git checkout of a GitHub repository; always the local file."""
+    links = {}
+    sidecar = model.with_suffix(".source.json")
+    if sidecar.exists():
+        links.update(json.loads(sidecar.read_text()))
+    else:
+        try:
+
+            def git(*args):
+                return subprocess.run(
+                    ["git", "-C", str(model.parent), *args], capture_output=True, text=True, check=True
+                ).stdout.strip()
+
+            top = Path(git("rev-parse", "--show-toplevel"))
+            remote = git("remote", "get-url", "origin")
+            commit = git("rev-parse", "HEAD")
+            m = re.search(r"github\.com[:/](.+?)(?:\.git)?$", remote)
+            if m:
+                rel = model.resolve().relative_to(top.resolve()).as_posix()
+                links["model"] = f"https://github.com/{m.group(1)}/blob/{commit}/{rel}"
+                sbgn = model.with_suffix(".sbgn")
+                if sbgn.exists():
+                    links["reference"] = links["model"][: -len(model.suffix)] + ".sbgn"
+        except (subprocess.CalledProcessError, FileNotFoundError, ValueError):
+            pass
+    if local:
+        links["local file"] = model.resolve().as_uri()
+    return links
+
+
+def _figure(model: str, r: dict, out: Path) -> tuple[str, str]:
+    """(picture or error, caption) of one run."""
+    svg = f"{model}/{r['layout']}.svg"
+    if r.get("error") or not (out / svg).exists():
+        body = f'<div class="error">{escape(r.get("error") or "no picture")}</div>'
+    else:
+        body = f'<a href="{escape(svg)}" target="_blank"><img src="{escape(svg)}" loading="lazy" alt=""></a>'
+    note = f" · {escape(r['note'])}" if r.get("note") else ""
+    links = " ".join(
+        f'<a href="{escape(f)}" target="_blank">{label}</a>'
+        for f, label in ((svg, "SVG"), (f"{model}/{r['layout']}.json", "positions (JSON)"))
+        if (out / f).exists()
+    )
+    group = f" <span class=t>({escape(GROUP[r['layout']])})</span>" if r["layout"] in GROUP else ""
+    return body, (
+        f"<b>{escape(r['layout'])}</b>{group} <span class=t>{r['seconds']} s{note}</span>"
+        f"{'<br>' + links if links else ''}"
+    )
+
+
+def write_report(out: Path, rows: list[dict], sources: dict[str, Path], local: bool = True) -> Path:
+    """Write ``out/index.html``. ``sources`` maps a model name to its SBML file. ``local``: with links to the
+    local files (False for a published copy)."""
+    parts = [
+        "<!doctype html><html lang=en><meta charset=utf-8>",
+        "<meta name=viewport content='width=device-width, initial-scale=1'>",
+        f"<title>Layout benchmark</title><style>{CSS}</style>",
+        "<h1>Layout benchmark</h1>",
+        (
+            "<p class=meta>Per model: the reference layout (brown box, where there is one), then every computed "
+            "layout, from the expected most promising to the least (by group, before any scoring); scroll sideways. "
+            "Every picture is drawn the same way (SBGN shapes and arcs, fixed node sizes). "
+            "Click a picture to open it full size.</p>"
+        ),
+    ]
+    for model in dict.fromkeys(r["model"] for r in rows):
+        mr = [r for r in rows if r["model"] == model]
+        links = source_links(sources[model], local) if model in sources else {}
+        credit = links.pop("credit", None)
+        licence = links.pop("licence", None)
+        link_html = " ".join(
+            f'<a href="{escape(url)}" target="_blank" rel="noopener">{escape(label)}</a>'
+            for label, url in links.items()
+        )
+        if credit:
+            credit_html = (
+                f'<a href="{escape(licence)}" target="_blank" rel="noopener">{escape(credit)}</a>'
+                if licence
+                else escape(credit)
+            )
+            link_html += f" · {credit_html}"
+        parts.append(f"<section id='{escape(model)}'><h2>{escape(model)}</h2>")
+        parts.append(
+            f"<div class=meta>{mr[0]['species']} species, {mr[0]['reactions']} reactions, {mr[0]['edges']} edges"
+            f" · {link_html}</div>"
+        )
+        ref = next((r for r in mr if r["layout"] == REFERENCE), None)
+        parts.append("<div class=row>")
+        if ref:
+            body, caption = _figure(model, ref, out)
+            # where the reference layout comes from: its file (on GitHub when known)
+            ref_file = sources[model].with_suffix(".sbgn") if model in sources else None
+            ref_url = links.get("reference") or (ref_file.resolve().as_uri() if ref_file and local else None)
+            name = escape(ref_file.name) if ref_file else ""
+            origin = f': <a href="{escape(ref_url)}" target="_blank">{name}</a>' if ref_url and name else ""
+            caption = caption.replace(f"<b>{REFERENCE}</b>", f"<b>Reference</b>{origin}", 1)
+            parts.append(f"<figure class=ref>{body}<figcaption>{caption}</figcaption></figure>")
+        else:
+            parts.append("<figure class='ref none'>No reference layout</figure>")
+        parts.append("<div class=strip>")
+        for r in sorted(mr, key=lambda r: expected_rank(r["layout"])):
+            if r["layout"] == REFERENCE:
+                continue
+            body, caption = _figure(model, r, out)
+            parts.append(f"<figure>{body}<figcaption>{caption}</figcaption></figure>")
+        parts.append("</div></div></section>")
+    path = out / "index.html"
+    path.write_text("\n".join(parts))
+    return path
+
+
+__all__ = ["source_links", "write_report"]

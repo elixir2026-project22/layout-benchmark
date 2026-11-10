@@ -7,7 +7,7 @@ Visualization of Metabolic Networks*.
 Every model is laid out with many algorithms. Each result is scored with metrics derived from the project's layout
 rules and written as standard SBML Layout + Render, so any viewer can open it. The results are compared side by side.
 
-> Status: planning. The pipeline is being written; this README describes what it will do.
+> Status: in development. Layout runs and the report work; metrics are next.
 
 ## Input
 
@@ -64,6 +64,57 @@ For each model and layout:
 
 An HTML report shows the table and the pictures side by side.
 
+## Setup
+
+Requirements: [uv](https://docs.astral.sh/uv/), Graphviz (for `pygraphviz`) and Node.js (for the cytoscape.js
+layouts).
+
+```bash
+uv sync --extra tests                       # the Python environment (.venv), from uv.lock
+(cd src/layout_benchmark/js && npm ci)      # cytoscape.js and its layout extensions
+uv run pytest
+```
+
+External tools run in their own environments under `.tools/` (not tracked):
+
+```bash
+# MetaCarto 2 (CC BY 4.0)
+git clone --depth 1 --branch v2.0.0 https://github.com/forxhunter/MetaCarto.git .tools/MetaCarto
+(cd .tools/MetaCarto && uv venv --python 3.12 && uv pip install -e .)
+
+# sbml2escher (the project's own tool)
+git clone https://github.com/elixir2026-project22/sbml2escher.git .tools/sbml2escher
+(cd .tools/sbml2escher && uv venv --python 3.12 && uv pip install -r requirements-layout-lock.txt -r requirements-escher.txt)
+
+# SBMLNetwork: its auto layout (a layout), and its reader for layouts stored in SBML
+mkdir -p .tools/sbmlnetwork && (cd .tools/sbmlnetwork && uv venv --python 3.12 && uv pip install sbmlnetwork==0.5.12 ipython)
+```
+
+Each tool is optional: without it, its layout reports an error.
+
+## Usage
+
+```bash
+uv run layout-benchmark layouts                          # the layout algorithms
+uv run layout-benchmark gallery data/gallery             # maps with a hand-made reference layout
+uv run layout-benchmark run data/gallery/*.xml path/to/model.xml -o results/run1
+```
+
+`results/run1/index.html` shows per model the reference (where there is one) and every layout, from the expected
+most promising to the least; each layout also has its positions as JSON. `results.csv` has a row per run (time,
+error, nodes not placed). A `<model>.sbgn` next to a model is used as its reference (and for its SBGN classes and
+labels).
+
+```bash
+uv run layout-benchmark report results/run1                      # redo the page from results.csv
+uv run layout-benchmark publish results/run1 site --name run1    # a copy for GitHub Pages (no local paths)
+```
+
+The published report is on the `gh-pages` branch:
+<https://elixir2026-project22.github.io/layout-benchmark/>.
+
 ## Licence
 
-MIT (code). The input data keep their own licences.
+MIT (code). The input data keep their own licences; the metabolismregulation gallery maps (reference layouts)
+are CC BY 4.0 (<https://metabolismregulation.github.io/about/>), credited in the report. gdMetriX, used for the general metrics, is GPL-3.0: it is
+imported, not included; a bundle that includes it must follow the GPL.
