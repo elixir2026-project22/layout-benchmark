@@ -132,7 +132,9 @@ def write_report(out: Path, rows: list[dict], sources: dict[str, Path], local: b
             "layout, from the expected most promising to the least (by group, before any scoring); scroll sideways. "
             "Every picture is drawn the same way (SBGN shapes and arcs, fixed node sizes). Positions are each "
             "tool's own, drawn at a common scale (nearest neighbours 1.5 node widths apart); the layouts themselves "
-            "are not changed. "
+            "are not changed. Species are coloured by compartment (models with more than one; legend in each "
+            "picture). Compartment boxes are drawn only where the reference or the tool has them: the references, "
+            "and cytoscape.js's compound layouts (with compartments); MetaCarto and sbml2escher have none. "
             "Click a picture to open it full size.</p>"
         ),
     ]

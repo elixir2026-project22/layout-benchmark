@@ -172,3 +172,55 @@ def test_manifest(tmp_path):
     assert [(s.path.name, s.set) for s in specs] == [("a.xml", "First"), ("b.xml", "Second")]
     assert specs[0].reference.name == "a.sbgn" and specs[0].credit == "Map, CC BY 4.0"
     assert specs[1].reference is None
+
+
+def _two_compartments(tmp_path):
+    path = make_sbml(
+        tmp_path / "two.xml",
+        [("r1", ["A"], ["B"], []), ("r2", ["B"], ["X"], [])],
+        compartments=("cyt", "nuc"),
+        species_compartment={"X": "nuc"},
+    )
+    return read_sbml(path)
+
+
+def test_compartment_colours_and_legend(tmp_path):
+    from layout_benchmark.render import PALETTE, compartment_colours, to_svg
+
+    p = _two_compartments(tmp_path)
+    colours = compartment_colours(p)
+    assert colours == {"cyt": PALETTE[0], "nuc": PALETTE[1]}  # the larger compartment first
+    svg = to_svg(layout("graphviz-neato", p).normalised(), "two", p)
+    assert f'fill="{PALETTE[1]}"' in svg  # X, in the nucleus
+    assert ">nuc</text>" in svg  # the legend
+    single = read_sbml(make_sbml(tmp_path / "one.xml", [("r", ["S"], ["P"], [])]))
+    assert compartment_colours(single) == {}
+
+
+def test_compartment_boxes_round_trip(tmp_path):
+    from layout_benchmark.drawing import Drawing
+    from layout_benchmark.render import to_svg
+
+    p = _two_compartments(tmp_path)
+    d = layout("graphviz-dot", p)
+    d.compartments = {"nuc": {"box": [0.0, 0.0, 100.0, 50.0], "label": "nucleus"}}
+    back = Drawing.from_json(d.to_json())
+    assert back.compartments == d.compartments
+    scaled = back.normalised()
+    x0, y0, x1, y1 = scaled.compartments["nuc"]["box"]
+    assert (x1 - x0) / (y1 - y0) == pytest.approx(2.0)  # scaled with the nodes
+    assert ">nucleus</text>" in to_svg(scaled, "two", p)
+
+
+def test_append_replaces_only_given_layouts(tmp_path, tiny_sbml):
+    import csv
+
+    from layout_benchmark.runner import run
+
+    out = tmp_path / "out"
+    run([tiny_sbml], ["graphviz-dot", "graphviz-neato"], out)
+    first = {r["layout"]: r for r in csv.DictReader((out / "results.csv").open())}
+    run([tiny_sbml], ["graphviz-neato"], out, append=True)
+    rows = list(csv.DictReader((out / "results.csv").open()))
+    assert sorted(r["layout"] for r in rows) == ["graphviz-dot", "graphviz-neato"]
+    assert next(r for r in rows if r["layout"] == "graphviz-dot")["seconds"] == first["graphviz-dot"]["seconds"]

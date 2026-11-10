@@ -1,7 +1,8 @@
 // Headless cytoscape.js layouts for layout-benchmark.
 // stdin: {"algorithm": "fcose", "seed": 0, "compound": true,
 //         "nodes": [{"id", "width", "height", "parent"}], "parents": ["c1", ...], "edges": [{"source", "target"}]}
-// stdout: {"positions": {"<id>": [x, y]}}  (node centres; y down, as in cytoscape)
+// stdout: {"positions": {"<id>": [x, y]}, "compartments": {"<parent>": [x1, y1, x2, y2]}}
+//         (node centres and, with compound parents, their boxes; y down, as in cytoscape)
 import cytoscape from "cytoscape";
 import fcose from "cytoscape-fcose";
 import coseBilkent from "cytoscape-cose-bilkent";
@@ -83,5 +84,12 @@ for (const n of input.nodes) {
   const p = cy.getElementById(n.id).position();
   positions[n.id] = [p.x, p.y];
 }
+const compartments = {};
+if (input.compound) {
+  for (const p of input.parents) {
+    const b = cy.getElementById(`__parent__${p}`).boundingBox();
+    if (b.w > 0 && b.h > 0) compartments[p] = [b.x1, b.y1, b.x2, b.y2];
+  }
+}
 // exit once written: some layouts (cola, ELK) leave timers or workers behind that keep Node alive
-process.stdout.write(JSON.stringify({ positions }), () => process.exit(0));
+process.stdout.write(JSON.stringify({ positions, compartments }), () => process.exit(0));

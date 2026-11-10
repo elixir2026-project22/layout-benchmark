@@ -112,6 +112,11 @@ def apply_gallery_classes(pathway: Pathway, sbgn: str | Path) -> int:
 
     glyphs = read_sbgn_glyphs(sbgn)
     match = match_glyphs(pathway, sbgn)
+    # compartment names from the map's compartment glyphs (the gallery SBML names are encoded)
+    for cid in pathway.compartments:
+        glyph = _glyph_for(cid, glyphs)
+        if glyph and glyphs[glyph][0] == "compartment" and glyphs[glyph][1]:
+            pathway.compartments[cid] = glyphs[glyph][1]
     n = 0
     for node, d in pathway.graph.nodes(data=True):
         glyph = match.get(node)
@@ -139,6 +144,30 @@ def read_sbgn_positions(path: str | Path) -> dict[str, tuple[float, float]]:
         x, y, w, h = (float(bbox.get(k)) for k in ("x", "y", "w", "h"))
         pos[el.get("id")] = (x + w / 2, -(y + h / 2))  # y up, as in the layouts
     return pos
+
+
+def sbgn_compartments(pathway: Pathway, sbgn: str | Path) -> dict[str, dict]:
+    """The compartment glyphs of an SBGN-ML map as boxes (y up), keyed by the pathway's compartment id where it
+    matches (the same id, or ``c_n0`` for glyph ``n0``), else by glyph id."""
+    root = ET.parse(sbgn).getroot()
+    glyphs = {}
+    for el in root.iter():
+        if _local(el.tag) == "glyph" and el.get("class") == "compartment" and el.get("id"):
+            glyphs[el.get("id")] = el
+    key = {}
+    for cid in pathway.compartments:
+        glyph = cid if cid in glyphs else _glyph_for(cid, glyphs)
+        if glyph:
+            key[glyph] = cid
+    out = {}
+    for gid, el in glyphs.items():
+        bbox = next((c for c in el if _local(c.tag) == "bbox"), None)
+        if bbox is None:
+            continue
+        x, y, w, h = (float(bbox.get(k)) for k in ("x", "y", "w", "h"))
+        label = next((c.get("text") for c in el if _local(c.tag) == "label"), None) or gid
+        out[key.get(gid, gid)] = {"box": [x, -(y + h), x + w, -y], "label": label}
+    return out
 
 
 def gallery_reference(pathway: Pathway, sbgn: str | Path) -> Positions:

@@ -4,7 +4,8 @@ Imports only SBMLNetwork and the standard library.
     python sbmlnetwork_helper.py layout MODEL OUT.json [--save LAYOUT.xml]   auto layout, as a drawing
     python sbmlnetwork_helper.py read LAYOUT.xml OUT.json                    a model's own layout, as a drawing
 
-Drawings (JSON): {"nodes": [{"id", "of", "kind", "x", "y", "w", "h"}], "edges": [{"source", "target", "role"}]};
+Drawings (JSON): {"nodes": [{"id", "of", "kind", "x", "y", "w", "h"}], "edges": [{"source", "target", "role"}],
+"compartments": [{"id", "x", "y", "w", "h"}]} (compartment boxes: top-left corner and size);
 x, y are node centres in SBML Layout coordinates (y down). Glyph positions in SBMLNetwork are top-left corners.
 Edges are drawn straight by layout-benchmark (SBMLNetwork's curves are not used).
 """
@@ -37,7 +38,13 @@ def dump(net) -> dict:
                 edges.append({"source": r.get_id(), "target": species.get_id(), "role": role})
             else:
                 edges.append({"source": species.get_id(), "target": r.get_id(), "role": role})
-    return {"nodes": nodes, "edges": edges}
+    compartments = []
+    for c in net.get_compartments_list():
+        if getattr(c, "is_hidden", lambda: False)():
+            continue
+        (x, y), (w, h) = c.get_position(), c.get_size()
+        compartments.append({"id": c.get_compartment_id(), "x": x, "y": y, "w": w, "h": h})
+    return {"nodes": nodes, "edges": edges, "compartments": compartments}
 
 
 def main(argv):

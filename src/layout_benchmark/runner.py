@@ -13,7 +13,7 @@ from .graph import read_sbml
 from .layouts import LAYOUTS, layout
 from .manifest import ModelSpec, SetSpec
 from .metrics import all_metrics
-from .reference import apply_gallery_classes, gallery_reference
+from .reference import apply_gallery_classes, gallery_reference, sbgn_compartments
 from .render import to_svg
 from .report import write_report
 
@@ -100,6 +100,7 @@ def run(
     ``out/<model>/<layout>.svg`` and ``.json`` and ``out/results.csv``. Models are manifest entries (``ModelSpec``)
     or plain files. ``sets``: the manifest's sets (order, descriptions), saved as ``out/sets.json`` for the report.
     Returns the CSV path."""
+    requested = set(layouts) if layouts else None  # with append: only these layouts' rows are replaced
     layouts = layouts or list(LAYOUTS)
     out.mkdir(parents=True, exist_ok=True)
     specs = [m if isinstance(m, ModelSpec) else spec_for(Path(m)) for m in models]
@@ -110,7 +111,12 @@ def run(
     names = model_names([s.path for s in specs])
     kept = []  # with append: the rows of the other models already in out/results.csv
     if append and (out / "results.csv").exists():
-        kept = [r for r in csv.DictReader((out / "results.csv").open()) if r["model"] not in names.values()]
+        kept = [
+            r
+            for r in csv.DictReader((out / "results.csv").open())
+            if r["model"] not in names.values()
+            or (requested is not None and r["layout"] not in requested and r["layout"] != REFERENCE)
+        ]
         sources.update({r["model"]: Path(r["source"]) for r in kept if r.get("source")})
     for spec in specs:
         model = spec.path
@@ -143,7 +149,10 @@ def run(
         }
         runs = []
         if reference:
-            runs = [(REFERENCE, reference_drawing or Drawing.of(pathway, reference), 0.0, None)]
+            if reference_drawing is None:  # an SBGN map: its nodes, and its compartment glyphs
+                reference_drawing = Drawing.of(pathway, reference)
+                reference_drawing.compartments = sbgn_compartments(pathway, spec.reference)
+            runs = [(REFERENCE, reference_drawing, 0.0, None)]
         for name in layouts:
             drawing, seconds, error = run_layout(name, pathway, seed, timeout)
             runs.append((name, drawing, seconds, error))
@@ -163,7 +172,7 @@ def run(
                 scaled = drawing.normalised()
                 if metrics:
                     row.update(all_metrics(pathway, scaled.node_positions(), reference if name != REFERENCE else None))
-                (folder / f"{name}.svg").write_text(to_svg(scaled, f"{pathway.name}: {name}"))
+                (folder / f"{name}.svg").write_text(to_svg(scaled, f"{pathway.name}: {name}", pathway))
             rows.append(row)
             print(f"{pathway.name:30} {name:24} {row['seconds']:8.2f}s {row['error']}")
         # after each model, so a long run can be followed, and a stopped one loses nothing finished

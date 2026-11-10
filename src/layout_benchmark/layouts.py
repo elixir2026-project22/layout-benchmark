@@ -119,8 +119,17 @@ def _cytoscape(algorithm: str, compound: bool = False) -> Callable[[Pathway, int
         )
         if result.returncode:
             raise RuntimeError(result.stderr.strip()[-500:])
-        positions = json.loads(result.stdout)["positions"]
-        return {n: (float(x), -float(y)) for n, (x, y) in positions.items()}  # y up
+        out = json.loads(result.stdout)
+        pos = {n: (float(x), -float(y)) for n, (x, y) in out["positions"].items()}  # y up
+        if not out.get("compartments"):
+            return pos
+        # compound layouts: the compartments' boxes as cytoscape.js computed them (y up)
+        drawing = Drawing.of(pathway, pos)
+        drawing.compartments = {
+            c: {"box": [x1, -y2, x2, -y1], "label": pathway.compartments.get(c, c)}
+            for c, (x1, y1, x2, y2) in out["compartments"].items()
+        }
+        return drawing
 
     return run
 

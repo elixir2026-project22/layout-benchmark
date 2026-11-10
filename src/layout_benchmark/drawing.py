@@ -8,6 +8,8 @@ more: clones (a metabolite such as ATP drawn several times, each near the reacti
   plus ``kind``, ``label``, ``width``, ``height``; edges have ``arc`` (SBGN arc class).
 - ``pos``: drawn node centres (y up).
 - ``routes``: per edge (u, v), the points between its ends (none: a straight line).
+- ``compartments``: the compartment boxes the tool (or reference) drew, by compartment id:
+  ``{"box": [x0, y0, x1, y1], "label": name}`` (y up). Empty when the tool draws no compartments.
 
 Positions are the tool's own. For drawing (and for metrics that use node sizes), ``normalised()`` scales a drawing
 uniformly, so that nearest neighbours are SPACING node widths apart: a uniform scale changes no shape, angle or
@@ -35,6 +37,7 @@ class Drawing:
     graph: nx.DiGraph
     pos: Positions
     routes: dict[tuple[str, str], list[Point]] = field(default_factory=dict)
+    compartments: dict[str, dict] = field(default_factory=dict)
 
     @classmethod
     def of(cls, pathway: Pathway, pos: Positions) -> Drawing:
@@ -85,10 +88,15 @@ class Drawing:
         def t(p):
             return (float((p[0] - centre[0]) * scale), float((p[1] - centre[1]) * scale))
 
+        def box(c):
+            (x0, y0), (x1, y1) = t(c["box"][:2]), t(c["box"][2:])
+            return {**c, "box": [x0, y0, x1, y1]}
+
         return Drawing(
             graph=self.graph,
             pos={n: t(p) for n, p in self.pos.items()},
             routes={e: [t(p) for p in pts] for e, pts in self.routes.items()},
+            compartments={k: box(c) for k, c in self.compartments.items()},
         )
 
     def to_json(self) -> dict:
@@ -113,6 +121,7 @@ class Drawing:
                 {"source": u, "target": v, "arc": d.get("arc"), "route": self.routes.get((u, v), [])}
                 for u, v, d in self.graph.edges(data=True)
             ],
+            "compartments": self.compartments,
         }
 
     @classmethod
@@ -129,4 +138,4 @@ class Drawing:
             g.add_edge(e["source"], e["target"], arc=e.get("arc"))
             if e.get("route"):
                 routes[(e["source"], e["target"])] = [tuple(p) for p in e["route"]]
-        return cls(graph=g, pos=pos, routes=routes)
+        return cls(graph=g, pos=pos, routes=routes, compartments=data.get("compartments") or {})

@@ -67,7 +67,15 @@ def _to_drawing(pathway: Pathway, data: dict) -> Drawing:
         else:
             arc = PRODUCTION if g.nodes[u]["kind"] == REACTION else MODULATION
         g.add_edge(u, v, arc=arc)
-    return Drawing(graph=g, pos=pos)
+    compartments = {
+        c["id"]: {
+            "box": [c["x"], -(c["y"] + c["h"]), c["x"] + c["w"], -c["y"]],
+            "label": pathway.compartments.get(c["id"], c["id"]),
+        }
+        for c in data.get("compartments", [])
+        if c["w"] > 0 and c["h"] > 0
+    }
+    return Drawing(graph=g, pos=pos, compartments=compartments)
 
 
 def autolayout(pathway: Pathway, seed: int) -> Drawing:

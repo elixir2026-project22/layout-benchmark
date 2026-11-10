@@ -110,11 +110,30 @@ def _clip(x1, y1, x2, y2, hw, hh):
 
 
 STROKE = 'fill="#fff" stroke="#222" stroke-width="1"'
+# pale fills, one per compartment (largest compartment first); boxes use the same colour, lighter
+PALETTE = ["#cfe2f3", "#fce5cd", "#d9ead3", "#f4cccc", "#d9d2e9", "#fff2cc", "#d0e0e3", "#ead1dc"]
+LEGEND_ROW = 16  # px
 
 
-def _shape(sbgn: str | None, x: float, y: float, hw: float, hh: float, label: str) -> str:
+def compartment_colours(pathway) -> dict[str, str]:
+    """A colour per compartment of a model with more than one (largest first), else none."""
+    if pathway is None:
+        return {}
+    sizes: dict[str, int] = {}
+    for _, d in pathway.graph.nodes(data=True):
+        if d["kind"] != REACTION and d.get("compartment"):
+            sizes[d["compartment"]] = sizes.get(d["compartment"], 0) + 1
+    if len(sizes) < 2:
+        return {}
+    order = sorted(sizes, key=lambda c: (-sizes[c], c))
+    return {c: PALETTE[i % len(PALETTE)] for i, c in enumerate(order)}
+
+
+def _shape(sbgn: str | None, x: float, y: float, hw: float, hh: float, label: str, fill: str = "#fff") -> str:
     """An SBGN Process Description glyph centred on (x, y), half-sizes hw, hh."""
     t = f"<title>{label}</title>"
+    if fill != "#fff":
+        return _shape(sbgn, x, y, hw, hh, label).replace('fill="#fff"', f'fill="{fill}"', 1)
     if sbgn == "process":
         return f'<rect x="{x - hw:.1f}" y="{y - hh:.1f}" width="{2 * hw:.1f}" height="{2 * hh:.1f}" {STROKE}>{t}</rect>'
     if sbgn == SIMPLE_CHEMICAL:
@@ -174,22 +193,37 @@ def _fit(label: str, width: float, font_size: float) -> str:
     return label if len(label) <= n else label[: max(n - 1, 1)] + "…"
 
 
-def to_svg(drawing: Drawing, title: str = "") -> str:
+def to_svg(drawing: Drawing, title: str = "", pathway=None) -> str:
+    """The picture of a drawing. With the ``pathway``: species are coloured by compartment (models with more than
+    one), with a legend; compartment boxes are drawn where the drawing has them (the tool's or reference's own)."""
     g, pos = drawing.graph, drawing.pos
     placed = [n for n in g if n in pos]
     if not placed:
         return '<svg xmlns="http://www.w3.org/2000/svg"/>'
+    colours = compartment_colours(pathway)
+    names = pathway.compartments if pathway is not None else {}
+
+    def compartment(n):
+        of = g.nodes[n]["of"]
+        if pathway is not None and of in pathway.graph:
+            return pathway.graph.nodes[of].get("compartment")
+        return g.nodes[n].get("compartment")
+
     pad = 40
     route_points = [p for pts in drawing.routes.values() for p in pts]
     xs = [pos[n][0] for n in placed] + [p[0] for p in route_points]
     ys = [pos[n][1] for n in placed] + [p[1] for p in route_points]
+    for c in drawing.compartments.values():
+        xs += [c["box"][0], c["box"][2]]
+        ys += [c["box"][1], c["box"][3]]
     minx, maxx, miny, maxy = min(xs) - pad, max(xs) + pad, min(ys) - pad, max(ys) + pad
     w, h = maxx - minx, maxy - miny
     scale = WIDTH / w if w else 1
-    height = max(h * scale, 50)
+    top = (len(colours) * LEGEND_ROW + 10) if colours else 0  # room for the legend above the drawing
+    height = max(h * scale, 50) + top
 
     def q(point):  # y flipped: layouts have y up
-        return (point[0] - minx) * scale, (maxy - point[1]) * scale
+        return (point[0] - minx) * scale, (maxy - point[1]) * scale + top
 
     def p(n):
         return q(pos[n])
@@ -207,6 +241,20 @@ def to_svg(drawing: Drawing, title: str = "") -> str:
         _defs(),
         '<rect width="100%" height="100%" fill="#fff"/>',
     ]
+    for i, (cid, c) in enumerate(colours.items()):  # the legend
+        y = 6 + i * LEGEND_ROW
+        out.append(
+            f'<rect x="8" y="{y}" width="14" height="11" rx="2" fill="{c}" stroke="#666" stroke-width="0.6"/>'
+            f'<text x="28" y="{y + 9.5}" font-size="11" fill="#333">{escape(names.get(cid, cid))}</text>'
+        )
+    for cid, c in drawing.compartments.items():  # the compartment boxes the tool or reference drew
+        (x0, y1), (x1, y0) = q(c["box"][:2]), q(c["box"][2:])
+        fill = colours.get(cid, "#f3f3f3")
+        out.append(
+            f'<rect x="{x0:.1f}" y="{y0:.1f}" width="{x1 - x0:.1f}" height="{y1 - y0:.1f}" rx="8" fill="{fill}" '
+            f'fill-opacity="0.35" stroke="#777" stroke-width="1.6"><title>{escape(c.get("label") or cid)}</title></rect>'
+            f'<text x="{x0 + 6:.1f}" y="{y0 + 13:.1f}" font-size="11" fill="#555">{escape(c.get("label") or cid)}</text>'
+        )
     for u, v, d in g.edges(data=True):
         if u not in pos or v not in pos or u == v:
             continue
@@ -232,7 +280,8 @@ def to_svg(drawing: Drawing, title: str = "") -> str:
         hw, hh = half(n)
         label = escape(d["label"])
         sbgn = d.get("sbgn") if d["kind"] != REACTION else "process"
-        out.append(_shape(sbgn, x, y, hw, hh, label))
+        fill = colours.get(compartment(n), "#fff") if d["kind"] != REACTION else "#fff"
+        out.append(_shape(sbgn, x, y, hw, hh, label, fill))
         if d["kind"] != REACTION and copies[d["of"]] > 1:
             outline = _shape(sbgn, x, y, hw, hh, "")
             out.append(

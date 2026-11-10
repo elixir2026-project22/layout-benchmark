@@ -59,18 +59,24 @@ def render(out, manifest):
     from .render import to_svg
     from .report import write_report
 
-    # every saved drawing (also of a run still going, which has no results.csv yet)
+    rows = list(csv.DictReader((out / "results.csv").open())) if (out / "results.csv").exists() else []
+    if manifest and rows:
+        rows = _apply_manifest(out, rows, manifest)
+    pathways = _pathways(rows)  # for compartment colours, names and reference boxes
+    # every saved drawing (also of a run still going, whose newest models are not in results.csv yet)
     n = 0
     for path in sorted(out.glob("*/*.json")):
         drawing = Drawing.from_json(json.loads(path.read_text()))
-        path.with_suffix(".svg").write_text(to_svg(drawing.normalised(), f"{path.parent.name}: {path.stem}"))
+        pathway, reference = pathways.get(path.parent.name, (None, None))
+        if path.stem == "reference" and not drawing.compartments and reference:
+            drawing.compartments = _reference_compartments(pathway, *reference)
+            path.write_text(json.dumps(drawing.to_json(), indent=1))
+        title = f"{path.parent.name}: {path.stem}"
+        path.with_suffix(".svg").write_text(to_svg(drawing.normalised(), title, pathway))
         n += 1
-    if not (out / "results.csv").exists():
+    if not rows:
         click.echo(f"{n} pictures (no results.csv yet: report not rewritten)")
         return
-    rows = list(csv.DictReader((out / "results.csv").open()))
-    if manifest:
-        rows = _apply_manifest(out, rows, manifest)
     sources = {r["model"]: Path(r["source"]) for r in rows if r.get("source")}
     click.echo(f"{n} pictures; report: {write_report(out, rows, sources)}")
 
@@ -148,6 +154,38 @@ def gallery(dest):
 
     models = fetch_gallery(dest)
     click.echo(f"{len(models)} maps with a reference layout in {dest}")
+
+
+def _pathways(rows: list[dict]) -> dict:
+    """Per model of a run: its pathway (read again from its SBML, with the gallery's SBGN classes, labels and
+    compartment names where it has an SBGN reference) and its reference (file, kind)."""
+    from .graph import read_sbml
+    from .reference import apply_gallery_classes
+
+    out = {}
+    for r in rows:
+        if r["model"] in out or not r.get("source") or not Path(r["source"]).exists():
+            continue
+        pathway = read_sbml(r["source"], name=r["model"])
+        ref_file, kind = r.get("reference_file"), r.get("reference_kind") or ""
+        if ref_file and not kind:
+            kind = "sbgn" if ref_file.endswith(".sbgn") else "sbml-layout"
+        if ref_file and kind == "sbgn":
+            apply_gallery_classes(pathway, ref_file)
+        out[r["model"]] = (pathway, (ref_file, kind) if ref_file else None)
+    return out
+
+
+def _reference_compartments(pathway, ref_file: str, kind: str) -> dict:
+    """The compartment boxes of a reference layout (for runs saved before references had them)."""
+    from . import sbmlnet
+    from .reference import sbgn_compartments
+
+    if kind == "sbgn":
+        return sbgn_compartments(pathway, ref_file)
+    if sbmlnet.available():
+        return sbmlnet.read_layout(pathway, Path(ref_file)).compartments
+    return {}
 
 
 def _apply_manifest(out: Path, rows: list[dict], manifest: Path) -> list[dict]:
