@@ -9,7 +9,7 @@ import subprocess
 from html import escape
 from pathlib import Path
 
-from .layouts import GROUP, expected_rank
+from .layouts import GROUP, LINKS, expected_rank
 
 REFERENCE = "reference"
 
@@ -113,10 +113,10 @@ def _figure(model: str, r: dict, out: Path) -> tuple[str, str]:
         if (out / f).exists()
     )
     group = f" <span class=t>({escape(GROUP[r['layout']])})</span>" if r["layout"] in GROUP else ""
-    return body, (
-        f"<b>{escape(r['layout'])}</b>{group} <span class=t>{r['seconds']} s{note}</span>"
-        f"{'<br>' + links if links else ''}"
-    )
+    name = escape(r["layout"])
+    if r["layout"] in LINKS:  # the layout's documentation
+        name = f'<a href="{escape(LINKS[r["layout"]])}" target="_blank" rel="noopener">{name}</a>'
+    return body, (f"<b>{name}</b>{group} <span class=t>{r['seconds']} s{note}</span>{'<br>' + links if links else ''}")
 
 
 def write_report(out: Path, rows: list[dict], sources: dict[str, Path], local: bool = True) -> Path:
@@ -209,6 +209,9 @@ def _model_section(parts: list, model: str, rows: list[dict], sources: dict[str,
             ref_file = sources[model].with_suffix(".sbgn")
         ref_url = links.get("reference") or (ref_file.resolve().as_uri() if ref_file and local else None)
         name = escape(ref_file.name) if ref_file else ""
+        if name and mr[0].get("reference_kind") == "sbml-layout":  # the model file itself, its SBML Layout
+            name += " (its SBML Layout)"
+            ref_url = links.get("model") or ref_url
         origin = f': <a href="{escape(ref_url)}" target="_blank">{name}</a>' if ref_url and name else ""
         caption = caption.replace(f"<b>{REFERENCE}</b>", f"<b>Reference</b>{origin}", 1)
         parts.append(f"<figure class=ref>{body}<figcaption>{caption}</figcaption></figure>")

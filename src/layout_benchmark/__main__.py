@@ -165,6 +165,7 @@ def _apply_manifest(out: Path, rows: list[dict], manifest: Path) -> list[dict]:
         if spec:
             r["set"] = spec.set
             r["reference_file"] = str(spec.reference.resolve()) if spec.reference else ""
+            r["reference_kind"] = spec.reference_kind or ""
             r["credit"] = spec.credit or ""
             r["licence"] = spec.licence or ""
     (out / "sets.json").write_text(json.dumps([s.__dict__ for s in sets], indent=1))

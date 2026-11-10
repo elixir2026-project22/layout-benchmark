@@ -5,7 +5,8 @@ A YAML file::
     sets:
       - name: metabolismregulation gallery
         models: data/gallery/*.xml            # a glob or a list of paths/globs, relative to the manifest
-        reference: "{stem}.sbgn"              # optional: the reference layout next to each model
+        reference: "{stem}.sbgn"              # optional: the reference layout next to each model (SBGN-ML), or
+                                              #   "layout": the model's own SBML Layout
         credit: Map and layout, CC BY 4.0     # optional: shown with each model of the set
         licence: https://metabolismregulation.github.io/about/
         description: Hand-drawn maps ...      # optional: shown under the set's header
@@ -29,6 +30,7 @@ class ModelSpec:
     path: Path
     set: str
     reference: Path | None = None
+    reference_kind: str | None = None  # "sbgn" (an SBGN-ML map) or "sbml-layout" (the model's own SBML Layout)
     credit: str | None = None
     licence: str | None = None
 
@@ -61,15 +63,18 @@ def load(path: str | Path) -> tuple[list[SetSpec], list[ModelSpec]]:
             if key in seen:
                 continue
             seen.add(key)
-            reference = None
-            if entry.get("reference"):
+            reference, kind = None, None
+            if entry.get("reference") == "layout":
+                reference, kind = f, "sbml-layout"
+            elif entry.get("reference"):
                 candidate = f.parent / entry["reference"].format(stem=f.stem)
-                reference = candidate if candidate.exists() else None
+                reference, kind = (candidate, "sbgn") if candidate.exists() else (None, None)
             models.append(
                 ModelSpec(
                     path=f,
                     set=entry["name"],
                     reference=reference,
+                    reference_kind=kind,
                     credit=entry.get("credit"),
                     licence=entry.get("licence"),
                 )

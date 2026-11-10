@@ -66,10 +66,24 @@ def model_names(models: list[Path]) -> dict[Path, str]:
     return names
 
 
+def has_sbml_layout(path: Path) -> bool:
+    """Whether an SBML file has a layout of its own (SBML Layout package)."""
+    import libsbml
+
+    model = libsbml.readSBMLFromFile(str(path)).getModel()
+    plugin = model.getPlugin("layout") if model is not None else None
+    return bool(plugin and plugin.getNumLayouts())
+
+
 def spec_for(path: Path) -> ModelSpec:
-    """A model given as a plain file: its set is its folder, its reference the ``<stem>.sbgn`` next to it."""
+    """A model given as a plain file: its set is its folder; its reference the ``<stem>.sbgn`` next to it, else
+    its own SBML Layout if it has one."""
     sbgn = path.with_suffix(".sbgn")
-    return ModelSpec(path=path, set=path.resolve().parent.name, reference=sbgn if sbgn.exists() else None)
+    if sbgn.exists():
+        return ModelSpec(path=path, set=path.resolve().parent.name, reference=sbgn, reference_kind="sbgn")
+    if has_sbml_layout(path):
+        return ModelSpec(path=path, set=path.resolve().parent.name, reference=path, reference_kind="sbml-layout")
+    return ModelSpec(path=path, set=path.resolve().parent.name)
 
 
 def run(
@@ -104,8 +118,14 @@ def run(
         sources[pathway.name] = model
         folder = out / pathway.name
         folder.mkdir(exist_ok=True)
-        reference = None
-        if spec.reference:
+        reference, reference_drawing = None, None
+        if spec.reference and spec.reference_kind == "sbml-layout":
+            # the model's own SBML Layout, read by SBMLNetwork (aliases are clones)
+            from . import sbmlnet
+
+            reference_drawing = sbmlnet.read_layout(pathway, spec.reference)
+            reference = reference_drawing.node_positions()
+        elif spec.reference:
             reference = gallery_reference(pathway, spec.reference)
             # its SBGN map has the classes and labels (the gallery SBML has no SBO terms, encoded names)
             apply_gallery_classes(pathway, spec.reference)
@@ -117,10 +137,13 @@ def run(
             "edges": pathway.graph.number_of_edges(),
             "source": str(model.resolve()),
             "reference_file": str(spec.reference.resolve()) if spec.reference else "",
+            "reference_kind": spec.reference_kind or "",
             "credit": spec.credit or "",
             "licence": spec.licence or "",
         }
-        runs = [(REFERENCE, Drawing.of(pathway, reference), 0.0, None)] if reference else []
+        runs = []
+        if reference:
+            runs = [(REFERENCE, reference_drawing or Drawing.of(pathway, reference), 0.0, None)]
         for name in layouts:
             drawing, seconds, error = run_layout(name, pathway, seed, timeout)
             runs.append((name, drawing, seconds, error))

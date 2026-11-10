@@ -220,3 +220,41 @@ def expected_rank(name: str) -> int:
     """Position in EXPECTED (unknown layouts last)."""
     order = [n for n, _ in EXPECTED]
     return order.index(name) if name in order else len(order)
+
+
+_IGRAPH = "https://python.igraph.org/en/stable/api/igraph.Graph.html#"
+_NETWORKX = "https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout."
+_ELK = "https://eclipse.dev/elk/reference/algorithms/org-eclipse-elk-"
+# where each layout algorithm is documented (shown in the report)
+LINKS = {
+    "metacarto": "https://github.com/forxhunter/MetaCarto",
+    "sbml2escher": "https://github.com/elixir2026-project22/sbml2escher",
+    "sbmlnetwork": "https://github.com/sys-bio/SBMLNetwork",
+    "cytoscape-fcose": "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose",
+    "cytoscape-fcose-compartments": "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose",
+    "cytoscape-cose-bilkent": "https://github.com/cytoscape/cytoscape.js-cose-bilkent",
+    "cytoscape-cose-bilkent-compartments": "https://github.com/cytoscape/cytoscape.js-cose-bilkent",
+    "cytoscape-cose": "https://js.cytoscape.org/#layouts/cose",
+    "cytoscape-cola": "https://github.com/cytoscape/cytoscape.js-cola",
+    "cytoscape-dagre": "https://github.com/cytoscape/cytoscape.js-dagre",
+    "cytoscape-klay": "https://github.com/cytoscape/cytoscape.js-klay",
+    "cytoscape-elk-layered": _ELK + "layered.html",
+    "cytoscape-elk-stress": _ELK + "stress.html",
+    "cytoscape-elk-force": _ELK + "force.html",
+    "cytoscape-elk-mrtree": _ELK + "mrtree.html",
+    **{
+        f"graphviz-{p}": f"https://graphviz.org/docs/layouts/{p}/"
+        for p in ("dot", "neato", "fdp", "sfdp", "twopi", "circo")
+    },
+    "igraph-fr": _IGRAPH + "layout_fruchterman_reingold",
+    "igraph-kk": _IGRAPH + "layout_kamada_kawai",
+    "igraph-drl": _IGRAPH + "layout_drl",
+    "igraph-graphopt": _IGRAPH + "layout_graphopt",
+    "igraph-lgl": _IGRAPH + "layout_lgl",
+    "igraph-mds": _IGRAPH + "layout_mds",
+    "igraph-sugiyama": _IGRAPH + "layout_sugiyama",
+    "networkx-spring": _NETWORKX + "spring_layout.html",
+    "networkx-kamada_kawai": _NETWORKX + "kamada_kawai_layout.html",
+    "networkx-spectral": _NETWORKX + "spectral_layout.html",
+}
+assert set(LINKS) == set(LAYOUTS), set(LINKS) ^ set(LAYOUTS)
