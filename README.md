@@ -4,43 +4,50 @@ Benchmark of automatic layout algorithms for pathway maps in SBML, from
 [BioHackathon Europe 2026](https://biohackathon-europe.org/), project 22, *Open Pathway Maps: Scalable and FAIR
 Visualization of Metabolic Networks*.
 
-Every model is laid out with many algorithms. Each result is scored with metrics derived from the project's layout
-rules and written as standard SBML Layout + Render, so any viewer can open it. The results are compared side by side.
+Every model is laid out with many algorithms, and the results are compared side by side, next to a reference layout
+where there is one: https://elixir2026-project22.github.io/layout-benchmark/. Next, each result is scored with
+metrics derived from the project's layout rules.
 
-> Status: in development. Layout runs and the report work; metrics are next.
+> Status: in development. The layouts and the report work; the metrics are written but not yet in the report.
+> Planned: SBML Layout + Render output per layout, more reference layouts (Escher, Reactome), cofactor clones and a
+> split by pathway.
 
 ## Input
 
 - The SBML models in the project's
   [`data_shared`](https://github.com/elixir2026-project22/data_shared) repository: BRENDA pathways, E. coli core and
   iCH360, Reactome, Human2, *Mycoplasma*, and the Stress Knowledge Map (PSS pathways, whole PSS, CKN).
-- **Reference layouts** (hand-made), for comparing the automatic ones against:
-  - the [metabolismregulation](https://metabolismregulation.github.io/gallery/) maps (SBML, plus SBGN-ML with the
-    layout);
-  - Escher maps (E. coli core metabolism, carbohydrate metabolism);
-  - Reactome diagrams.
+- **Reference layouts** (drawn by hand), for comparing the automatic ones against: the
+  [metabolismregulation gallery](https://metabolismregulation.github.io/gallery/) maps (SBML, plus SBGN-ML with the
+  layout; CC BY 4.0). Planned: Escher maps (E. coli core, carbohydrate metabolism) and Reactome diagrams.
 
 The model is read as one graph: species and reactions as nodes, one edge per reactant, product and modifier, and
-compartments as parents. Options: clones of common small metabolites and cofactors, and a split by pathway or
-subsystem.
+compartments as parents. Each species gets its SBGN class from its SBO term (or from the model's SBGN file), and
+each modifier its SBGN arc (catalysis, inhibition, stimulation, …).
 
 ## Layouts
 
 | Family | Algorithms |
 |---|---|
-| Graphviz | dot, neato, fdp, sfdp, twopi, circo; sfdp compartment by compartment |
+| [MetaCarto](https://github.com/forxhunter/MetaCarto) | constructive layout of metabolic maps (whole-model canvas) |
+| [sbml2escher](https://github.com/elixir2026-project22/sbml2escher) | constraint-based, on a grid |
+| cytoscape.js | fCoSE and CoSE-Bilkent (also with compartments as groups), CoSE, cola, dagre, klay, ELK (layered, stress, force, mrtree) |
+| [SBMLNetwork](https://github.com/sys-bio/SBMLNetwork) | its auto layout |
+| Graphviz | dot, neato, fdp, sfdp, twopi, circo |
 | igraph | Fruchterman–Reingold, Kamada–Kawai, DrL, graphopt, LGL, MDS, Sugiyama |
 | networkx | spring, Kamada–Kawai, spectral |
-| cytoscape.js | fCoSE, CoSE-Bilkent, cola, dagre, ELK (layered, stress, force) |
-| SBMLNetwork | autolayout |
-| [sbml2escher](https://github.com/elixir2026-project22/sbml2escher) | constraint-based, on a grid |
-| later | UNICON, Metabopolis |
+| planned | UNICON, Metabopolis |
 
-Every run gets a fixed seed and a timeout.
+`layout-benchmark layouts` lists them in the order the report uses, from the expected most promising for pathway
+maps to the least, with their group. Every run gets a fixed seed and a timeout. MetaCarto and sbml2escher read the
+model as a metabolic network: they keep clones (a metabolite drawn more than once) and route their edges, but they
+leave out species that are only modifiers (enzymes, regulators).
 
 ## Metrics
 
-All layouts are scored by the same code. The rules come from the project's discussion.
+All layouts are scored by the same code (`--metrics`; not yet in the report). The general graph-drawing metrics come
+from [gdMetriX](https://github.com/livus/gdMetriX), the pathway-specific ones are this package's. The rules come
+from the project's discussion.
 
 | Rule | Metric |
 |---|---|
@@ -58,11 +65,11 @@ All layouts are scored by the same code. The rules come from the project's discu
 ## Output
 
 For each model and layout:
-- an SBML file with the layout (SBML Layout + Render);
-- an SVG picture, drawn the same way for every layout;
-- a row in `results.csv`.
+- an SVG picture, drawn the same way for every layout: SBGN shapes and arcs, fixed node sizes;
+- its positions as JSON (every drawn node, clones included, and every edge with its arc class and route);
+- a row in `results.csv` (time, error, nodes not placed).
 
-An HTML report shows the table and the pictures side by side.
+An HTML report shows, per model, the reference layout and then every layout side by side.
 
 ## Setup
 
@@ -110,11 +117,11 @@ uv run layout-benchmark report results/run1                      # redo the page
 uv run layout-benchmark publish results/run1 site --name run1    # a copy for GitHub Pages (no local paths)
 ```
 
-The published report is on the `gh-pages` branch:
+The layouts run locally; the published report is only the result, on the `gh-pages` branch:
 <https://elixir2026-project22.github.io/layout-benchmark/>.
 
 ## Licence
 
 MIT (code). The input data keep their own licences; the metabolismregulation gallery maps (reference layouts)
-are CC BY 4.0 (<https://metabolismregulation.github.io/about/>), credited in the report. gdMetriX, used for the general metrics, is GPL-3.0: it is
-imported, not included; a bundle that includes it must follow the GPL.
+are CC BY 4.0 (<https://metabolismregulation.github.io/about/>), credited in the report. gdMetriX, used for the
+general metrics, is GPL-3.0: it is imported, not included; a bundle that includes it must follow the GPL.
