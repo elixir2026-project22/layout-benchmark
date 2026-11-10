@@ -1,9 +1,8 @@
 """Layout algorithms behind one interface: ``layout(name, pathway, seed) -> Drawing``.
 
 An algorithm returns node centres ``{node: (x, y)}`` (y up), or a ``Drawing`` when it draws more than the pathway
-graph (clones, routed edges; see ``drawing``). Every result is normalised: the median edge length becomes
-EDGE_LENGTH, so that metrics that use node sizes (overlaps) compare fairly across algorithms whose coordinates
-have different units.
+graph (clones, routed edges; see ``drawing``). Results keep the tool's own coordinates (y up); the common scale
+for pictures and metrics is applied later (``Drawing.normalised``).
 """
 
 from __future__ import annotations
@@ -16,25 +15,9 @@ from pathlib import Path
 
 import igraph as ig
 import networkx as nx
-import numpy as np
 
-from .drawing import EDGE_LENGTH, Drawing, Positions
+from .drawing import Drawing, Positions
 from .graph import Pathway
-
-
-def normalise(pathway: Pathway, pos: Positions) -> Positions:
-    """Scale (and centre) positions so that the median edge length is EDGE_LENGTH (for references)."""
-    nodes = list(pos)
-    xy = np.array([pos[n] for n in nodes], dtype=float)
-    xy -= xy.mean(axis=0)
-    lengths = [
-        np.hypot(*np.subtract(pos[u], pos[v])) for u, v in pathway.graph.edges() if u != v and u in pos and v in pos
-    ]
-    median = float(np.median(lengths)) if lengths else 0.0
-    if median > 0:
-        xy *= EDGE_LENGTH / median
-    return {n: (float(x), float(y)) for n, (x, y) in zip(nodes, xy)}
-
 
 # --- Graphviz ------------------------------------------------------------------------------------------------
 
@@ -182,15 +165,15 @@ _register_external()
 
 
 def layout(name: str, pathway: Pathway, seed: int = 0) -> Drawing:
-    """Lay out with a registered algorithm, normalised. Tools that draw only part of a model (e.g. leave out
-    boundary species) place fewer nodes: ``Drawing.placed()``."""
+    """Lay out with a registered algorithm, in its own coordinates. Tools that draw only part of a model (e.g.
+    leave out boundary species) place fewer nodes: ``Drawing.placed()``."""
     if name not in LAYOUTS:
         raise ValueError(f"unknown layout {name!r}, one of: {', '.join(LAYOUTS)}")
     result = LAYOUTS[name](pathway, seed)
     drawing = result if isinstance(result, Drawing) else Drawing.of(pathway, result)
     if not drawing.pos:
         raise RuntimeError(f"{name}: no positions")
-    return drawing.normalised()
+    return drawing
 
 
 # The layouts in the order of how promising they are expected to be for pathway maps (before any scoring), with
@@ -199,11 +182,11 @@ def layout(name: str, pathway: Pathway, seed: int = 0) -> Drawing:
 EXPECTED = [
     ("metacarto", "pathway-specific"),
     ("sbml2escher", "pathway-specific"),
+    ("sbmlnetwork", "SBML-specific"),
     ("cytoscape-fcose-compartments", "compartments as groups"),
     ("cytoscape-cose-bilkent-compartments", "compartments as groups"),
     ("cytoscape-fcose", "compound-capable force-directed"),
     ("cytoscape-cose-bilkent", "compound-capable force-directed"),
-    ("sbmlnetwork", "SBML-specific"),
     ("cytoscape-elk-layered", "layered"),
     ("graphviz-dot", "layered"),
     ("cytoscape-dagre", "layered"),

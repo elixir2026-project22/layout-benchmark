@@ -1,0 +1,34 @@
+# The layout benchmark's models: sets, files (globs, relative to this file), reference layouts and credits.
+#   uv run layout-benchmark run benchmark.yaml -o results/all
+# data/gallery: `uv run layout-benchmark gallery data/gallery`; ../data_shared: a clone of
+# https://github.com/elixir2026-project22/data_shared next to this repository.
+sets:
+  - name: metabolismregulation gallery
+    description: >-
+      Hand-drawn maps of metabolic regulation; the SBGN map of each is its reference layout (SBGN classes and
+      labels from it too).
+    models: data/gallery/*.xml
+    reference: "{stem}.sbgn"
+    credit: "Map and layout: metabolismregulation gallery, CC BY 4.0"
+    licence: https://metabolismregulation.github.io/about/
+
+  - name: Stress Knowledge Map (PSS)
+    description: >-
+      Plant stress signalling, from the Stress Knowledge Map (skm.nib.si), with model fixes; public data,
+      Arabidopsis thaliana.
+    models:
+      - ../data_shared/NIB/Small_pathways/ja/sbml/model-with-model-fixes.xml
+      - ../data_shared/NIB/Small_pathways/sa/sbml/model-with-model-fixes.xml
+      - ../data_shared/NIB/Big_pathways/pss/sbml/model-with-model-fixes.xml
+
+  - name: BRENDA pathways
+    models: ../data_shared/brenda_*.xml
+
+  - name: Reactome
+    models: ../data_shared/R-HSA-77289.sbml
+
+  - name: Genome-scale and core models
+    models:
+      - ../data_shared/e_coli_core.sbml
+      - ../data_shared/e_coli_iCH360.sbml
+      - ../data_shared/Mycoplasma_genitalium-Opt243273_1.sbml

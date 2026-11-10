@@ -8,7 +8,7 @@ from pathlib import Path
 import libsbml
 import networkx as nx
 
-# node sizes, in layout units (a median edge is scaled to EDGE_LENGTH, see layouts.normalise)
+# node sizes, in drawing units (layouts are scaled to them for drawing, see drawing.Drawing.normalised)
 SPECIES_SIZE = (60.0, 24.0)
 REACTION_SIZE = (10.0, 10.0)
 

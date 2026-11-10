@@ -8,6 +8,10 @@ more: clones (a metabolite such as ATP drawn several times, each near the reacti
   plus ``kind``, ``label``, ``width``, ``height``; edges have ``arc`` (SBGN arc class).
 - ``pos``: drawn node centres (y up).
 - ``routes``: per edge (u, v), the points between its ends (none: a straight line).
+
+Positions are the tool's own. For drawing (and for metrics that use node sizes), ``normalised()`` scales a drawing
+uniformly, so that nearest neighbours are SPACING node widths apart: a uniform scale changes no shape, angle or
+crossing of the layout, only how big the fixed-size nodes are relative to the spacing.
 """
 
 from __future__ import annotations
@@ -16,10 +20,12 @@ from dataclasses import dataclass, field
 
 import networkx as nx
 import numpy as np
+from scipy.spatial import cKDTree
 
 from .graph import Pathway
 
-EDGE_LENGTH = 100.0
+# drawing scale: the median distance from a node to its nearest drawn neighbour, in median node widths
+SPACING = 1.5
 Point = tuple[float, float]
 Positions = dict[str, Point]
 
@@ -54,15 +60,27 @@ class Drawing:
                 pos[d["of"]] = self.pos[n]
         return pos
 
+    def scale_factor(self) -> float:
+        """The factor that puts nearest neighbours SPACING median node widths apart (1 if undefined)."""
+        if len(self.pos) < 2:
+            return 1.0
+        nodes = list(self.pos)
+        xy = np.array([self.pos[n] for n in nodes], dtype=float)
+        distances = cKDTree(xy).query(xy, k=2)[0][:, 1]
+        distances = distances[distances > 0]  # nodes drawn on top of each other say nothing about the spacing
+        widths = [self.graph.nodes[n].get("width") or 0 for n in nodes]
+        width = float(np.median([w for w in widths if w > 0])) if any(w > 0 for w in widths) else 1.0
+        if not len(distances):
+            return 1.0
+        return SPACING * width / float(np.median(distances))
+
     def normalised(self) -> Drawing:
-        """Centred and scaled so that the median drawn edge (end to end, straight) is EDGE_LENGTH long."""
+        """Centred and scaled uniformly by ``scale_factor()``; nothing else changes."""
         if not self.pos:
             return self
         xy = np.array(list(self.pos.values()), dtype=float)
         centre = xy.mean(axis=0)
-        lengths = [float(np.hypot(*np.subtract(self.pos[u], self.pos[v]))) for u, v in self.graph.edges() if u != v]
-        median = float(np.median(lengths)) if lengths else 0.0
-        scale = EDGE_LENGTH / median if median > 0 else 1.0
+        scale = self.scale_factor()
 
         def t(p):
             return (float((p[0] - centre[0]) * scale), float((p[1] - centre[1]) * scale))
@@ -96,3 +114,19 @@ class Drawing:
                 for u, v, d in self.graph.edges(data=True)
             ],
         }
+
+    @classmethod
+    def from_json(cls, data: dict) -> Drawing:
+        """The inverse of ``to_json``."""
+        g = nx.DiGraph()
+        pos = {}
+        for n in data["nodes"]:
+            attributes = {k: v for k, v in n.items() if k not in ("id", "x", "y")}
+            g.add_node(n["id"], **attributes)
+            pos[n["id"]] = (float(n["x"]), float(n["y"]))
+        routes = {}
+        for e in data["edges"]:
+            g.add_edge(e["source"], e["target"], arc=e.get("arc"))
+            if e.get("route"):
+                routes[(e["source"], e["target"])] = [tuple(p) for p in e["route"]]
+        return cls(graph=g, pos=pos, routes=routes)

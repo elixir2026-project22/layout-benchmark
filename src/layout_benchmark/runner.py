@@ -11,6 +11,7 @@ from pathlib import Path
 from .drawing import Drawing
 from .graph import read_sbml
 from .layouts import LAYOUTS, layout
+from .manifest import ModelSpec, SetSpec
 from .metrics import all_metrics
 from .reference import apply_gallery_classes, gallery_reference
 from .render import to_svg
@@ -65,37 +66,59 @@ def model_names(models: list[Path]) -> dict[Path, str]:
     return names
 
 
+def spec_for(path: Path) -> ModelSpec:
+    """A model given as a plain file: its set is its folder, its reference the ``<stem>.sbgn`` next to it."""
+    sbgn = path.with_suffix(".sbgn")
+    return ModelSpec(path=path, set=path.resolve().parent.name, reference=sbgn if sbgn.exists() else None)
+
+
 def run(
-    models: list[Path],
+    models: list[Path | ModelSpec],
     layouts: list[str] | None,
     out: Path,
     seed: int = 0,
     timeout: float = 300.0,
     metrics: bool = False,
+    append: bool = False,
+    sets: list[SetSpec] | None = None,
 ) -> Path:
-    """Lay out every model with every layout (and its reference, if a ``.sbgn`` sits next to it), write
-    ``out/<model>/<layout>.svg`` and ``out/results.csv``. Returns the CSV path."""
+    """Lay out every model with every layout (and its reference layout, if it has one), write
+    ``out/<model>/<layout>.svg`` and ``.json`` and ``out/results.csv``. Models are manifest entries (``ModelSpec``)
+    or plain files. ``sets``: the manifest's sets (order, descriptions), saved as ``out/sets.json`` for the report.
+    Returns the CSV path."""
     layouts = layouts or list(LAYOUTS)
     out.mkdir(parents=True, exist_ok=True)
+    specs = [m if isinstance(m, ModelSpec) else spec_for(Path(m)) for m in models]
+    if sets:
+        (out / "sets.json").write_text(json.dumps([s.__dict__ for s in sets], indent=1))
     rows = []
     sources = {}
-    names = model_names(models)
-    for model in models:
+    names = model_names([s.path for s in specs])
+    kept = []  # with append: the rows of the other models already in out/results.csv
+    if append and (out / "results.csv").exists():
+        kept = [r for r in csv.DictReader((out / "results.csv").open()) if r["model"] not in names.values()]
+        sources.update({r["model"]: Path(r["source"]) for r in kept if r.get("source")})
+    for spec in specs:
+        model = spec.path
         pathway = read_sbml(model, name=names[model])
         sources[pathway.name] = model
         folder = out / pathway.name
         folder.mkdir(exist_ok=True)
-        sbgn = model.with_suffix(".sbgn")
         reference = None
-        if sbgn.exists():
-            reference = gallery_reference(pathway, sbgn)
-            apply_gallery_classes(pathway, sbgn)  # gallery SBML has no SBO terms; its SBGN map has the classes
+        if spec.reference:
+            reference = gallery_reference(pathway, spec.reference)
+            # its SBGN map has the classes and labels (the gallery SBML has no SBO terms, encoded names)
+            apply_gallery_classes(pathway, spec.reference)
         base = {
             "model": pathway.name,
+            "set": spec.set,
             "species": len(pathway.species),
             "reactions": len(pathway.reactions),
             "edges": pathway.graph.number_of_edges(),
             "source": str(model.resolve()),
+            "reference_file": str(spec.reference.resolve()) if spec.reference else "",
+            "credit": spec.credit or "",
+            "licence": spec.licence or "",
         }
         runs = [(REFERENCE, Drawing.of(pathway, reference), 0.0, None)] if reference else []
         for name in layouts:
@@ -112,19 +135,25 @@ def run(
                     notes.append(f"{drawing.graph.number_of_nodes()} drawn nodes (clones)")
                 row["note"] = "; ".join(notes)
                 # partial layouts (references, tools that leave nodes out) are drawn without the missing nodes
-                if metrics:
-                    pos = drawing.node_positions()
-                    row.update(all_metrics(pathway, pos, reference if name != REFERENCE else None))
-                (folder / f"{name}.svg").write_text(to_svg(drawing, f"{pathway.name}: {name}"))
+                # the JSON keeps the tool's own coordinates; pictures and metrics use the common scale
                 (folder / f"{name}.json").write_text(json.dumps(drawing.to_json(), indent=1))
+                scaled = drawing.normalised()
+                if metrics:
+                    row.update(all_metrics(pathway, scaled.node_positions(), reference if name != REFERENCE else None))
+                (folder / f"{name}.svg").write_text(to_svg(scaled, f"{pathway.name}: {name}"))
             rows.append(row)
             print(f"{pathway.name:30} {name:24} {row['seconds']:8.2f}s {row['error']}")
-        write_report(out, rows, sources)  # after each model, so a long run can be followed
+        # after each model, so a long run can be followed, and a stopped one loses nothing finished
+        _write_results(out, kept + rows)
+        write_report(out, kept + rows, sources)
+    return out / "results.csv"
+
+
+def _write_results(out: Path, rows: list[dict]) -> Path:
     fields = list(dict.fromkeys(k for r in rows for k in r))
     path = out / "results.csv"
     with path.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
         w.writerows(rows)
-    write_report(out, rows, sources)
     return path

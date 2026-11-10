@@ -2,9 +2,11 @@ import math
 import re
 
 import pytest
+from scipy.spatial.distance import pdist
 
+from layout_benchmark.drawing import SPACING
 from layout_benchmark.graph import read_sbml
-from layout_benchmark.layouts import EDGE_LENGTH, LAYOUTS, layout
+from layout_benchmark.layouts import LAYOUTS, layout
 from layout_benchmark.metrics import (
     compartment_metrics,
     general_metrics,
@@ -37,13 +39,40 @@ def test_every_layout_places_every_node(tiny_sbml, name):
     assert all(math.isfinite(c) for xy in d.pos.values() for c in xy)
 
 
-def test_layout_is_normalised_and_reproducible(tiny_sbml):
+def test_layout_is_reproducible_and_scaled_only_for_drawing(tiny_sbml):
     p = read_sbml(tiny_sbml)
-    a = layout("networkx-spring", p, seed=3).node_positions()
-    b = layout("networkx-spring", p, seed=3).node_positions()
-    assert a == b
-    lengths = sorted(math.dist(a[u], a[v]) for u, v in p.graph.edges())
-    assert lengths[len(lengths) // 2] == pytest.approx(EDGE_LENGTH, rel=0.2)
+    a = layout("networkx-spring", p, seed=3)
+    b = layout("networkx-spring", p, seed=3)
+    assert a.node_positions() == b.node_positions()
+    # the common scale: nearest neighbours SPACING median node widths apart; a uniform scale, shapes unchanged
+    import numpy as np
+    from scipy.spatial import cKDTree
+
+    scaled = a.normalised()
+    xy = np.array(list(scaled.pos.values()))
+    nn = cKDTree(xy).query(xy, k=2)[0][:, 1]
+    widths = [d["width"] for _, d in scaled.graph.nodes(data=True)]
+    assert np.median(nn) == pytest.approx(SPACING * np.median(widths))
+    raw = np.array(list(a.pos.values()))
+    ratio = pdist(xy) / pdist(raw)
+    assert np.allclose(ratio, ratio[0])
+
+
+def test_graphviz_keeps_its_coordinates(tiny_sbml):
+    """A layout is returned in the tool's own coordinates (Graphviz: points), not rescaled."""
+    p = read_sbml(tiny_sbml)
+    d = layout("graphviz-neato", p)
+    xs = [x for x, _ in d.pos.values()]
+    assert min(xs) >= 0  # Graphviz's own coordinates start at its margin, not centred on 0
+
+
+def test_json_round_trip(tiny_sbml):
+    from layout_benchmark.drawing import Drawing
+    from layout_benchmark.render import to_svg
+
+    d = layout("graphviz-dot", read_sbml(tiny_sbml))
+    back = Drawing.from_json(d.to_json())
+    assert to_svg(back.normalised()) == to_svg(d.normalised())
 
 
 def test_general_metrics_smoke(tiny_sbml):
@@ -121,3 +150,25 @@ def test_node_size_does_not_depend_on_label(tmp_path):
     shown = re.findall(r"<text[^>]*>([^<]*)", svg)  # the visible label text, without its tooltip
     assert "S" * 80 not in shown
     assert any(t.startswith("SSS") and t.endswith("…") for t in shown)
+
+
+def test_manifest(tmp_path):
+    """Sets in order, globs relative to the manifest, references by pattern, credits; a model in two sets counts
+    once (the first)."""
+    from layout_benchmark.manifest import load
+
+    (tmp_path / "maps").mkdir()
+    for name in ("a", "b"):
+        make_sbml(tmp_path / "maps" / f"{name}.xml", [("r", ["S"], ["P"], [])])
+    (tmp_path / "maps" / "a.sbgn").write_text("<sbgn/>")
+    (tmp_path / "benchmark.yaml").write_text(
+        "sets:\n"
+        "  - name: First\n    models: maps/a.xml\n    reference: '{stem}.sbgn'\n    credit: Map, CC BY 4.0\n"
+        "  - name: Second\n    description: The rest\n    models: [maps/*.xml]\n"
+    )
+    sets, specs = load(tmp_path / "benchmark.yaml")
+    assert [s.name for s in sets] == ["First", "Second"]
+    assert sets[1].description == "The rest"
+    assert [(s.path.name, s.set) for s in specs] == [("a.xml", "First"), ("b.xml", "Second")]
+    assert specs[0].reference.name == "a.sbgn" and specs[0].credit == "Map, CC BY 4.0"
+    assert specs[1].reference is None

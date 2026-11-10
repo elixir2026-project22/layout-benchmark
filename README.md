@@ -104,8 +104,14 @@ Each tool is optional: without it, its layout reports an error.
 ```bash
 uv run layout-benchmark layouts                          # the layout algorithms
 uv run layout-benchmark gallery data/gallery             # maps with a hand-made reference layout
-uv run layout-benchmark run data/gallery/*.xml path/to/model.xml -o results/run1
+uv run layout-benchmark run benchmark.yaml -o results/all   # the models of the manifest
+uv run layout-benchmark run path/to/model.xml -o results/run1  # or any SBML files
 ```
+
+`benchmark.yaml` is the benchmark manifest: the sets of models (files or globs, relative to it), each set's
+reference layouts (e.g. `"{stem}.sbgn"`, next to each model), credit, licence and description. The report shows
+the sets in this order. Models given as plain files are grouped by their folder, with a `<model>.sbgn` next to a
+model as its reference.
 
 `results/run1/index.html` shows per model the reference (where there is one) and every layout, from the expected
 most promising to the least; each layout also has its positions as JSON. `results.csv` has a row per run (time,
@@ -114,6 +120,7 @@ labels).
 
 ```bash
 uv run layout-benchmark report results/run1                      # redo the page from results.csv
+uv run layout-benchmark render results/run1                      # redraw the pictures from the saved positions
 uv run layout-benchmark publish results/run1 site --name run1    # a copy for GitHub Pages (no local paths)
 ```
 

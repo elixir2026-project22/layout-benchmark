@@ -7,7 +7,6 @@ from xml.etree import ElementTree as ET
 
 from .drawing import Positions
 from .graph import Pathway
-from .layouts import normalise
 
 SBGN_NS = {"s": "http://sbgn.org/libsbgn/0.2", "s3": "http://sbgn.org/libsbgn/0.3"}
 
@@ -72,11 +71,11 @@ def read_sbgn_positions(path: str | Path) -> dict[str, tuple[float, float]]:
 
 def gallery_reference(pathway: Pathway, sbgn: str | Path) -> Positions:
     """The reference layout of a metabolismregulation gallery map: SBML species ``s_<glyph>`` and reactions
-    ``re_<glyph>`` are the SBGN glyphs ``<glyph>``. Normalised like the computed layouts."""
+    ``re_<glyph>`` are the SBGN glyphs ``<glyph>``. In the map's own coordinates (y up)."""
     glyphs = read_sbgn_positions(sbgn)
     pos = {}
     for n in pathway.graph:
         glyph = _glyph_for(n, glyphs)
         if glyph:
             pos[n] = glyphs[glyph]
-    return normalise(pathway, pos) if pos else {}
+    return pos

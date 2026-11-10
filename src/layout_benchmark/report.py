@@ -17,7 +17,20 @@ CSS = """
 :root { --ref: #b5651d; --line: #d0d7de; --muted: #57606a; --bg: #f6f8fa; }
 body { font-family: system-ui, sans-serif; margin: 16px; color: #1f2328; background: #fff; }
 h1 { font-size: 20px; } h2 { font-size: 16px; margin: 0 0 4px; }
-section { border-top: 1px solid var(--line); padding: 14px 0 18px; }
+section { border-top: 1px solid var(--line); padding: 14px 0 18px; scroll-margin-top: 64px; }
+nav { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid var(--line);
+      padding: 8px 0; font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
+nav details { position: relative; }
+nav summary { cursor: pointer; font-weight: 600; }
+nav details ul { position: absolute; background: #fff; border: 1px solid var(--line); border-radius: 6px;
+                 padding: 8px 14px; margin: 4px 0 0; list-style: none; max-height: 60vh; overflow-y: auto;
+                 white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+nav details li { margin: 2px 0; }
+h2.set { font-size: 18px; margin: 28px 0 4px; padding-top: 8px; border-top: 3px solid #1f2328;
+         scroll-margin-top: 64px; }
+.badge { font-size: 11px; font-weight: normal; color: var(--muted); border: 1px solid var(--line);
+         border-radius: 10px; padding: 1px 7px; margin-left: 6px; vertical-align: middle; }
+h3 { font-size: 15px; margin: 0 0 4px; }
 .meta { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
 .meta a { margin-right: 12px; }
 .row { display: flex; gap: 14px; align-items: flex-start; padding: 3px; }
@@ -67,6 +80,25 @@ def source_links(model: Path, local: bool = True) -> dict[str, str]:
     return links
 
 
+def model_set(row: dict) -> str:
+    """A model's set: from the manifest (the row's ``set``), else the folder of its file."""
+    if row.get("set"):
+        return row["set"]
+    return Path(row["source"]).parent.name if row.get("source") else "Other"
+
+
+def _set_order(out: Path, names: list[str]) -> tuple[list[str], dict[str, str]]:
+    """The sets in the manifest's order (``out/sets.json``, written by a manifest run), then any others in the order
+    they first appear; and their descriptions."""
+    order, descriptions = [], {}
+    if (out / "sets.json").exists():
+        for entry in json.loads((out / "sets.json").read_text()):
+            order.append(entry["name"])
+            if entry.get("description"):
+                descriptions[entry["name"]] = entry["description"]
+    return [n for n in order if n in names] + [n for n in names if n not in order], descriptions
+
+
 def _figure(model: str, r: dict, out: Path) -> tuple[str, str]:
     """(picture or error, caption) of one run."""
     svg = f"{model}/{r['layout']}.svg"
@@ -98,54 +130,97 @@ def write_report(out: Path, rows: list[dict], sources: dict[str, Path], local: b
         (
             "<p class=meta>Per model: the reference layout (brown box, where there is one), then every computed "
             "layout, from the expected most promising to the least (by group, before any scoring); scroll sideways. "
-            "Every picture is drawn the same way (SBGN shapes and arcs, fixed node sizes). "
+            "Every picture is drawn the same way (SBGN shapes and arcs, fixed node sizes). Positions are each "
+            "tool's own, drawn at a common scale (nearest neighbours 1.5 node widths apart); the layouts themselves "
+            "are not changed. "
             "Click a picture to open it full size.</p>"
         ),
     ]
-    for model in dict.fromkeys(r["model"] for r in rows):
-        mr = [r for r in rows if r["model"] == model]
-        links = source_links(sources[model], local) if model in sources else {}
-        credit = links.pop("credit", None)
-        licence = links.pop("licence", None)
-        link_html = " ".join(
-            f'<a href="{escape(url)}" target="_blank" rel="noopener">{escape(label)}</a>'
-            for label, url in links.items()
+    models = list(dict.fromkeys(r["model"] for r in rows))
+    has_ref = {m: any(r["layout"] == REFERENCE for r in rows if r["model"] == m) for m in models}
+    first_row = {}
+    for r in rows:
+        first_row.setdefault(r["model"], r)
+    grouped: dict[str, list[str]] = {}
+    for m in models:
+        grouped.setdefault(model_set(first_row[m]), []).append(m)
+    order, descriptions = _set_order(out, list(grouped))
+    by_set = {name: grouped[name] for name in order}
+    nav = ["<nav>"]
+    for set_name, ms in by_set.items():
+        anchor = "set-" + "".join(c if c.isalnum() else "-" for c in set_name.lower())
+        items = "".join(
+            f'<li><a href="#{escape(m)}">{escape(m)}</a>{"" if has_ref[m] else " <span class=t>(no reference)</span>"}</li>'
+            for m in ms
         )
-        if credit:
-            credit_html = (
-                f'<a href="{escape(licence)}" target="_blank" rel="noopener">{escape(credit)}</a>'
-                if licence
-                else escape(credit)
-            )
-            link_html += f" · {credit_html}"
-        parts.append(f"<section id='{escape(model)}'><h2>{escape(model)}</h2>")
+        nav.append(
+            f"<details><summary>{escape(set_name)} ({len(ms)})</summary>"
+            f'<ul><li><a href="#{anchor}"><b>Jump to the start of {escape(set_name)}</b></a></li>{items}</ul></details>'
+        )
+    nav.append("</nav>")
+    parts.extend(nav)
+    for set_name, ms in by_set.items():
+        anchor = "set-" + "".join(c if c.isalnum() else "-" for c in set_name.lower())
+        n_ref = sum(has_ref[m] for m in ms)
         parts.append(
-            f"<div class=meta>{mr[0]['species']} species, {mr[0]['reactions']} reactions, {mr[0]['edges']} edges"
-            f" · {link_html}</div>"
+            f"<h2 class=set id='{anchor}'>{escape(set_name)}"
+            f"<span class=badge>{len(ms)} models, {n_ref} with a reference layout</span></h2>"
         )
-        ref = next((r for r in mr if r["layout"] == REFERENCE), None)
-        parts.append("<div class=row>")
-        if ref:
-            body, caption = _figure(model, ref, out)
-            # where the reference layout comes from: its file (on GitHub when known)
-            ref_file = sources[model].with_suffix(".sbgn") if model in sources else None
-            ref_url = links.get("reference") or (ref_file.resolve().as_uri() if ref_file and local else None)
-            name = escape(ref_file.name) if ref_file else ""
-            origin = f': <a href="{escape(ref_url)}" target="_blank">{name}</a>' if ref_url and name else ""
-            caption = caption.replace(f"<b>{REFERENCE}</b>", f"<b>Reference</b>{origin}", 1)
-            parts.append(f"<figure class=ref>{body}<figcaption>{caption}</figcaption></figure>")
-        else:
-            parts.append("<figure class='ref none'>No reference layout</figure>")
-        parts.append("<div class=strip>")
-        for r in sorted(mr, key=lambda r: expected_rank(r["layout"])):
-            if r["layout"] == REFERENCE:
-                continue
-            body, caption = _figure(model, r, out)
-            parts.append(f"<figure>{body}<figcaption>{caption}</figcaption></figure>")
-        parts.append("</div></div></section>")
+        if set_name in descriptions:
+            parts.append(f"<p class=meta>{escape(descriptions[set_name])}</p>")
+        for model in ms:
+            _model_section(parts, model, rows, sources, out, local)
     path = out / "index.html"
     path.write_text("\n".join(parts))
     return path
+
+
+def _model_section(parts: list, model: str, rows: list[dict], sources: dict[str, Path], out: Path, local: bool):
+    """One model: header with its sizes and source links, the reference (or a placeholder), the layouts."""
+    mr = [r for r in rows if r["model"] == model]
+    links = source_links(sources[model], local) if model in sources else {}
+    credit = mr[0].get("credit") or links.pop("credit", None)
+    licence = mr[0].get("licence") or links.pop("licence", None)
+    links.pop("credit", None)
+    links.pop("licence", None)
+    link_html = " ".join(
+        f'<a href="{escape(url)}" target="_blank" rel="noopener">{escape(label)}</a>' for label, url in links.items()
+    )
+    if credit:
+        credit_html = (
+            f'<a href="{escape(licence)}" target="_blank" rel="noopener">{escape(credit)}</a>'
+            if licence
+            else escape(credit)
+        )
+        link_html += f" · {credit_html}"
+    badge = "" if any(r["layout"] == REFERENCE for r in mr) else "<span class=badge>no reference layout</span>"
+    parts.append(f"<section id='{escape(model)}'><h3>{escape(model)}{badge}</h3>")
+    parts.append(
+        f"<div class=meta>{mr[0]['species']} species, {mr[0]['reactions']} reactions, {mr[0]['edges']} edges"
+        f" · {link_html}</div>"
+    )
+    ref = next((r for r in mr if r["layout"] == REFERENCE), None)
+    parts.append("<div class=row>")
+    if ref:
+        body, caption = _figure(model, ref, out)
+        # where the reference layout comes from: its file (on GitHub when known)
+        ref_file = Path(mr[0]["reference_file"]) if mr[0].get("reference_file") else None
+        if ref_file is None and model in sources:  # runs from before the manifest: the .sbgn next to the model
+            ref_file = sources[model].with_suffix(".sbgn")
+        ref_url = links.get("reference") or (ref_file.resolve().as_uri() if ref_file and local else None)
+        name = escape(ref_file.name) if ref_file else ""
+        origin = f': <a href="{escape(ref_url)}" target="_blank">{name}</a>' if ref_url and name else ""
+        caption = caption.replace(f"<b>{REFERENCE}</b>", f"<b>Reference</b>{origin}", 1)
+        parts.append(f"<figure class=ref>{body}<figcaption>{caption}</figcaption></figure>")
+    else:
+        parts.append("<figure class='ref none'>No reference layout</figure>")
+    parts.append("<div class=strip>")
+    for r in sorted(mr, key=lambda r: expected_rank(r["layout"])):
+        if r["layout"] == REFERENCE:
+            continue
+        body, caption = _figure(model, r, out)
+        parts.append(f"<figure>{body}<figcaption>{caption}</figcaption></figure>")
+    parts.append("</div></div></section>")
 
 
 __all__ = ["source_links", "write_report"]

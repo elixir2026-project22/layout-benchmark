@@ -1,6 +1,7 @@
 """One SVG renderer for every layout, so the pictures compare fairly.
 
-Arcs are drawn with SBGN Process Description arrowheads: consumption (no head), production (filled arrow),
+A species drawn more than once (a clone) has SBGN's clone marker, its lower part filled dark. Arcs are drawn with
+SBGN Process Description arrowheads: consumption (no head), production (filled arrow),
 catalysis (open circle), inhibition (bar), stimulation (open arrow), necessary stimulation (bar and open arrow),
 modulation (open diamond). Lines end at the node's boundary, so the heads are visible.
 """
@@ -221,12 +222,24 @@ def to_svg(drawing: Drawing, title: str = "") -> str:
             f'<polyline points="{points}" fill="none" stroke="{LINE}" stroke-width="0.9"{marker}>'
             f"<title>{escape(arc)}</title></polyline>"
         )
+    # SBGN clone marker: the lower part of every glyph that the drawing has more than once
+    copies: dict[str, int] = {}
     for n in placed:
+        copies[g.nodes[n]["of"]] = copies.get(g.nodes[n]["of"], 0) + 1
+    for i, n in enumerate(placed):
         d = g.nodes[n]
         x, y = p(n)
         hw, hh = half(n)
         label = escape(d["label"])
-        out.append(_shape(d.get("sbgn") if d["kind"] != REACTION else "process", x, y, hw, hh, label))
+        sbgn = d.get("sbgn") if d["kind"] != REACTION else "process"
+        out.append(_shape(sbgn, x, y, hw, hh, label))
+        if d["kind"] != REACTION and copies[d["of"]] > 1:
+            outline = _shape(sbgn, x, y, hw, hh, "")
+            out.append(
+                f'<clipPath id="clone{i}">{outline}</clipPath>'
+                f'<rect x="{x - hw:.1f}" y="{y + hh * 0.35:.1f}" width="{2 * hw:.1f}" height="{hh * 0.65:.1f}" '
+                f'fill="#555" clip-path="url(#clone{i})"/>' + outline.replace('fill="#fff"', 'fill="none"', 1)
+            )
         if d["kind"] != REACTION and hh >= 3.5:
             size = hh * 0.8  # font size: fixed relative to the node, which never grows for its label
             out.append(
