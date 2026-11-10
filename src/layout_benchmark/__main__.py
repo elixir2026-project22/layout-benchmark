@@ -68,8 +68,10 @@ def render(out, manifest):
     for path in sorted(out.glob("*/*.json")):
         drawing = Drawing.from_json(json.loads(path.read_text()))
         pathway, reference = pathways.get(path.parent.name, (None, None))
-        if path.stem == "reference" and not drawing.compartments and reference:
-            drawing.compartments = _reference_compartments(pathway, *reference)
+        if path.stem == "reference" and reference:
+            # a reference is data, not a run: built again from its file (nodes and compartments in its own
+            # coordinates), so older saved references (scaled, or without compartments) are replaced
+            drawing = _reference_drawing(pathway, *reference) or drawing
             path.write_text(json.dumps(drawing.to_json(), indent=1))
         title = f"{path.parent.name}: {path.stem}"
         path.with_suffix(".svg").write_text(to_svg(drawing.normalised(), title, pathway))
@@ -176,16 +178,20 @@ def _pathways(rows: list[dict]) -> dict:
     return out
 
 
-def _reference_compartments(pathway, ref_file: str, kind: str) -> dict:
-    """The compartment boxes of a reference layout (for runs saved before references had them)."""
+def _reference_drawing(pathway, ref_file: str, kind: str):
+    """A model's reference layout, read from its file: an SBGN map (nodes and compartment glyphs) or the model's
+    own SBML Layout (read by SBMLNetwork). None if it can't be read."""
     from . import sbmlnet
-    from .reference import sbgn_compartments
+    from .drawing import Drawing
+    from .reference import gallery_reference, sbgn_compartments
 
     if kind == "sbgn":
-        return sbgn_compartments(pathway, ref_file)
+        drawing = Drawing.of(pathway, gallery_reference(pathway, ref_file))
+        drawing.compartments = sbgn_compartments(pathway, ref_file)
+        return drawing
     if sbmlnet.available():
-        return sbmlnet.read_layout(pathway, Path(ref_file)).compartments
-    return {}
+        return sbmlnet.read_layout(pathway, Path(ref_file))
+    return None
 
 
 def _apply_manifest(out: Path, rows: list[dict], manifest: Path) -> list[dict]:
