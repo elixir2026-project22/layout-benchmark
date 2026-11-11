@@ -401,3 +401,26 @@ def test_report_links_from_the_manifest(tmp_path):
     row = {"links": '{"page": "https://example.org/p/"}', "source": str(tmp_path / "m.xml")}
     assert model_links(row) == {"page": "https://example.org/p/", "local file": (tmp_path / "m.xml").as_uri()}
     assert model_links(row, local=False) == {"page": "https://example.org/p/"}
+
+
+def _drawing(n_species, n_reactions, spacing=100.0):
+    """A row of species (48 wide) and reactions (10 wide), ``spacing`` apart."""
+    import networkx as nx
+
+    from layout_benchmark.drawing import Drawing
+
+    g = nx.DiGraph()
+    pos = {}
+    for i in range(n_species + n_reactions):
+        kind = "species" if i < n_species else "reaction"
+        n = f"n{i}"
+        g.add_node(n, of=n, kind=kind, label=n, width=48.0 if kind == "species" else 10.0, height=24.0)
+        pos[n] = (i * spacing, 0.0)
+    return Drawing(graph=g, pos=pos)
+
+
+def test_scale_uses_species_width():
+    """Nearest neighbours SPACING species widths apart, however many reactions there are."""
+    few, many = _drawing(4, 2), _drawing(2, 6)
+    assert few.scale_factor() == pytest.approx(SPACING * 48 / 100)
+    assert many.scale_factor() == pytest.approx(SPACING * 48 / 100)  # was 10-wide reactions' median

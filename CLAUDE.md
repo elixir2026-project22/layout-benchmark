@@ -57,8 +57,11 @@ with changes (layouts, options, output).
 ## Decisions (from the project lead)
 
 - **Keep layouts as close to the tools' output as possible.** The JSON keeps each tool's own coordinates; pictures
-  use one uniform scale (nearest neighbours 1.5 node widths apart), which changes no shape. No edge routing of our
-  own: edges are straight, except routes a tool returns itself (Escher maps).
+  use one uniform scale (nearest neighbours 1.5 species widths apart: the median width of the drawn species, clones
+  at their drawn size, reactions left out), which changes no shape. Scaling to each tool's own node sizes was tried
+  and dropped (user, 2026-11-11): each tool's sizes mean something else (label boxes, glyphs, Escher circles with
+  labels beside them), and it needed an exception per tool. No edge routing of our own: edges are straight, except
+  routes a tool returns itself (Escher maps).
 - **Node sizes are fixed per SBGN class, never sized to the label**; long labels are cut with "…".
 - **One SVG renderer for every picture**: SBGN shapes and arcs, SBGN clone markers, species coloured by compartment
   (with a legend). SBMLNetwork is used as a layout and a reader only: drawing with it needed too many workarounds.

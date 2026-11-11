@@ -77,8 +77,10 @@ from the project's discussion.
 ## Output
 
 For each model and layout:
-- an SVG picture, drawn the same way for every layout: SBGN shapes and arcs, fixed node sizes;
-- its positions as JSON (every drawn node, clones included, and every edge with its arc class and route);
+- an SVG picture, drawn the same way for every layout: SBGN shapes and arcs, fixed node sizes. The tool's positions
+  are scaled uniformly (no shape changes), so that nearest neighbours are 1.5 species widths apart;
+- its positions as JSON, in the tool's own coordinates (every drawn node, clones included, and every edge with its
+  arc class and route);
 - a row in `results.csv` (time, error, nodes not placed).
 
 An HTML report shows, per model, the reference layout and then every layout side by side.

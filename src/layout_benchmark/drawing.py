@@ -12,7 +12,7 @@ more: clones (a metabolite such as ATP drawn several times, each near the reacti
   ``{"box": [x0, y0, x1, y1], "label": name}`` (y up). Empty when the tool draws no compartments.
 
 Positions are the tool's own. For drawing (and for metrics that use node sizes), ``normalised()`` scales a drawing
-uniformly, so that nearest neighbours are SPACING node widths apart: a uniform scale changes no shape, angle or
+uniformly, so that nearest neighbours are SPACING species widths apart: a uniform scale changes no shape, angle or
 crossing of the layout, only how big the fixed-size nodes are relative to the spacing.
 """
 
@@ -24,9 +24,9 @@ import networkx as nx
 import numpy as np
 from scipy.spatial import cKDTree
 
-from .graph import Pathway
+from .graph import REACTION, Pathway
 
-# drawing scale: the median distance from a node to its nearest drawn neighbour, in median node widths
+# drawing scale: the median distance from a node to its nearest drawn neighbour, in species widths
 SPACING = 1.5
 Point = tuple[float, float]
 Positions = dict[str, Point]
@@ -63,19 +63,24 @@ class Drawing:
                 pos[d["of"]] = self.pos[n]
         return pos
 
+    def species_width(self) -> float:
+        """The median width of the drawn species nodes (clones at the size they are drawn); reactions are left out,
+        so that a model with more reactions than species (cofactors drawn inside reactions) is not drawn cramped.
+        All drawn nodes if there is no species; 1 if no node has a width."""
+        nodes = [d for n, d in self.graph.nodes(data=True) if n in self.pos and (d.get("width") or 0) > 0]
+        widths = [float(d["width"]) for d in nodes if d.get("kind") != REACTION] or [float(d["width"]) for d in nodes]
+        return float(np.median(widths)) if widths else 1.0
+
     def scale_factor(self) -> float:
-        """The factor that puts nearest neighbours SPACING median node widths apart (1 if undefined)."""
+        """The factor that puts nearest neighbours SPACING species widths apart (1 if undefined)."""
         if len(self.pos) < 2:
             return 1.0
-        nodes = list(self.pos)
-        xy = np.array([self.pos[n] for n in nodes], dtype=float)
+        xy = np.array(list(self.pos.values()), dtype=float)
         distances = cKDTree(xy).query(xy, k=2)[0][:, 1]
         distances = distances[distances > 0]  # nodes drawn on top of each other say nothing about the spacing
-        widths = [self.graph.nodes[n].get("width") or 0 for n in nodes]
-        width = float(np.median([w for w in widths if w > 0])) if any(w > 0 for w in widths) else 1.0
         if not len(distances):
             return 1.0
-        return SPACING * width / float(np.median(distances))
+        return SPACING * self.species_width() / float(np.median(distances))
 
     def normalised(self) -> Drawing:
         """Centred and scaled uniformly by ``scale_factor()``; nothing else changes."""
