@@ -5,6 +5,8 @@ from __future__ import annotations
 import csv
 import json
 import multiprocessing as mp
+import os
+import signal
 import time
 from pathlib import Path
 
@@ -21,6 +23,7 @@ REFERENCE = "reference"
 
 
 def _layout_worker(name, pathway, seed, queue):
+    os.setsid()  # its own process group: a timeout kills the tools it started too
     try:
         queue.put(("ok", layout(name, pathway, seed)))
     except Exception as ex:  # noqa: BLE001 -- any failure is the run's result, reported as its error (last line)
@@ -29,7 +32,11 @@ def _layout_worker(name, pathway, seed, queue):
 
 
 def run_layout(name, pathway, seed=0, timeout=300.0):
-    """A layout in its own process, with a timeout. Returns (positions or None, seconds, error or None)."""
+    """A layout in its own process, with a timeout. Returns (positions or None, seconds, error or None).
+
+    The process matters for reproducibility too, not only for the timeout: a Graphviz engine's first layout in a
+    process can differ from later ones (sfdp, issue #4). On a timeout, the worker's whole process group is killed,
+    with the external tools it started."""
     ctx = mp.get_context("fork")
     queue = ctx.Queue()
     proc = ctx.Process(target=_layout_worker, args=(name, pathway, seed, queue))
@@ -38,7 +45,10 @@ def run_layout(name, pathway, seed=0, timeout=300.0):
     try:
         status, value = queue.get(timeout=timeout)
     except Exception:  # noqa: BLE001 -- queue.Empty on timeout, or a worker that died
-        proc.kill()
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):  # gone already, or not yet its own group
+            proc.kill()
         return None, timeout, f"timeout after {timeout:.0f} s"
     finally:
         proc.join(5)

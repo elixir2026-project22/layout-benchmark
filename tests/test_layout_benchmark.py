@@ -424,3 +424,30 @@ def test_scale_uses_species_width():
     few, many = _drawing(4, 2), _drawing(2, 6)
     assert few.scale_factor() == pytest.approx(SPACING * 48 / 100)
     assert many.scale_factor() == pytest.approx(SPACING * 48 / 100)  # was 10-wide reactions' median
+
+
+def test_timeout_kills_the_tools_a_layout_started(tiny_sbml, tmp_path, monkeypatch):
+    import subprocess
+    import time
+    from pathlib import Path
+
+    from layout_benchmark import layouts, runner
+    from layout_benchmark.graph import read_sbml
+
+    pid_file = tmp_path / "pid"
+
+    def hangs(pathway, seed):  # an external tool that runs past the timeout
+        child = subprocess.Popen(["sleep", "60"])
+        pid_file.write_text(str(child.pid))
+        child.wait()
+
+    monkeypatch.setitem(layouts.LAYOUTS, "hangs", hangs)
+    positions, _, error = runner.run_layout("hangs", read_sbml(tiny_sbml), timeout=1)
+    assert positions is None and error.startswith("timeout")
+    pid = int(pid_file.read_text())
+    for _ in range(50):  # the kill is asynchronous
+        if not Path(f"/proc/{pid}").exists() or "Z" in Path(f"/proc/{pid}/stat").read_text().split()[2]:
+            break
+        time.sleep(0.1)
+    else:
+        raise AssertionError("the tool's process is still running")
