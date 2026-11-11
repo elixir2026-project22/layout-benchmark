@@ -5,7 +5,7 @@ Guidance for Claude Code in this repository.
 ## What this is
 
 **layout-benchmark**: a benchmark of automatic layout algorithms for pathway maps in SBML, from BioHackathon Europe
-2026, project 22 (*Open Pathway Maps*). Every model is laid out with many algorithms (31), drawn the same way, and
+2026, project 22 (*Open Pathway Maps*). Every model is laid out with many algorithms (34), drawn the same way, and
 shown side by side with its reference layout where it has one. The report is published at
 <https://elixir2026-project22.github.io/layout-benchmark/>. `README.md` is the user documentation: keep it in step
 with changes (layouts, options, output).
@@ -17,7 +17,8 @@ with changes (layouts, options, output).
 - `layouts.py`: the layout registry (`LAYOUTS`), Graphviz, igraph, networkx and cytoscape.js adapters, the expected
   order (`EXPECTED`, also the report's order) and documentation links (`LINKS`). `js/layout.mjs` runs the
   cytoscape.js layouts headless in Node.
-- `external.py`: MetaCarto and sbml2escher (Escher maps read back as drawings, clones and routes kept).
+- `external.py`: MetaCarto, sbml2escher, ecmapper (`ecmapper-brenda`, `-packed`) and sbml_pathway_layout
+  (`rules-claude`); all write Escher maps, read back as drawings (clones of metabolites and reactions, routes kept).
   `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's auto layout and its reader for SBML Layout; the helper runs
   in SBMLNetwork's own environment.
 - `drawing.py`: `Drawing`, what a tool draws (clones, routes, compartment boxes), its JSON, and the common scale.
@@ -32,8 +33,8 @@ with changes (layouts, options, output).
 - `uv sync --extra tests`; `(cd src/layout_benchmark/js && npm ci)`; `uv run pytest` (unit tests need no external
   tools; the tools' layouts are skipped in the per-layout test).
 - External tools live in `.tools/` (untracked), each in its own uv environment: MetaCarto (v2.0.0), sbml2escher,
-  SBMLNetwork (0.5.12, needs IPython and Skia). Setup commands are in the README. Without a tool, its layout
-  reports an error.
+  ecmapper, sbml_pathway_layout, SBMLNetwork (0.5.12, needs IPython and Skia). Setup commands are in the README.
+  Without a tool, its layout reports an error.
 - Graphviz from the system (`pygraphviz`). Distribution builds may lack GTS: the force-directed programs use
   `overlap=scale`, and sfdp prints "not built with triangulation library" but still returns a layout.
 - Data: `uv run layout-benchmark gallery data/gallery`; `../data_shared` is a clone of
@@ -70,6 +71,9 @@ with changes (layouts, options, output).
 
 - MetaCarto and sbml2escher read models as metabolic networks (COBRApy): species that are only modifiers (enzymes,
   regulators) aren't drawn. MetaCarto ignores SBML Layout (checked: same result without it).
+- ecmapper draws only what it matches to the BRENDA map; subsystems it sets aside go to a separate map (not read);
+  `--split` (several maps without common coordinates) isn't used. sbml_pathway_layout writes cofactors inside
+  reaction boxes (fewer nodes placed), is slow on large models in one drawing, and ignores the seed.
 - sbml2escher fails on variable stoichiometry (the PSS models). MetaCarto needs flux bounds for pFBA and falls back
   to `--no-fba`.
 - The compound layouts (`*-compartments`, iVis-at-Bilkent) expect every node in a compartment; reactions (which

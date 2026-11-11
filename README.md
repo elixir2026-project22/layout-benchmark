@@ -29,6 +29,8 @@ each modifier its SBGN arc (catalysis, inhibition, stimulation, …).
 
 | Family | Algorithms |
 |---|---|
+| [sbml_pathway_layout](https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude) (`rules-claude`) | the project's layout rules: cycles as rings, pathways as layered backbones, cofactors written inside the reaction box (whole model in one drawing) |
+| [ecmapper](https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md) (`ecmapper-brenda`, `-packed`) | draft maps from the BRENDA pathway map, matched by EC number: the subsystems arranged with few crossing links, or packed without them |
 | [MetaCarto](https://github.com/forxhunter/MetaCarto) | constructive layout of metabolic maps (whole-model canvas) |
 | [sbml2escher](https://github.com/elixir2026-project22/sbml2escher) | constraint-based, on a grid |
 | cytoscape.js | fCoSE and CoSE-Bilkent (also with compartments as groups: reactions are placed in the compartment of their reactants and products, or their SBML Level 3 compartment where set; transports stay between), CoSE, cola, dagre, klay, ELK (layered, stress, force, mrtree) |
@@ -39,9 +41,13 @@ each modifier its SBGN arc (catalysis, inhibition, stimulation, …).
 | planned | UNICON, Metabopolis |
 
 `layout-benchmark layouts` lists them in the order the report uses, from the expected most promising for pathway
-maps to the least, with their group. Every run gets a fixed seed and a timeout. MetaCarto and sbml2escher read the
-model as a metabolic network: they keep clones (a metabolite drawn more than once) and route their edges, but they
-leave out species that are only modifiers (enzymes, regulators).
+maps to the least, with their group. Every run gets a fixed seed and a timeout. The pathway-specific tools write
+Escher maps, read back with their clones (a metabolite or reaction drawn more than once) and edge routes.
+MetaCarto, sbml2escher and ecmapper read the model as a metabolic network and leave out species that are only
+modifiers (enzymes, regulators); sbml_pathway_layout writes cofactors inside the reaction boxes instead of drawing
+them as nodes. ecmapper draws only the reactions it can match to the BRENDA map (by EC number, or added next to
+matched ones), and puts subsystems drawn elsewhere already on a separate map (`set_aside`), which isn't read; its
+`--split` mode (several maps, no common coordinates) isn't used.
 
 ## Metrics
 
@@ -92,6 +98,14 @@ git clone --depth 1 --branch v2.0.0 https://github.com/forxhunter/MetaCarto.git 
 # sbml2escher (the project's own tool)
 git clone https://github.com/elixir2026-project22/sbml2escher.git .tools/sbml2escher
 (cd .tools/sbml2escher && uv venv --python 3.12 && uv pip install -r requirements-layout-lock.txt -r requirements-escher.txt)
+
+# sbml_pathway_layout (the project's layout rules)
+git clone https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude.git .tools/sbml_pathway_layout
+(cd .tools/sbml_pathway_layout && uv venv --python 3.12 && uv pip install networkx numpy matplotlib)
+
+# ecmapper (GPL-3.0): draft maps from the BRENDA map
+git clone https://github.com/elixir2026-project22/ecmapper.git .tools/ecmapper
+(cd .tools/ecmapper && uv venv --python 3.12 && uv pip install -e ".[draft-map]")
 
 # SBMLNetwork: its auto layout (a layout), and its reader for layouts stored in SBML
 mkdir -p .tools/sbmlnetwork && (cd .tools/sbmlnetwork && uv venv --python 3.12 && uv pip install sbmlnetwork==0.5.12 ipython)

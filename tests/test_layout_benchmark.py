@@ -28,7 +28,14 @@ def test_read_sbml(tiny_sbml):
     assert roles[("E", "r1")] == "modifier"
 
 
-EXTERNAL = ("metacarto", "sbml2escher", "sbmlnetwork")  # need their own environments under .tools/
+EXTERNAL = (
+    "rules-claude",
+    "ecmapper-brenda",
+    "ecmapper-brenda-packed",
+    "metacarto",
+    "sbml2escher",
+    "sbmlnetwork",
+)  # need their own environments under .tools/
 
 
 @pytest.mark.parametrize("name", [n for n in LAYOUTS if n not in EXTERNAL])
