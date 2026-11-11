@@ -8,12 +8,12 @@ import multiprocessing as mp
 import time
 from pathlib import Path
 
-from .drawing import Drawing
 from .graph import read_sbml
 from .layouts import LAYOUTS, layout
-from .manifest import ModelSpec, SetSpec
+from .manifest import ModelSpec, SetSpec, model_names, reference_kind
 from .metrics import all_metrics
-from .reference import apply_gallery_classes, gallery_reference, sbgn_compartments
+from .reference import apply_gallery_classes
+from .reference import reference_drawing as reference_drawing_of
 from .render import to_svg
 from .report import write_report
 
@@ -46,26 +46,6 @@ def run_layout(name, pathway, seed=0, timeout=300.0):
     return (value, seconds, None) if status == "ok" else (None, seconds, value)
 
 
-def model_names(models: list[Path]) -> dict[Path, str]:
-    """A unique name per model: the file name, or, where several files share it (e.g. ``ja/sbml/model.xml`` and
-    ``sa/sbml/model.xml``), with the nearest folders that tell them apart (``ja-model``, ``sa-model``)."""
-
-    def folders(m):  # nearest first, without folders named after the format
-        return [f for f in reversed(m.resolve().parent.parts) if f.lower() not in ("sbml", "xml", "models")]
-
-    names = {m: m.stem for m in models}
-    for depth in range(1, 6):
-        counts = {}
-        for n in names.values():
-            counts[n] = counts.get(n, 0) + 1
-        clashing = [m for m in models if counts[names[m]] > 1]
-        if not clashing:
-            break
-        for m in clashing:
-            names[m] = "-".join([*reversed(folders(m)[:depth]), m.stem])
-    return names
-
-
 def has_sbml_layout(path: Path) -> bool:
     """Whether an SBML file has a layout of its own (SBML Layout package)."""
     import libsbml
@@ -76,11 +56,12 @@ def has_sbml_layout(path: Path) -> bool:
 
 
 def spec_for(path: Path) -> ModelSpec:
-    """A model given as a plain file: its set is its folder; its reference the ``<stem>.sbgn`` next to it, else
-    its own SBML Layout if it has one."""
-    sbgn = path.with_suffix(".sbgn")
-    if sbgn.exists():
-        return ModelSpec(path=path, set=path.resolve().parent.name, reference=sbgn, reference_kind="sbgn")
+    """A model given as a plain file: its set is its folder; its reference the ``<stem>.sbgn`` or
+    ``<stem>.escher.json`` next to it, else its own SBML Layout if it has one."""
+    for reference in (path.with_suffix(".sbgn"), path.with_suffix(".escher.json")):
+        if reference.exists():
+            folder = path.resolve().parent.name
+            return ModelSpec(path=path, set=folder, reference=reference, reference_kind=reference_kind(reference))
     if has_sbml_layout(path):
         return ModelSpec(path=path, set=path.resolve().parent.name, reference=path, reference_kind="sbml-layout")
     return ModelSpec(path=path, set=path.resolve().parent.name)
@@ -107,8 +88,8 @@ def run(
     if sets:
         (out / "sets.json").write_text(json.dumps([s.__dict__ for s in sets], indent=1))
     rows = []
-    sources = {}
-    names = model_names([s.path for s in specs])
+    unnamed = model_names([s.path for s in specs if not s.name])
+    names = {s.path: s.name or unnamed[s.path] for s in specs}
     kept = []  # with append: the rows of the other models already in out/results.csv
     if append and (out / "results.csv").exists():
         kept = [
@@ -117,24 +98,18 @@ def run(
             if r["model"] not in names.values()
             or (requested is not None and r["layout"] not in requested and r["layout"] != REFERENCE)
         ]
-        sources.update({r["model"]: Path(r["source"]) for r in kept if r.get("source")})
     for spec in specs:
         model = spec.path
         pathway = read_sbml(model, name=names[model])
-        sources[pathway.name] = model
         folder = out / pathway.name
         folder.mkdir(exist_ok=True)
         reference, reference_drawing = None, None
-        if spec.reference and spec.reference_kind == "sbml-layout":
-            # the model's own SBML Layout, read by SBMLNetwork (aliases are clones)
-            from . import sbmlnet
-
-            reference_drawing = sbmlnet.read_layout(pathway, spec.reference)
-            reference = reference_drawing.node_positions()
-        elif spec.reference:
-            reference = gallery_reference(pathway, spec.reference)
-            # its SBGN map has the classes and labels (the gallery SBML has no SBO terms, encoded names)
-            apply_gallery_classes(pathway, spec.reference)
+        if spec.reference:
+            if spec.reference_kind == "sbgn":
+                # its SBGN map has the classes and labels (the gallery SBML has no SBO terms, encoded names)
+                apply_gallery_classes(pathway, spec.reference)
+            reference_drawing = reference_drawing_of(pathway, spec.reference, spec.reference_kind)
+            reference = reference_drawing.node_positions() if reference_drawing else None
         base = {
             "model": pathway.name,
             "set": spec.set,
@@ -146,12 +121,10 @@ def run(
             "reference_kind": spec.reference_kind or "",
             "credit": spec.credit or "",
             "licence": spec.licence or "",
+            "links": json.dumps(spec.links) if spec.links else "",
         }
         runs = []
         if reference:
-            if reference_drawing is None:  # an SBGN map: its nodes, and its compartment glyphs
-                reference_drawing = Drawing.of(pathway, reference)
-                reference_drawing.compartments = sbgn_compartments(pathway, spec.reference)
             runs = [(REFERENCE, reference_drawing, 0.0, None)]
         for name in layouts:
             drawing, seconds, error = run_layout(name, pathway, seed, timeout)
@@ -177,7 +150,7 @@ def run(
             print(f"{pathway.name:30} {name:24} {row['seconds']:8.2f}s {row['error']}")
         # after each model, so a long run can be followed, and a stopped one loses nothing finished
         _write_results(out, kept + rows)
-        write_report(out, kept + rows, sources)
+        write_report(out, kept + rows)
     return out / "results.csv"
 
 

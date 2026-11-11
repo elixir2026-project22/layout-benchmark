@@ -243,3 +243,161 @@ def test_reaction_compartment(tmp_path):
     assert reaction_compartment(p, "r2") is None
     p.graph.nodes["r2"]["compartment"] = "nuc"  # as read from an SBML Level 3 reaction compartment
     assert reaction_compartment(p, "r2") == "nuc"
+
+
+def _escher_map():
+    """A small Escher map as VMH draws them: man1p[c] -> man6p[c] by PMANM; ATP drawn twice (a clone); a
+    multimarker between the metabolite and the midmarker; PMANM's metabolites include H+, not drawn."""
+
+    def met(bigg, x, y, primary=True):
+        name = bigg.split("[")[0].upper()
+        return {"node_type": "metabolite", "bigg_id": bigg, "name": name, "x": x, "y": y, "node_is_primary": primary}
+
+    nodes = {
+        "1": met("man1p[c]", 0, 0),
+        "2": met("man6p[c]", 0, 200),
+        "3": {"node_type": "midmarker", "x": 0, "y": 100},
+        "4": {"node_type": "multimarker", "x": 0, "y": 50},
+        "5": met("atp[c]", 50, 80, False),
+        "6": met("atp[c]", 300, 300, False),
+    }
+
+    def segment(a, b):
+        return {"from_node_id": a, "to_node_id": b, "b1": None, "b2": None}
+
+    reaction = {
+        "bigg_id": "PMANM",
+        "name": "Phosphomannomutase",
+        "reversibility": True,
+        "metabolites": [
+            {"bigg_id": "man1p[c]", "coefficient": -1},
+            {"bigg_id": "atp[c]", "coefficient": -1},
+            {"bigg_id": "man6p[c]", "coefficient": 1},
+            {"bigg_id": "h[c]", "coefficient": 2},
+        ],
+        "segments": {"a": segment("1", "4"), "b": segment("4", "3"), "c": segment("3", "2"), "d": segment("5", "3")},
+    }
+    return [{"map_name": "test"}, {"nodes": nodes, "reactions": {"0": reaction}, "text_labels": {}}]
+
+
+def test_escher_to_sbml(tmp_path):
+    """An Escher map without a model: SBML from its reactions (stoichiometry, compartments from the ids), and the
+    map as the reference, matched to the SBML ids, clones and routes kept."""
+    import json
+
+    from layout_benchmark.datasets import escher_to_sbml, slug
+    from layout_benchmark.reference import reference_drawing
+
+    assert slug("N‑linked protein glycosylation") == "n-linked-protein-glycosylation"
+    sbml, reference = escher_to_sbml(_escher_map(), "Test map")
+    (tmp_path / "m.xml").write_text(sbml)
+    (tmp_path / "m.escher.json").write_text(json.dumps(reference))
+    p = read_sbml(tmp_path / "m.xml")
+    assert sorted(p.species) == ["M_atp_c", "M_h_c", "M_man1p_c", "M_man6p_c"]
+    assert list(p.reactions) == ["R_PMANM"]
+    assert p.graph.nodes["M_man1p_c"]["label"] == "MAN1P"
+    assert p.compartments == {"C_c": "cytosol"}
+    roles = {(u, v): d["role"] for u, v, d in p.graph.edges(data=True)}
+    assert roles[("M_atp_c", "R_PMANM")] == "reactant" and roles[("R_PMANM", "M_h_c")] == "product"
+
+    d = reference_drawing(p, tmp_path / "m.escher.json", "escher")
+    assert d.has_clones and d.placed() == {"M_atp_c", "M_man1p_c", "M_man6p_c", "R_PMANM"}  # H+ isn't drawn
+    pos = d.node_positions()
+    assert pos["M_man1p_c"] == (0.0, 0.0) and pos["M_man6p_c"] == (0.0, -200.0) and pos["R_PMANM"] == (0.0, -100.0)
+    assert d.routes[("M_man1p_c@1", "R_PMANM")] == [(0.0, -50.0)]  # through the multimarker
+
+
+def test_manifest_escher_reference(tmp_path):
+    """A reference pattern ending in .json is an Escher map; a plain model file finds <stem>.escher.json."""
+    from layout_benchmark.manifest import load
+    from layout_benchmark.runner import spec_for
+
+    make_sbml(tmp_path / "a.xml", [("r", ["S"], ["P"], [])])
+    (tmp_path / "a.escher.json").write_text("[]")
+    (tmp_path / "benchmark.yaml").write_text(
+        "sets:\n  - name: Maps\n    models: a.xml\n    reference: '{stem}.escher.json'\n"
+    )
+    _, specs = load(tmp_path / "benchmark.yaml")
+    assert specs[0].reference.name == "a.escher.json" and specs[0].reference_kind == "escher"
+    spec = spec_for(tmp_path / "a.xml")
+    assert spec.reference.name == "a.escher.json" and spec.reference_kind == "escher"
+
+
+def test_fetch_caches_per_set(tmp_path):
+    """Remote models are cached as <data>/<set>/<name><suffix>, with their reference (a pattern next to the source)
+    and companions; Escher maps of a `convert: escher` set become a model and its reference; links and credits come
+    from the manifest; the lock file is written."""
+    import json
+
+    from layout_benchmark.datasets import fetch
+    from layout_benchmark.manifest import LOCK, load
+
+    remote = tmp_path / "remote"
+    (remote / "maps").mkdir(parents=True)
+    make_sbml(remote / "F001.xml", [("r", ["S"], ["P"], [])])
+    (remote / "F001.sbgn").write_text("<sbgn/>")
+    (remote / "F001.json").write_text("{}")
+    (remote / "maps" / "Test map.json").write_text(json.dumps(_escher_map()))
+    url = remote.as_uri()
+    (tmp_path / "benchmark.yaml").write_text(
+        "sets:\n"
+        "  - name: My Gallery\n    reference: '{stem}.sbgn'\n    credit: Maps, CC BY 4.0\n    models:\n"
+        f"      - name: glycolysis\n        url: {url}/F001.xml\n        files: [{url}/F001.json]\n"
+        "        page: https://example.org/glycolysis/\n"
+        f"  - name: Escher maps\n    convert: escher\n    models: '{url}/maps/Test%20map.json'\n"
+    )
+    data = tmp_path / "data"
+    specs = fetch(tmp_path / "benchmark.yaml", data)
+    gallery, escher = specs
+    assert gallery.path == data / "my-gallery" / "glycolysis.xml" and gallery.path.exists()
+    assert gallery.reference == data / "my-gallery" / "glycolysis.sbgn" and gallery.reference.exists()
+    assert (data / "my-gallery" / "glycolysis.json").exists()  # a companion, next to the model
+    assert gallery.links == {
+        "model": f"{url}/F001.xml",
+        "reference": f"{url}/F001.sbgn",
+        "page": "https://example.org/glycolysis/",
+    }
+    assert gallery.credit == "Maps, CC BY 4.0" and gallery.set == "My Gallery"
+    assert escher.name == "test-map" and escher.reference_kind == "escher"
+    assert list(read_sbml(escher.path).reactions) == ["R_PMANM"] and escher.reference.exists()
+    assert (data / LOCK).exists()
+    assert [s.path for s in load(tmp_path / "benchmark.yaml", data)[1]] == [gallery.path, escher.path]
+
+
+def test_github_sources_are_pinned_to_their_commit(tmp_path, monkeypatch):
+    """A GitHub glob expands over the tree of its ref's commit; files are downloaded and linked at that commit;
+    the lock file lets the manifest be read again without network, and its absence says to fetch."""
+    from layout_benchmark import manifest
+
+    calls = []
+
+    def github(url):
+        calls.append(url)
+        if url.endswith("/commits/main"):
+            return {"sha": "abc123"}
+        return {"tree": [{"path": p, "type": "blob"} for p in ("a.xml", "b.xml", "sub/c.xml", "a.sbgn")]}
+
+    monkeypatch.setattr(manifest, "_github_json", github)
+    (tmp_path / "benchmark.yaml").write_text(
+        "sets:\n  - name: Repo\n    models: https://github.com/org/repo/blob/main/*.xml\n"
+    )
+    lock = {"commits": {}, "globs": {}}
+    _, specs = manifest.load(tmp_path / "benchmark.yaml", tmp_path / "data", lock=lock, online=True)
+    assert [s.name for s in specs] == ["a", "b"]  # * stays in its folder
+    assert specs[0].url == "https://raw.githubusercontent.com/org/repo/abc123/a.xml"
+    assert specs[0].links["model"] == "https://github.com/org/repo/blob/abc123/a.xml"
+    assert len(calls) == 2
+    _, again = manifest.load(tmp_path / "benchmark.yaml", tmp_path / "data", lock=lock)  # offline, from the lock
+    assert [s.url for s in again] == [s.url for s in specs] and len(calls) == 2
+    with pytest.raises(RuntimeError, match="fetch"):
+        manifest.load(tmp_path / "benchmark.yaml", tmp_path / "data")  # no lock file yet
+    assert manifest._match("IMD Maps/A/b c.json", "IMD Maps/**/*.json")
+    assert manifest._match("IMD Maps/b.json", "IMD Maps/**/*.json")
+
+
+def test_report_links_from_the_manifest(tmp_path):
+    from layout_benchmark.report import model_links
+
+    row = {"links": '{"page": "https://example.org/p/"}', "source": str(tmp_path / "m.xml")}
+    assert model_links(row) == {"page": "https://example.org/p/", "local file": (tmp_path / "m.xml").as_uri()}
+    assert model_links(row, local=False) == {"page": "https://example.org/p/"}

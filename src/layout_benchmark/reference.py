@@ -175,3 +175,29 @@ def gallery_reference(pathway: Pathway, sbgn: str | Path) -> Positions:
     own coordinates (y up)."""
     glyphs = read_sbgn_positions(sbgn)
     return {n: glyphs[g] for n, g in match_glyphs(pathway, sbgn).items() if g in glyphs}
+
+
+def reference_drawing(pathway: Pathway, path: str | Path, kind: str):
+    """A model's reference layout, read from its file, in its own coordinates (y up):
+
+    - ``sbgn``: an SBGN-ML map (nodes matched by ``match_glyphs``, and its compartment glyphs);
+    - ``escher``: an Escher map (clones and routes as drawn);
+    - ``sbml-layout``: the model's own SBML Layout, read by SBMLNetwork (aliases are clones; None without it).
+    """
+    from .drawing import Drawing
+
+    if kind == "sbgn":
+        drawing = Drawing.of(pathway, gallery_reference(pathway, path))
+        drawing.compartments = sbgn_compartments(pathway, path)
+        return drawing
+    if kind == "escher":
+        import json
+
+        from .external import escher_drawing
+
+        return escher_drawing(pathway, json.loads(Path(path).read_text()))
+    if kind == "sbml-layout":
+        from . import sbmlnet
+
+        return sbmlnet.read_layout(pathway, Path(path)) if sbmlnet.available() else None
+    raise ValueError(f"unknown reference kind {kind!r}")

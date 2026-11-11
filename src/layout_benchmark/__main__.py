@@ -25,16 +25,31 @@ def list_layouts():
 @click.option("--timeout", default=300.0, show_default=True, help="Seconds per layout run.")
 @click.option("--metrics/--no-metrics", default=False, show_default=True, help="Also score the layouts.")
 @click.option("--append", is_flag=True, help="Keep the other models already in OUT (their rows in results.csv).")
-def run(models, layouts, out, seed, timeout, metrics, append):
-    """Lay out SBML MODELS: a benchmark manifest (.yaml: sets, models, references, credits), or SBML files (a
-    <model>.sbgn next to a model is its reference layout)."""
+@click.option("--only", default=None, help="With a manifest: only these models (comma-separated names).")
+@click.option(
+    "--data",
+    default="data",
+    show_default=True,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="The manifest's cache of downloaded models (see `fetch`).",
+)
+def run(models, layouts, out, seed, timeout, metrics, append, only, data):
+    """Lay out SBML MODELS: a benchmark manifest (.yaml: sets, models, references, credits; fetched first with
+    `fetch`), or SBML files (a <model>.sbgn or <model>.escher.json next to a model is its reference layout)."""
     from .manifest import load
     from .runner import run as run_all
 
     names = [x.strip() for x in layouts.split(",")] if layouts else None
     sets = None
     if len(models) == 1 and models[0].suffix in (".yaml", ".yml"):
-        sets, specs = load(models[0])
+        sets, specs = load(models[0], data)
+        if only:
+            wanted = {x.strip() for x in only.split(",")}
+            specs = [s for s in specs if s.name in wanted]
+            if missing := wanted - {s.name for s in specs}:
+                raise click.UsageError(f"not in the manifest: {', '.join(sorted(missing))}")
+        if absent := [str(s.path) for s in specs if not s.path.exists()]:
+            raise click.UsageError(f"not fetched: {absent[0]} ({len(absent)} files); run `fetch {models[0]}`")
     else:
         specs = list(models)
     path = run_all(specs, names, out, seed, timeout, metrics, append, sets)
@@ -47,21 +62,29 @@ def run(models, layouts, out, seed, timeout, metrics, append):
     "--manifest",
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
     default=None,
-    help="Take sets, reference files and credits from this manifest (for runs made without it).",
+    help="Take sets, reference files, links and credits from this manifest (for runs made without it).",
 )
-def render(out, manifest):
+@click.option(
+    "--data",
+    default="data",
+    show_default=True,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="The manifest's cache of downloaded models (see `fetch`).",
+)
+def render(out, manifest, data):
     """Draw the pictures in OUT again from the saved positions (OUT/<model>/<layout>.json), with the current
     renderer and scale, and write OUT/index.html (without running the layouts)."""
     import csv
     import json
 
     from .drawing import Drawing
+    from .reference import reference_drawing
     from .render import to_svg
     from .report import write_report
 
     rows = list(csv.DictReader((out / "results.csv").open())) if (out / "results.csv").exists() else []
     if manifest and rows:
-        rows = _apply_manifest(out, rows, manifest)
+        rows = _apply_manifest(out, rows, manifest, data)
     pathways = _pathways(rows)  # for compartment colours, names and reference boxes
     # every saved drawing (also of a run still going, whose newest models are not in results.csv yet)
     n = 0
@@ -71,7 +94,7 @@ def render(out, manifest):
         if path.stem == "reference" and reference:
             # a reference is data, not a run: built again from its file (nodes and compartments in its own
             # coordinates), so older saved references (scaled, or without compartments) are replaced
-            drawing = _reference_drawing(pathway, *reference) or drawing
+            drawing = reference_drawing(pathway, *reference) or drawing
             path.write_text(json.dumps(drawing.to_json(), indent=1))
         title = f"{path.parent.name}: {path.stem}"
         path.with_suffix(".svg").write_text(to_svg(drawing.normalised(), title, pathway))
@@ -79,8 +102,7 @@ def render(out, manifest):
     if not rows:
         click.echo(f"{n} pictures (no results.csv yet: report not rewritten)")
         return
-    sources = {r["model"]: Path(r["source"]) for r in rows if r.get("source")}
-    click.echo(f"{n} pictures; report: {write_report(out, rows, sources)}")
+    click.echo(f"{n} pictures; report: {write_report(out, rows)}")
 
 
 @main.command()
@@ -89,9 +111,16 @@ def render(out, manifest):
     "--manifest",
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
     default=None,
-    help="Take sets, reference files and credits from this manifest (for runs made without it).",
+    help="Take sets, reference files, links and credits from this manifest (for runs made without it).",
 )
-def report(out, manifest):
+@click.option(
+    "--data",
+    default="data",
+    show_default=True,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="The manifest's cache of downloaded models (see `fetch`).",
+)
+def report(out, manifest, data):
     """Write OUT/index.html again from OUT/results.csv (without running the layouts)."""
     import csv
 
@@ -99,9 +128,8 @@ def report(out, manifest):
 
     rows = list(csv.DictReader((out / "results.csv").open()))
     if manifest:
-        rows = _apply_manifest(out, rows, manifest)
-    sources = {r["model"]: Path(r["source"]) for r in rows if r.get("source")}
-    click.echo(f"report: {write_report(out, rows, sources)}")
+        rows = _apply_manifest(out, rows, manifest, data)
+    click.echo(f"report: {write_report(out, rows)}")
 
 
 @main.command()
@@ -123,7 +151,6 @@ def publish(out, site, name):
         shutil.rmtree(dest)
     dest.mkdir(parents=True)
     rows = list(csv.DictReader((out / "results.csv").open()))
-    sources = {r["model"]: Path(r["source"]) for r in rows if r.get("source")}
     for model in {r["model"] for r in rows}:
         if (out / model).is_dir():
             shutil.copytree(out / model, dest / model, ignore=shutil.ignore_patterns("*.png"))
@@ -134,7 +161,7 @@ def publish(out, site, name):
         w = csv.DictWriter(f, fieldnames=list(public_rows[0]))
         w.writeheader()
         w.writerows(public_rows)
-    write_report(dest, rows, sources, local=False)
+    write_report(dest, rows, local=False)
     runs = sorted(p.name for p in site.iterdir() if (p / "index.html").exists())
     items = "".join(f'<li><a href="{escape(r)}/index.html">{escape(r)}</a></li>' for r in runs)
     (site / "index.html").write_text(
@@ -149,19 +176,31 @@ def publish(out, site, name):
 
 
 @main.command()
-@click.argument("dest", type=click.Path(path_type=Path))
-def gallery(dest):
-    """Download the metabolismregulation gallery maps (SBML + SBGN reference layout) into DEST."""
-    from .datasets import fetch_gallery
+@click.argument("manifest", type=click.Path(exists=True, dir_okay=False, path_type=Path))
+@click.option(
+    "--data",
+    default="data",
+    show_default=True,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="Where to cache the models (<data>/<set>/).",
+)
+@click.option("--refresh", is_flag=True, help="Resolve GitHub refs and globs again, and download everything again.")
+def fetch(manifest, data, refresh):
+    """Download the models of MANIFEST, with their references and companion files, into DATA; Escher maps of
+    `convert: escher` sets become models. Writes DATA/manifest.lock.json (the commits and expanded globs), so the
+    other commands need no network."""
+    from .datasets import fetch as fetch_all
 
-    models = fetch_gallery(dest)
-    click.echo(f"{len(models)} maps with a reference layout in {dest}")
+    specs = fetch_all(manifest, data, refresh)
+    remote = sum(1 for s in specs if s.url)
+    click.echo(f"{len(specs)} models ({remote} fetched into {data}, {len(specs) - remote} local)")
 
 
 def _pathways(rows: list[dict]) -> dict:
     """Per model of a run: its pathway (read again from its SBML, with the gallery's SBGN classes, labels and
     compartment names where it has an SBGN reference) and its reference (file, kind)."""
     from .graph import read_sbml
+    from .manifest import reference_kind
     from .reference import apply_gallery_classes
 
     out = {}
@@ -171,47 +210,33 @@ def _pathways(rows: list[dict]) -> dict:
         pathway = read_sbml(r["source"], name=r["model"])
         ref_file, kind = r.get("reference_file"), r.get("reference_kind") or ""
         if ref_file and not kind:
-            kind = "sbgn" if ref_file.endswith(".sbgn") else "sbml-layout"
+            kind = "sbml-layout" if ref_file == r["source"] else reference_kind(Path(ref_file))
         if ref_file and kind == "sbgn":
             apply_gallery_classes(pathway, ref_file)
         out[r["model"]] = (pathway, (ref_file, kind) if ref_file else None)
     return out
 
 
-def _reference_drawing(pathway, ref_file: str, kind: str):
-    """A model's reference layout, read from its file: an SBGN map (nodes and compartment glyphs) or the model's
-    own SBML Layout (read by SBMLNetwork). None if it can't be read."""
-    from . import sbmlnet
-    from .drawing import Drawing
-    from .reference import gallery_reference, sbgn_compartments
-
-    if kind == "sbgn":
-        drawing = Drawing.of(pathway, gallery_reference(pathway, ref_file))
-        drawing.compartments = sbgn_compartments(pathway, ref_file)
-        return drawing
-    if sbmlnet.available():
-        return sbmlnet.read_layout(pathway, Path(ref_file))
-    return None
-
-
-def _apply_manifest(out: Path, rows: list[dict], manifest: Path) -> list[dict]:
-    """Give an existing run's rows the sets, reference files and credits of a manifest (matched by model file),
-    save the manifest's set order in OUT/sets.json, and write the rows back to OUT/results.csv."""
+def _apply_manifest(out: Path, rows: list[dict], manifest: Path, data: Path) -> list[dict]:
+    """Give an existing run's rows the sets, files, references, links and credits of a manifest (matched by model
+    name), save the manifest's set order in OUT/sets.json, and write the rows back to OUT/results.csv."""
     import csv
     import json
 
     from .manifest import load
 
-    sets, specs = load(manifest)
-    by_path = {str(s.path.resolve()): s for s in specs}
+    sets, specs = load(manifest, data)
+    by_name = {s.name: s for s in specs}
     for r in rows:
-        spec = by_path.get(r.get("source", ""))
+        spec = by_name.get(r["model"])
         if spec:
             r["set"] = spec.set
+            r["source"] = str(spec.path.resolve())
             r["reference_file"] = str(spec.reference.resolve()) if spec.reference else ""
             r["reference_kind"] = spec.reference_kind or ""
             r["credit"] = spec.credit or ""
             r["licence"] = spec.licence or ""
+            r["links"] = json.dumps(spec.links) if spec.links else ""
     (out / "sets.json").write_text(json.dumps([s.__dict__ for s in sets], indent=1))
     fields = list(dict.fromkeys(k for r in rows for k in r))
     with (out / "results.csv").open("w", newline="") as f:

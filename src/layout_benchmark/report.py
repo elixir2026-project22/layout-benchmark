@@ -4,8 +4,6 @@ next to it, with links to the source files."""
 from __future__ import annotations
 
 import json
-import re
-import subprocess
 from html import escape
 from pathlib import Path
 
@@ -48,35 +46,11 @@ figcaption .t { color: var(--muted); }
 """
 
 
-def source_links(model: Path, local: bool = True) -> dict[str, str]:
-    """Links to a model's source: from ``<model>.source.json`` (written by the dataset fetchers), else GitHub
-    links when the file is in a git checkout of a GitHub repository; always the local file."""
-    links = {}
-    sidecar = model.with_suffix(".source.json")
-    if sidecar.exists():
-        links.update(json.loads(sidecar.read_text()))
-    else:
-        try:
-
-            def git(*args):
-                return subprocess.run(
-                    ["git", "-C", str(model.parent), *args], capture_output=True, text=True, check=True
-                ).stdout.strip()
-
-            top = Path(git("rev-parse", "--show-toplevel"))
-            remote = git("remote", "get-url", "origin")
-            commit = git("rev-parse", "HEAD")
-            m = re.search(r"github\.com[:/](.+?)(?:\.git)?$", remote)
-            if m:
-                rel = model.resolve().relative_to(top.resolve()).as_posix()
-                links["model"] = f"https://github.com/{m.group(1)}/blob/{commit}/{rel}"
-                sbgn = model.with_suffix(".sbgn")
-                if sbgn.exists():
-                    links["reference"] = links["model"][: -len(model.suffix)] + ".sbgn"
-        except (subprocess.CalledProcessError, FileNotFoundError, ValueError):
-            pass
-    if local:
-        links["local file"] = model.resolve().as_uri()
+def model_links(row: dict, local: bool = True) -> dict[str, str]:
+    """Links of a model (from the manifest: its source, reference, page), and its local file when ``local``."""
+    links = json.loads(row["links"]) if row.get("links") else {}
+    if local and row.get("source"):
+        links["local file"] = Path(row["source"]).resolve().as_uri()
     return links
 
 
@@ -119,9 +93,8 @@ def _figure(model: str, r: dict, out: Path) -> tuple[str, str]:
     return body, (f"<b>{name}</b>{group} <span class=t>{r['seconds']} s{note}</span>{'<br>' + links if links else ''}")
 
 
-def write_report(out: Path, rows: list[dict], sources: dict[str, Path], local: bool = True) -> Path:
-    """Write ``out/index.html``. ``sources`` maps a model name to its SBML file. ``local``: with links to the
-    local files (False for a published copy)."""
+def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
+    """Write ``out/index.html``. ``local``: with links to the local files (False for a published copy)."""
     parts = [
         "<!doctype html><html lang=en><meta charset=utf-8>",
         "<meta name=viewport content='width=device-width, initial-scale=1'>",
@@ -172,20 +145,17 @@ def write_report(out: Path, rows: list[dict], sources: dict[str, Path], local: b
         if set_name in descriptions:
             parts.append(f"<p class=meta>{escape(descriptions[set_name])}</p>")
         for model in ms:
-            _model_section(parts, model, rows, sources, out, local)
+            _model_section(parts, model, rows, out, local)
     path = out / "index.html"
     path.write_text("\n".join(parts))
     return path
 
 
-def _model_section(parts: list, model: str, rows: list[dict], sources: dict[str, Path], out: Path, local: bool):
+def _model_section(parts: list, model: str, rows: list[dict], out: Path, local: bool):
     """One model: header with its sizes and source links, the reference (or a placeholder), the layouts."""
     mr = [r for r in rows if r["model"] == model]
-    links = source_links(sources[model], local) if model in sources else {}
-    credit = mr[0].get("credit") or links.pop("credit", None)
-    licence = mr[0].get("licence") or links.pop("licence", None)
-    links.pop("credit", None)
-    links.pop("licence", None)
+    links = model_links(mr[0], local)
+    credit, licence = mr[0].get("credit"), mr[0].get("licence")
     link_html = " ".join(
         f'<a href="{escape(url)}" target="_blank" rel="noopener">{escape(label)}</a>' for label, url in links.items()
     )
@@ -208,8 +178,6 @@ def _model_section(parts: list, model: str, rows: list[dict], sources: dict[str,
         body, caption = _figure(model, ref, out)
         # where the reference layout comes from: its file (on GitHub when known)
         ref_file = Path(mr[0]["reference_file"]) if mr[0].get("reference_file") else None
-        if ref_file is None and model in sources:  # runs from before the manifest: the .sbgn next to the model
-            ref_file = sources[model].with_suffix(".sbgn")
         ref_url = links.get("reference") or (ref_file.resolve().as_uri() if ref_file and local else None)
         name = escape(ref_file.name) if ref_file else ""
         if name and mr[0].get("reference_kind") == "sbml-layout":  # the model file itself, its SBML Layout
@@ -229,4 +197,4 @@ def _model_section(parts: list, model: str, rows: list[dict], sources: dict[str,
     parts.append("</div></div></section>")
 
 
-__all__ = ["source_links", "write_report"]
+__all__ = ["model_links", "write_report"]

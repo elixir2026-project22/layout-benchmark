@@ -9,17 +9,23 @@ where there is one: https://elixir2026-project22.github.io/layout-benchmark/. Ne
 metrics derived from the project's layout rules.
 
 > Status: in development. The layouts and the report work; the metrics are written but not yet in the report.
-> Planned: SBML Layout + Render output per layout, more reference layouts (Escher, Reactome), cofactor clones and a
-> split by pathway.
+> Planned: SBML Layout + Render output per layout, cofactor clones and a split by pathway.
 
 ## Input
 
-- The SBML models in the project's
-  [`data_shared`](https://github.com/elixir2026-project22/data_shared) repository: BRENDA pathways, E. coli core and
-  iCH360, Reactome, Human2, *Mycoplasma*, and the Stress Knowledge Map (PSS pathways, whole PSS, CKN).
-- **Reference layouts** (drawn by hand), for comparing the automatic ones against: the
-  [metabolismregulation gallery](https://metabolismregulation.github.io/gallery/) maps (SBML, plus SBGN-ML with the
-  layout; CC BY 4.0). Planned: Escher maps (E. coli core, carbohydrate metabolism) and Reactome diagrams.
+All inputs are listed, with where they come from, in [`benchmark.yaml`](benchmark.yaml) (see Usage):
+
+- The SBML models in the project's [`data_shared`](https://github.com/elixir2026-project22/data_shared) repository
+  (private to the project): BRENDA pathways, E. coli core and iCH360, Reactome, Human2, *Mycoplasma*, and the
+  Stress Knowledge Map (PSS pathways, whole PSS, CKN); and
+  [iML1515](http://bigg.ucsd.edu/models/iML1515) from BiGG.
+- **Reference layouts** (drawn by hand), for comparing the automatic ones against:
+  - the [metabolismregulation gallery](https://metabolismregulation.github.io/gallery/) maps (SBML, plus SBGN-ML
+    with the layout; CC BY 4.0);
+  - the IMD maps in `data_shared` (pathways of inborn metabolic disorders, Escher maps drawn on Recon3D): they come
+    without SBML, so the model is made from each map (its reactions with all their metabolites and stoichiometry;
+    compartments from the metabolite ids), and the map is its reference;
+  - the Reactome pathway's own diagram (its SBML Layout).
 
 The model is read as one graph: species and reactions as nodes, one edge per reactant, product and modifier, and
 compartments as parents. Each species gets its SBGN class from its SBO term (or from the model's SBGN file), and
@@ -117,24 +123,34 @@ Each tool is optional: without it, its layout reports an error.
 
 ```bash
 uv run layout-benchmark layouts                          # the layout algorithms
-uv run layout-benchmark gallery data/gallery             # maps with a hand-made reference layout
+uv run layout-benchmark fetch benchmark.yaml             # download the manifest's models into data/<set>/
 uv run layout-benchmark run benchmark.yaml -o results/all   # the models of the manifest
+uv run layout-benchmark run benchmark.yaml -o results/all --append --only F001-glycolysis  # some of them
 uv run layout-benchmark run path/to/model.xml -o results/run1  # or any SBML files
 ```
 
-`benchmark.yaml` is the benchmark manifest: the sets of models (files or globs, relative to it), each set's
-reference layouts (e.g. `"{stem}.sbgn"`, next to each model), credit, licence and description. The report shows
-the sets in this order. Models given as plain files are grouped by their folder, with a `<model>.sbgn` next to a
-model as its reference.
+`benchmark.yaml` is the benchmark manifest: the sets of models, in the report's order, and per model where it
+comes from (a URL, a GitHub glob such as `https://github.com/<owner>/<repo>/blob/main/brenda_*.xml`, or a local
+file), its reference layout (an SBGN-ML map or an Escher map, as a URL or a pattern next to the model such as
+`"{stem}.sbgn"`; or `layout`, the model's own SBML Layout), companion files, a page to link, credit, licence and
+description; sets of Escher maps without SBML (`convert: escher`) become models with the map as reference. The
+format is described in `src/layout_benchmark/manifest.py`.
+
+`fetch` downloads every model into `data/<set>/<model>` (`--data` for another folder) and writes
+`data/manifest.lock.json`: the commit of each GitHub ref and the files each glob matched, so the files and the
+report's links are pinned to that commit, and the other commands need no network. `fetch --refresh` updates
+everything. data_shared is private: fetching from it needs a GitHub token (`GITHUB_TOKEN`, or the GitHub CLI's,
+`gh auth login`). The gallery's entries are written by `scripts/gallery_manifest.py` (run it again when the
+gallery changes). Models given as plain files are grouped by their folder, with a `<model>.sbgn` or
+`<model>.escher.json` next to a model as its reference.
 
 `results/run1/index.html` shows per model the reference (where there is one) and every layout, from the expected
 most promising to the least; each layout also has its positions as JSON. `results.csv` has a row per run (time,
-error, nodes not placed). A `<model>.sbgn` next to a model is used as its reference (and for its SBGN classes and
-labels).
+error, nodes not placed). An SBGN-ML reference also gives the model's SBGN classes and labels.
 
 ```bash
 uv run layout-benchmark report results/run1                      # redo the page from results.csv
-uv run layout-benchmark render results/run1                      # redraw the pictures from the saved positions
+uv run layout-benchmark render results/run1 [--manifest benchmark.yaml]  # redraw the pictures from the saved positions
 uv run layout-benchmark publish results/run1 site --name run1    # a copy for GitHub Pages (no local paths)
 ```
 
