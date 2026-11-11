@@ -171,11 +171,14 @@ LAYOUTS: dict[str, Callable[[Pathway, int], Positions]] = {
 
 
 def _register_external():
-    from .external import metacarto, sbml2escher
+    from .external import ecmapper, ecmapper_packed, metacarto, rules_layout, sbml2map
     from .sbmlnet import autolayout
 
+    LAYOUTS["rules-claude"] = rules_layout
+    LAYOUTS["ecmapper-brenda"] = ecmapper
+    LAYOUTS["ecmapper-brenda-packed"] = ecmapper_packed
     LAYOUTS["metacarto"] = metacarto
-    LAYOUTS["sbml2escher"] = sbml2escher
+    LAYOUTS["sbml2map"] = sbml2map
     LAYOUTS["sbmlnetwork"] = autolayout
 
 
@@ -198,8 +201,11 @@ def layout(name: str, pathway: Pathway, seed: int = 0) -> Drawing:
 # their group: tools made for pathway maps; force-directed with compartments as groups; layered (flows read in one
 # direction); stress-based; generic force-directed; for large graphs; radial, circular and tree; baselines.
 EXPECTED = [
+    ("rules-claude", "pathway-specific"),
+    ("ecmapper-brenda", "pathway-specific"),
+    ("ecmapper-brenda-packed", "pathway-specific"),
     ("metacarto", "pathway-specific"),
-    ("sbml2escher", "pathway-specific"),
+    ("sbml2map", "pathway-specific"),
     ("sbmlnetwork", "SBML-specific"),
     ("cytoscape-fcose-compartments", "compartments as groups"),
     ("cytoscape-cose-bilkent-compartments", "compartments as groups"),
@@ -245,8 +251,11 @@ _NETWORKX = "https://networkx.org/documentation/stable/reference/generated/netwo
 _ELK = "https://eclipse.dev/elk/reference/algorithms/org-eclipse-elk-"
 # where each layout algorithm is documented (shown in the report)
 LINKS = {
+    "rules-claude": "https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude",
+    "ecmapper-brenda": "https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md",
+    "ecmapper-brenda-packed": "https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md",
     "metacarto": "https://github.com/forxhunter/MetaCarto",
-    "sbml2escher": "https://github.com/elixir2026-project22/sbml2escher",
+    "sbml2map": "https://github.com/elixir2026-project22/sbml2map",
     "sbmlnetwork": "https://github.com/sys-bio/SBMLNetwork",
     "cytoscape-fcose": "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose",
     "cytoscape-fcose-compartments": "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose",
