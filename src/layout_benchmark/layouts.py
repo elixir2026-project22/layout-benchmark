@@ -171,14 +171,14 @@ LAYOUTS: dict[str, Callable[[Pathway, int], Positions]] = {
 
 
 def _register_external():
-    from .external import ecmapper, ecmapper_packed, metacarto, rules_layout, sbml2escher
+    from .external import ecmapper, ecmapper_packed, metacarto, rules_layout, sbml2map
     from .sbmlnet import autolayout
 
     LAYOUTS["rules-claude"] = rules_layout
     LAYOUTS["ecmapper-brenda"] = ecmapper
     LAYOUTS["ecmapper-brenda-packed"] = ecmapper_packed
     LAYOUTS["metacarto"] = metacarto
-    LAYOUTS["sbml2escher"] = sbml2escher
+    LAYOUTS["sbml2map"] = sbml2map
     LAYOUTS["sbmlnetwork"] = autolayout
 
 
@@ -205,7 +205,7 @@ EXPECTED = [
     ("ecmapper-brenda", "pathway-specific"),
     ("ecmapper-brenda-packed", "pathway-specific"),
     ("metacarto", "pathway-specific"),
-    ("sbml2escher", "pathway-specific"),
+    ("sbml2map", "pathway-specific"),
     ("sbmlnetwork", "SBML-specific"),
     ("cytoscape-fcose-compartments", "compartments as groups"),
     ("cytoscape-cose-bilkent-compartments", "compartments as groups"),
@@ -255,7 +255,7 @@ LINKS = {
     "ecmapper-brenda": "https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md",
     "ecmapper-brenda-packed": "https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md",
     "metacarto": "https://github.com/forxhunter/MetaCarto",
-    "sbml2escher": "https://github.com/elixir2026-project22/sbml2escher",
+    "sbml2map": "https://github.com/elixir2026-project22/sbml2map",
     "sbmlnetwork": "https://github.com/sys-bio/SBMLNetwork",
     "cytoscape-fcose": "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose",
     "cytoscape-fcose-compartments": "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose",

@@ -108,7 +108,7 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
             "themselves are not changed. Species are coloured by compartment (models with more than one; legend in each "
             "picture). Compartment boxes are drawn only where the reference or the tool has them: the references, "
             "and cytoscape.js's compound layouts (with compartments: reactions are placed in the compartment of "
-            "their reactants and products, transports between). MetaCarto and sbml2escher have none. "
+            "their reactants and products, transports between). MetaCarto and sbml2map have none. "
             "Click a picture to open it full size.</p>"
         ),
     ]

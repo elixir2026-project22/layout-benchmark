@@ -17,7 +17,7 @@ with changes (layouts, options, output).
 - `layouts.py`: the layout registry (`LAYOUTS`), Graphviz, igraph, networkx and cytoscape.js adapters, the expected
   order (`EXPECTED`, also the report's order) and documentation links (`LINKS`). `js/layout.mjs` runs the
   cytoscape.js layouts headless in Node.
-- `external.py`: MetaCarto, sbml2escher, ecmapper (`ecmapper-brenda`, `-packed`) and sbml_pathway_layout
+- `external.py`: MetaCarto, sbml2map, ecmapper (`ecmapper-brenda`, `-packed`) and sbml_pathway_layout
   (`rules-claude`); all write Escher maps, read back as drawings (clones of metabolites and reactions, routes kept).
   `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's auto layout and its reader for SBML Layout; the helper runs
   in SBMLNetwork's own environment.
@@ -36,7 +36,7 @@ with changes (layouts, options, output).
 
 - `uv sync --extra tests`; `(cd src/layout_benchmark/js && npm ci)`; `uv run pytest` (unit tests need no external
   tools; the tools' layouts are skipped in the per-layout test).
-- External tools live in `.tools/` (untracked), each in its own uv environment: MetaCarto (v2.0.0), sbml2escher,
+- External tools live in `.tools/` (untracked), each in its own uv environment: MetaCarto (v2.0.0), sbml2map,
   ecmapper, sbml_pathway_layout, SBMLNetwork (0.5.12, needs IPython and Skia). Setup commands are in the README.
   Without a tool, its layout reports an error.
 - Graphviz from the system (`pygraphviz`). Distribution builds may lack GTS: the force-directed programs use
@@ -66,7 +66,7 @@ with changes (layouts, options, output).
 - **One SVG renderer for every picture**: SBGN shapes and arcs, SBGN clone markers, species coloured by compartment
   (with a legend). SBMLNetwork is used as a layout and a reader only: drawing with it needed too many workarounds.
 - **Compartment boxes only where they are real**: in references, and in cytoscape.js's compound layouts
-  (`*-compartments`). Never derived by us. MetaCarto and sbml2escher draw none.
+  (`*-compartments`). Never derived by us. MetaCarto and sbml2map draw none.
 - **The manifest is the one place for inputs**: where each model comes from, its reference, links (shown in the
   report, GitHub files at their commit) and credits. No side files, no links derived from local checkouts.
 - **References are data, not runs**: `render` rebuilds them from their files. Gallery SBGN maps are matched by their
@@ -81,12 +81,16 @@ with changes (layouts, options, output).
 
 ## Known tool limits
 
-- MetaCarto and sbml2escher read models as metabolic networks (COBRApy): species that are only modifiers (enzymes,
-  regulators) aren't drawn. MetaCarto ignores SBML Layout (checked: same result without it).
+- MetaCarto (COBRApy) and sbml2map (its own SBML reader) read models as metabolic networks: species that are
+  only modifiers (enzymes, regulators) aren't drawn; sbml2map also leaves out inorganic species (water, protons,
+  O2, CO2, phosphate, ammonium) and reactions with nothing else. MetaCarto ignores SBML Layout (checked: same
+  result without it).
+- sbml2map replaced sbml2escher (2026-11-11: the sbml2escher repository is gone; same options and output). Its
+  optimisation stops at a time limit (`--time-limit`, 60 s), so results can depend on the machine's speed.
 - ecmapper draws only what it matches to the BRENDA map; subsystems it sets aside go to a separate map (not read);
   `--split` (several maps without common coordinates) isn't used. sbml_pathway_layout writes cofactors inside
   reaction boxes (fewer nodes placed), is slow on large models in one drawing, and ignores the seed.
-- sbml2escher fails on variable stoichiometry (the PSS models). MetaCarto needs flux bounds for pFBA and falls back
+- sbml2map fails on variable stoichiometry (the PSS models). MetaCarto needs flux bounds for pFBA and falls back
   to `--no-fba`.
 - The compound layouts (`*-compartments`, iVis-at-Bilkent) expect every node in a compartment; reactions (which
   SBML doesn't put in compartments, except an optional Level 3 attribute) get the compartment of their reactants

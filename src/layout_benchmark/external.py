@@ -2,8 +2,8 @@
 
 - MetaCarto 2 (https://github.com/forxhunter/MetaCarto, CC BY 4.0): constructive layout for metabolic networks
   (pathways drawn one by one, then packed on one canvas), read through COBRApy, written as an Escher map.
-- sbml2escher (https://github.com/elixir2026-project22/sbml2escher): constraint-based grid layout, written as an
-  Escher map.
+- sbml2map (https://github.com/elixir2026-project22/sbml2map, formerly sbml2escher): constraint-based grid layout
+  (an exact optimisation, heuristic placement on large models), written as an Escher map.
 - ecmapper (https://github.com/elixir2026-project22/ecmapper, GPL-3.0): draft maps from the BRENDA pathway map,
   matched by EC number; the subsystems arranged with few crossing links, or packed. An Escher map.
 - sbml_pathway_layout
@@ -12,12 +12,14 @@
 
 Escher maps are read back as a ``Drawing`` (``escher_drawing``): every metabolite node, clones included, and
 every reaction (at its midmarker), with each participant's edge routed through the map's markers as drawn.
-COBRApy drops SBML's ``M_`` / ``R_`` id prefixes; ids are matched with and without them.
+COBRApy drops SBML's ``M_`` / ``R_`` id prefixes, and sbml2map also decodes the ``__45__`` escapes (``glc__45__D``:
+``glc-D``); ids are matched in all these forms.
 """
 
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import tempfile
 from pathlib import Path
@@ -38,6 +40,8 @@ def _id_lookup(pathway: Pathway) -> dict[str, str]:
         for prefix in ("M_", "R_"):
             if n.startswith(prefix):
                 lookup.setdefault(n[len(prefix) :], n)
+    for alias, n in list(lookup.items()):  # SBML's escapes of characters ids can't hold: __45__ is "-"
+        lookup.setdefault(re.sub(r"__(\d+)__", lambda m: chr(int(m.group(1))), alias), n)
     return lookup
 
 
@@ -140,10 +144,10 @@ def metacarto(pathway: Pathway, seed: int) -> Drawing:
         return _run_tool("MetaCarto", [*args, "--no-fba"], "**/*_Canvas.json", pathway)
 
 
-def sbml2escher(pathway: Pathway, seed: int) -> Drawing:
-    """sbml2escher, structural map (no flux sampling), every eligible reaction."""
+def sbml2map(pathway: Pathway, seed: int) -> Drawing:
+    """sbml2map, structural map (no flux sampling), every eligible reaction."""
     args = [
-        "sbml2escher.py",
+        "sbml2map.py",
         "--model",
         "{model}",
         "--no-sampling",
@@ -154,7 +158,7 @@ def sbml2escher(pathway: Pathway, seed: int) -> Drawing:
         "--output-dir",
         "{out}",
     ]
-    return _run_tool("sbml2escher", args, "escher_map.json", pathway)
+    return _run_tool("sbml2map", args, "escher_map.json", pathway)
 
 
 def _python(name: str) -> Path:

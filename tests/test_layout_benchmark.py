@@ -33,7 +33,7 @@ EXTERNAL = (
     "ecmapper-brenda",
     "ecmapper-brenda-packed",
     "metacarto",
-    "sbml2escher",
+    "sbml2map",
     "sbmlnetwork",
 )  # need their own environments under .tools/
 
@@ -424,6 +424,19 @@ def test_scale_uses_species_width():
     few, many = _drawing(4, 2), _drawing(2, 6)
     assert few.scale_factor() == pytest.approx(SPACING * 48 / 100)
     assert many.scale_factor() == pytest.approx(SPACING * 48 / 100)  # was 10-wide reactions' median
+
+
+def test_escher_ids_match_sbml_ids():
+    import networkx as nx
+
+    from layout_benchmark.external import _id_lookup
+    from layout_benchmark.graph import Pathway
+
+    g = nx.DiGraph()
+    g.add_nodes_from(["M_glc__45__D_e", "R_EX_glc__45__D_e", "s_n0"])
+    lookup = _id_lookup(Pathway(name="t", graph=g))
+    assert lookup["glc-D_e"] == lookup["glc__45__D_e"] == lookup["M_glc__45__D_e"] == "M_glc__45__D_e"
+    assert lookup["EX_glc-D_e"] == "R_EX_glc__45__D_e" and lookup["s_n0"] == "s_n0"
 
 
 def test_timeout_kills_the_tools_a_layout_started(tiny_sbml, tmp_path, monkeypatch):
