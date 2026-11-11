@@ -134,6 +134,16 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
             f'<ul><li><a href="#{anchor}"><b>Jump to the start of {escape(set_name)}</b></a></li>{items}</ul></details>'
         )
     nav.append("</nav>")
+    # a menu closes on a click outside it, on a model chosen in it, and on Escape (one menu open at a time)
+    nav.append(
+        "<script>"
+        "function closeMenus(keep){document.querySelectorAll('nav details[open]')"
+        ".forEach(d=>{if(d!==keep)d.open=false;});}"
+        "document.addEventListener('click',e=>{const d=e.target.closest('nav details');"
+        "closeMenus(d&&!e.target.closest('a')?d:null);});"
+        "document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenus(null);});"
+        "</script>"
+    )
     parts.extend(nav)
     for set_name, ms in by_set.items():
         anchor = "set-" + "".join(c if c.isalnum() else "-" for c in set_name.lower())
