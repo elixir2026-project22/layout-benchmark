@@ -1,0 +1,130 @@
+"""Reproducibility of a layout: the same model and seed laid out twice, and the two drawings compared.
+
+"Reproducibility of the same layout, e.g. cycle direction" is one of the project's hard rules for pathway maps.
+The comparison with the reference cannot check it: it is invariant to rotation and mirroring by design, so a
+drawing that comes back flipped scores as identical to the one it flipped from, which is the case the rule names.
+
+Not a metric of one drawing (``metrics.py`` scores a drawing as shown), so it has its own command,
+``layout-benchmark reproducibility``, and its own table, ``reproducibility.csv``. Each run goes through
+``runner.run_layout``, in a process of its own, as in the benchmark: within one process a Graphviz engine's first
+layout can differ from its later ones (issue #4), so runs compared in one process would not say what the
+benchmark's runs do.
+
+Like the metrics, the comparison is on the drawings as shown, in the tool's own coordinates: drawn nodes (clones
+are nodes), nothing rescaled.
+"""
+
+from __future__ import annotations
+
+import math
+from collections.abc import Iterator
+from pathlib import Path
+
+import numpy as np
+from scipy.spatial import procrustes
+
+from .drawing import Positions
+from .graph import read_sbml
+from .runner import run_layout
+
+CONGRUENT_BELOW = 1e-6  # Procrustes disparity (0 to 1) under which two runs are the same drawing, moved or turned
+
+COLUMNS = [
+    "model",
+    "nodes",
+    "layout",
+    "seed",
+    "verdict",
+    "max_shift",
+    "median_shift",
+    "procrustes",
+    "mirrored",
+    "nodes_compared",
+    "nodes_in_one_run",
+    "seconds_first",
+    "seconds_second",
+    "error",
+]
+
+
+def _mirrored(a: np.ndarray, b: np.ndarray) -> bool:
+    """Whether the best similarity transform from a to b includes a reflection (the orthogonal map of the
+    Procrustes alignment, from the SVD of the cross-covariance of the centred point sets, has determinant -1)."""
+    a = a - a.mean(axis=0)
+    b = b - b.mean(axis=0)
+    u, _, vt = np.linalg.svd(a.T @ b)
+    return bool(np.linalg.det(u @ vt) < 0)
+
+
+def compare_runs(first: Positions, second: Positions) -> dict[str, object]:
+    """Compare two runs of one layout on one model, from the positions of their drawn nodes.
+
+    ``verdict``:
+
+    - ``exact``: the same drawn nodes, each at the same coordinates in both runs.
+    - ``congruent``: not exact, but the same drawing up to translation, uniform scale, rotation or mirroring
+      (Procrustes disparity below ``CONGRUENT_BELOW``); ``mirrored`` then says whether the second run is a mirror
+      image of the first (a cycle drawn the other way round).
+    - ``differs``: a different drawing, or the runs don't draw the same nodes.
+    - ``too_small``: fewer than three nodes in common, or all of them at one point; nothing to compare.
+
+    ``max_shift`` and ``median_shift``: how far the nodes moved between the runs, in the tool's own coordinates,
+    as a fraction of the larger drawing's diagonal (0 when exact). ``procrustes``: the disparity that remains
+    after the best alignment (0 to 1). ``nodes_in_one_run``: drawn nodes that only one of the runs has.
+    """
+    nodes = sorted(set(first) & set(second))
+    result: dict[str, object] = {
+        "verdict": "too_small",
+        "max_shift": None,
+        "median_shift": None,
+        "procrustes": None,
+        "mirrored": None,
+        "nodes_compared": len(nodes),
+        "nodes_in_one_run": len(set(first) ^ set(second)),
+    }
+    if len(nodes) < 3:
+        return result
+    a = np.array([first[n] for n in nodes], dtype=float)
+    b = np.array([second[n] for n in nodes], dtype=float)
+    diagonal = max(math.hypot(*np.ptp(a, axis=0)), math.hypot(*np.ptp(b, axis=0)))
+    if diagonal == 0:
+        return result
+    shifts = np.linalg.norm(a - b, axis=1) / diagonal
+    result["max_shift"], result["median_shift"] = float(shifts.max()), float(np.median(shifts))
+    try:
+        disparity = float(procrustes(a, b)[2])
+    except ValueError:  # one run puts every node at one point
+        disparity = None
+    result["procrustes"] = disparity
+    if result["nodes_in_one_run"]:  # the runs don't draw the same nodes (other clones, nodes left out)
+        result["verdict"] = "differs"
+    elif result["max_shift"] == 0:
+        result["verdict"] = "exact"
+    elif disparity is not None and disparity < CONGRUENT_BELOW:
+        result["verdict"] = "congruent"
+        result["mirrored"] = _mirrored(a, b)
+    else:
+        result["verdict"] = "differs"
+    return result
+
+
+def check(models: list[Path], layouts: list[str], seed: int = 0, timeout: float = 300.0) -> Iterator[dict]:
+    """One row (``COLUMNS``) per model and layout: the layout run twice with ``seed``, each run in its own process
+    (``run_layout``), and the two drawings compared. A layout that fails or times out has ``verdict`` "error" and
+    the reason in ``error``: no result about its reproducibility."""
+    for path in models:
+        pathway = read_sbml(path)
+        for name in layouts:
+            row = dict.fromkeys(COLUMNS)
+            row.update(model=path.stem, nodes=pathway.graph.number_of_nodes(), layout=name, seed=seed)
+            runs = []
+            for when in ("seconds_first", "seconds_second"):
+                drawing, seconds, error = run_layout(name, pathway, seed=seed, timeout=timeout)
+                row[when] = round(seconds, 3)
+                if error or drawing is None:
+                    row.update(verdict="error", error=error or "no drawing")
+                    break
+                runs.append(drawing.pos)
+            else:
+                row.update(compare_runs(*runs))
+            yield row

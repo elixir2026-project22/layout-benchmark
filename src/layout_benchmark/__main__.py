@@ -336,6 +336,69 @@ def fetch(manifest, data, refresh):
     click.echo(f"{len(specs)} models ({remote} fetched into {data}, {len(specs) - remote} local)")
 
 
+@main.command()
+@click.argument("models", nargs=-1, required=True, type=click.Path(exists=True, path_type=Path))
+@click.option("--layouts", "-l", default=None, help="Comma-separated layout names (default: all).")
+@click.option(
+    "--out",
+    "-o",
+    default="reproducibility.csv",
+    show_default=True,
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="The table to write.",
+)
+@click.option("--seed", default=0, show_default=True, help="Random seed, the same for both runs.")
+@click.option("--timeout", default=300.0, show_default=True, help="Seconds per layout run.")
+@click.option("--only", default=None, help="With a manifest: only these models (comma-separated names).")
+@click.option(
+    "--data",
+    default="data",
+    show_default=True,
+    type=click.Path(file_okay=False, path_type=Path),
+    help="The manifest's cache of downloaded models (see `fetch`).",
+)
+def reproducibility(models, layouts, out, seed, timeout, only, data):
+    """Lay out each of MODELS (a manifest or SBML files, as for `run`) twice with the same seed and compare the
+    two drawings: exact, congruent (the same drawing moved, turned or mirrored) or differs. Writes one row per
+    model and layout to OUT; it does not touch a results folder."""
+    import csv
+
+    from .layouts import LAYOUTS
+    from .manifest import load
+    from .reproducibility import COLUMNS, check
+
+    names = [x.strip() for x in layouts.split(",")] if layouts else list(LAYOUTS)
+    if unknown := [n for n in names if n not in LAYOUTS]:
+        raise click.UsageError(f"unknown layouts: {', '.join(unknown)}")
+    if len(models) == 1 and models[0].suffix in (".yaml", ".yml"):
+        _, specs = load(models[0], data)
+        if only:
+            wanted = {x.strip() for x in only.split(",")}
+            specs = [s for s in specs if s.name in wanted]
+            if missing := wanted - {s.name for s in specs}:
+                raise click.UsageError(f"not in the manifest: {', '.join(sorted(missing))}")
+        if absent := [str(s.path) for s in specs if not s.path.exists()]:
+            raise click.UsageError(f"not fetched: {absent[0]} ({len(absent)} files); run `fetch {models[0]}`")
+        paths = [s.path for s in specs]
+    else:
+        paths = list(models)
+
+    counts: dict[str, dict[str, int]] = {}
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=COLUMNS)
+        writer.writeheader()
+        for row in check(paths, names, seed, timeout):
+            writer.writerow(row)
+            f.flush()  # a stopped run keeps the rows that finished
+            per_layout = counts.setdefault(row["layout"], {})
+            per_layout[row["verdict"]] = per_layout.get(row["verdict"], 0) + 1
+    for name in names:
+        verdicts = ", ".join(f"{v} {n}" for v, n in sorted(counts.get(name, {}).items()))
+        click.echo(f"{name}\t{verdicts}")
+    click.echo(f"reproducibility: {out}")
+
+
 def _pathways(rows: list[dict]) -> dict:
     """Per model of a run: its pathway (read again from its SBML, with the gallery's SBGN classes, labels and
     compartment names where it has an SBGN reference) and its reference (file, kind)."""

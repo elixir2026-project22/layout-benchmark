@@ -34,6 +34,9 @@ with changes (layouts, options, output).
 - `metrics.py`: gdMetriX's general metrics plus our pathway-specific ones, on the drawing as shown (`score`,
   `run --metrics`); `METRICS`: one `Metric` per column (label, group, direction, what it measures, source, how it is
   calculated), `SOURCES`: where metrics come from (shown in the report's headers and summary).
+- `reproducibility.py`: the same model and seed laid out twice and compared (`compare_runs`: exact, congruent, differs;
+  `check`: one row per model and layout); the `reproducibility` command writes its own table. Two runs, not one
+  drawing, so it is not in `metrics.METRICS`.
 - `datasets.py`: `fetch` (downloads a manifest's files, GitHub with a token for private repositories) and
   `escher_to_sbml` (models from Escher maps that come without one: the IMD maps).
 - `scripts/gallery_manifest.py`: writes the gallery's entries of `benchmark.yaml` (one-off, run when it changes).
@@ -182,6 +185,9 @@ time), check the report, and publish only on the user's go-ahead.
 - The compound layouts (`*-compartments`, iVis-at-Bilkent) expect every node in a compartment; reactions (which
   SBML doesn't put in compartments, except an optional Level 3 attribute) get the compartment of their reactants
   and products (`graph.reaction_compartment`; the `reactions` option of `_cytoscape`), transports none.
+- graphviz-fdp is not reproducible with a fixed seed (issue #4): on the gallery models, about half of those above 20
+  nodes come out as a different drawing on a second run, which ones changing from run to run. sfdp is
+  reproducible only as the first layout in a process (so through `run_layout`).
 - `js/layout.mjs` must exit after writing its output: cola and ELK leave timers or workers that keep Node alive.
 - `js/graph.mjs` runs graphology's ForceAtlas2 (+ noverlap) and Reagraph's `layoutProvider` headless (importing
   `reagraph` pulls in React and three.js, which load in Node without a display). Reagraph lays out with node radius
