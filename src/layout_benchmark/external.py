@@ -250,8 +250,8 @@ def ecmapper_packed(pathway: Pathway, seed: int) -> Drawing:
 
 def rules_layout(pathway: Pathway, seed: int) -> Drawing:
     """sbml_pathway_layout.py, the whole model in one drawing (``--max-cluster`` above any model's size; by default
-    models of more than 60 reactions are split into several drawings), read from its Escher map. Deterministic:
-    ``seed`` is ignored."""
+    models of more than 60 reactions are split into several drawings), read from its Escher map; drawings that break
+    its rules too (``--write-failing``, its PR #3). Deterministic: ``seed`` is ignored."""
     python = _python("sbml_pathway_layout")
     if pathway.source is None:
         raise RuntimeError("sbml_pathway_layout needs the SBML file")
@@ -265,6 +265,7 @@ def rules_layout(pathway: Pathway, seed: int) -> Drawing:
             "1000000",
             "--escher",
             "--no-sbml-layout",
+            "--write-failing",  # drawings that break its rules too, to show what failed (exit code 1, map written)
         ]
         result = subprocess.run(
             [str(python), *args], capture_output=True, text=True, check=False, cwd=tmp, env=_tool_env(seed)

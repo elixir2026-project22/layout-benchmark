@@ -818,3 +818,32 @@ def test_every_metric_says_where_it_comes_from_and_how():
     for m in METRICS:
         assert m.source in SOURCES and m.description and m.how, m.column
         assert m.better in ("lower", "higher", None), m.column
+
+
+def test_report_shows_the_reproducibility_check_where_it_was_run(tmp_path):
+    import csv
+
+    from layout_benchmark.report import write_report
+    from layout_benchmark.reproducibility import COLUMNS
+
+    rows = [
+        {"model": "m", "layout": "graphviz-dot", "seconds": "1", "crossings": "3"},
+        {"model": "m", "layout": "igraph-fr", "seconds": "2", "crossings": "1"},
+    ]
+    for r in rows:
+        r.update(species="2", reactions="1", edges="2")
+    index = write_report(tmp_path, rows).read_text()
+    assert "reproducible" not in index  # no check run: no column
+    with (tmp_path / "reproducibility.csv").open("w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=COLUMNS)
+        w.writeheader()
+        w.writerow(dict.fromkeys(COLUMNS, "") | {"model": "m", "layout": "graphviz-dot", "verdict": "exact"})
+        w.writerow(
+            dict.fromkeys(COLUMNS, "")
+            | {"model": "m", "layout": "igraph-fr", "verdict": "congruent", "mirrored": "True", "max_shift": "0.4"}
+        )
+    index = write_report(tmp_path, rows).read_text()
+    assert '<td data-v="exact" class="c-pw first yes"' in index
+    assert '<td data-v="mirrored" class="c-pw first no"' in index
+    summary = (tmp_path / "summary.html").read_text()
+    assert ">1 / 1</td>" in summary and ">0 / 1</td>" in summary

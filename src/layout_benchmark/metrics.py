@@ -231,7 +231,7 @@ METRICS = [
         "no crossings (hard rule)",
         "project rules",
         "proper crossings between the straight pieces of drawn lines, skipping two lines that share an end node, / the "
-        "drawn lines (as both implementations); no size limit (core.js counts none above 4000 pieces)",
+        "drawn lines (as both implementations, neither with a size limit)",
     ),
     Metric(
         "rule_lines_through_nodes",

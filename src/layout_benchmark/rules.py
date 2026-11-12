@@ -143,7 +143,7 @@ def _cross(p1, p2, p3, p4) -> bool:
 
 def crossings(drawing: Drawing) -> float | None:
     """Rule "no crossings": crossings between the pieces of drawn lines, skipping two lines that share an end node,
-    per drawn line (as both implementations; no cap on the size, unlike core.js's 4000 pieces)."""
+    per drawn line (as both implementations, neither with a size limit)."""
     edges = list(drawing.graph.edges())
     if not edges:
         return None
