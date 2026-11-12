@@ -131,10 +131,10 @@ def apply_gallery_classes(pathway: Pathway, sbgn: str | Path) -> int:
     return n
 
 
-def read_sbgn_positions(path: str | Path) -> dict[str, tuple[float, float]]:
-    """Centres of the top-level glyphs of an SBGN-ML map, by glyph id (any SBGN-ML namespace)."""
+def read_sbgn_boxes(path: str | Path) -> dict[str, tuple[float, float, float, float]]:
+    """Centre and size (x, y, w, h; y up) of the glyphs of an SBGN-ML map, by glyph id (any SBGN-ML namespace)."""
     root = ET.parse(path).getroot()
-    pos = {}
+    boxes = {}
     for el in root.iter():
         if el.tag.rsplit("}", 1)[-1] != "glyph" or "id" not in el.attrib:
             continue
@@ -142,8 +142,13 @@ def read_sbgn_positions(path: str | Path) -> dict[str, tuple[float, float]]:
         if bbox is None:
             continue
         x, y, w, h = (float(bbox.get(k)) for k in ("x", "y", "w", "h"))
-        pos[el.get("id")] = (x + w / 2, -(y + h / 2))  # y up, as in the layouts
-    return pos
+        boxes[el.get("id")] = (x + w / 2, -(y + h / 2), w, h)  # y up, as in the layouts
+    return boxes
+
+
+def read_sbgn_positions(path: str | Path) -> dict[str, tuple[float, float]]:
+    """Centres of the glyphs of an SBGN-ML map, by glyph id."""
+    return {g: (x, y) for g, (x, y, _, _) in read_sbgn_boxes(path).items()}
 
 
 def sbgn_compartments(pathway: Pathway, sbgn: str | Path) -> dict[str, dict]:
@@ -190,6 +195,11 @@ def reference_drawing(pathway: Pathway, path: str | Path, kind: str):
     if kind == "sbgn":
         drawing = Drawing.of(pathway, gallery_reference(pathway, path))
         drawing.compartments = sbgn_compartments(pathway, path)
+        boxes, glyph = read_sbgn_boxes(path), match_glyphs(pathway, path)
+        for n, d in drawing.graph.nodes(data=True):  # the glyphs' own sizes (for the overlap metric)
+            if glyph.get(n) in boxes:
+                _, _, w, h = boxes[glyph[n]]
+                d.update(own_shape="box", own_width=w, own_height=h)
         return drawing
     if kind == "escher":
         import json

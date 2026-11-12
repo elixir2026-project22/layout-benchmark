@@ -29,6 +29,9 @@ import networkx as nx
 from .drawing import Drawing
 from .graph import CONSUMPTION, PRODUCTION, REACTION, SPECIES, Pathway
 
+# Escher's default sizes (escher 1.8: primary_metabolite_radius, secondary_metabolite_radius, marker_radius)
+ESCHER_RADIUS = {"primary": 20.0, "secondary": 10.0, "marker": 5.0}
+
 TOOLS_DIR = Path(__file__).resolve().parents[2] / ".tools"
 
 
@@ -67,6 +70,7 @@ def escher_drawing(pathway: Pathway, escher_map: list | dict) -> Drawing:
         primary = bool(node.get("node_is_primary"))
         d = pathway.graph.nodes[sid]
         scale = 1.0 if primary else 0.6  # Escher draws secondary clones (cofactors) smaller
+        radius = ESCHER_RADIUS["primary" if primary else "secondary"]
         did = f"{sid}@{nid}"
         g.add_node(
             did,
@@ -77,6 +81,9 @@ def escher_drawing(pathway: Pathway, escher_map: list | dict) -> Drawing:
             width=d["width"] * scale,
             height=d["height"] * scale,
             primary=primary,
+            own_shape="circle",
+            own_width=2 * radius,
+            own_height=2 * radius,
         )
         pos[did] = xy(node)
         drawn[nid] = did
@@ -93,8 +100,18 @@ def escher_drawing(pathway: Pathway, escher_map: list | dict) -> Drawing:
             continue
         d = pathway.graph.nodes[rid]
         did = rid if rid not in g else f"{rid}@{key}"  # a reaction drawn more than once: clones
+        marker = 2 * ESCHER_RADIUS["marker"]
         g.add_node(
-            did, of=rid, kind=REACTION, label=d["label"], sbgn=d.get("sbgn"), width=d["width"], height=d["height"]
+            did,
+            of=rid,
+            kind=REACTION,
+            label=d["label"],
+            sbgn=d.get("sbgn"),
+            width=d["width"],
+            height=d["height"],
+            own_shape="circle",
+            own_width=marker,
+            own_height=marker,
         )
         pos[did] = xy(nodes[mid])
         coefficient = {m["bigg_id"]: m["coefficient"] for m in reaction.get("metabolites", [])}

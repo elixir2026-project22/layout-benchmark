@@ -55,6 +55,7 @@ def _to_drawing(pathway: Pathway, data: dict) -> Drawing:
             sbgn=d.get("sbgn"),
             width=d["width"],
             height=d["height"],
+            **({"own_shape": "box", "own_width": n["w"], "own_height": n["h"]} if n.get("w") and n.get("h") else {}),
         )
         pos[n["id"]] = (n["x"], -n["y"])
     for e in data["edges"]:

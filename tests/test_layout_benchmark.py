@@ -4,15 +4,18 @@ import re
 import pytest
 from scipy.spatial.distance import pdist
 
-from layout_benchmark.drawing import SPACING
+from layout_benchmark.drawing import SPACING, Drawing
 from layout_benchmark.graph import read_sbml
 from layout_benchmark.layouts import REGISTRY, layout
 from layout_benchmark.metrics import (
+    all_metrics,
     compartment_metrics,
     general_metrics,
     overlaps,
+    own_sizes,
     participant_consistency,
     reference_similarity,
+    segment_graph,
 )
 
 from .conftest import make_sbml
@@ -73,9 +76,9 @@ def test_json_round_trip(tiny_sbml):
 
 
 def test_general_metrics_smoke(tiny_sbml):
-    """gdMetriX's metrics are tested upstream; here only that they run on our graphs."""
+    """gdMetriX's metrics are tested upstream; here only that they run on our drawings."""
     p = read_sbml(tiny_sbml)
-    m = general_metrics(p, layout("graphviz-neato", p).node_positions())
+    m = general_metrics(layout("graphviz-neato", p))
     assert m["crossings"] >= 0
     assert m["aspect_ratio"] > 0
 
@@ -85,25 +88,71 @@ def _line(tmp_path):
     return read_sbml(make_sbml(tmp_path / "line.xml", [("r", ["S"], ["P"], [])]))
 
 
-def test_overlaps(tmp_path):
+def _drawn(p, pos, routes=None, **sizes):
+    d = Drawing.of(p, pos)
+    d.routes = routes or {}
+    for n, (w, h) in sizes.items():
+        d.graph.nodes[n].update(own_shape="box", own_width=w, own_height=h)
+    return d
+
+
+def test_metrics_on_a_drawing_with_clones_and_left_out_nodes(tmp_path):
+    """The drawing as shown: a clone is a node with its own edge, a node left out is absent (no error)."""
+    p = read_sbml(make_sbml(tmp_path / "two.xml", [("r1", ["A"], ["B"], []), ("r2", ["B"], ["C"], [])]))
+    d = Drawing.of(p, {"A": (0, 0), "r1": (100, 0), "B": (200, 0), "r2": (300, 100)})  # C left out
+    d.graph.add_node("B@2", **{**d.graph.nodes["B"], "of": "B"})  # B drawn again, next to r2
+    d.pos["B@2"] = (300, 0)
+    d.graph.remove_edge("B", "r2")
+    d.graph.add_edge("B@2", "r2", arc="consumption")
+    m = all_metrics(d, p, layout="test")
+    assert m["species_drawn"] == pytest.approx(2 / 3) and m["reactions_drawn"] == 1
+    assert m["drawn_per_node"] == pytest.approx(5 / 4)
+    assert m["crossings"] == 0 and m["overlapping_pairs"] is None  # no node sizes for an unknown layout
+
+
+def test_crossings_follow_the_routes(tmp_path):
+    """Two edges whose straight lines don't cross, but whose drawn routes do; a piece shared by two edges counts
+    once (no crossing with itself)."""
+    p = read_sbml(make_sbml(tmp_path / "x.xml", [("r1", ["A"], ["B"], []), ("r2", ["C"], ["D"], [])]))
+    pos = {"A": (0, 0), "r1": (100, 0), "B": (200, 0), "C": (0, 100), "r2": (100, 100), "D": (200, 100)}
+    assert general_metrics(_drawn(p, pos))["crossings"] == 0
+    routed = _drawn(p, pos, routes={("A", "r1"): [(50, 150)]})  # A -> up across C-r2 -> back down across it -> r1
+    assert general_metrics(routed)["crossings"] == 2
+    shared = _drawn(p, pos, routes={("A", "r1"): [(50, 0)], ("r1", "B"): [(150, 0)]})
+    g, _ = segment_graph(shared)
+    assert g.number_of_edges() == 4 + 2  # A-bend-r1, r1-bend-B, and r2's two straight edges
+
+
+def test_overlaps_use_the_tools_own_sizes(tmp_path):
     p = _line(tmp_path)
-    apart = {"S": (0, 0), "r": (100, 0), "P": (200, 0)}
-    assert overlaps(p, apart)["overlapping_pairs"] == 0
-    # species boxes are 60 wide: S and P 30 apart overlap, the reaction (10 wide) sits in between
     close = {"S": (0, 0), "r": (500, 0), "P": (30, 0)}
-    assert overlaps(p, close)["overlapping_pairs"] == 1
-    touching = {"S": (0, 0), "r": (500, 0), "P": (60, 0)}
-    assert overlaps(p, touching)["overlapping_pairs"] == 0
+    assert overlaps(_drawn(p, close), None)["overlapping_pairs"] is None  # no sizes: not applicable
+    # boxes 60 wide: S and P 30 apart overlap; 60 apart they only touch
+    sized = {"S": (60, 20), "r": (10, 10), "P": (60, 20)}
+    d = _drawn(p, close, **sized)
+    assert overlaps(d, own_sizes(d, p))["overlapping_pairs"] == 1
+    d = _drawn(p, dict(close, P=(60, 0)), **sized)
+    assert overlaps(d, own_sizes(d, p))["overlapping_pairs"] == 0
+    # small own sizes: no overlap at the same positions (our SBGN sizes would overlap)
+    d = _drawn(p, close, S=(20, 20), r=(10, 10), P=(20, 20))
+    assert overlaps(d, own_sizes(d, p))["overlapping_pairs"] == 0
+    # the sizes we give Graphviz and cytoscape.js; Escher's circles for the Escher tools
+    assert own_sizes(_drawn(p, close), p, "graphviz-dot")["S"][0] == "box"
+    assert own_sizes(_drawn(p, close), p, "sbml2map")["S"] == ("circle", 40.0, 40.0)
+    assert own_sizes(_drawn(p, close), p, "igraph-fr") is None
 
 
 def test_participant_consistency(tmp_path):
     p = _line(tmp_path)
-    assert participant_consistency(p, {"S": (0, 0), "r": (100, 0), "P": (200, 0)}) == 1.0
+    assert participant_consistency(_drawn(p, {"S": (0, 0), "r": (100, 0), "P": (200, 0)})) == 1.0
     # product on the reactant's side
-    assert participant_consistency(p, {"S": (0, 0), "r": (100, 0), "P": (10, 50)}) == 0.0
+    assert participant_consistency(_drawn(p, {"S": (0, 0), "r": (100, 0), "P": (10, 50)})) == 0.0
+    # ... but its drawn route leaves the reaction on the other side
+    routed = _drawn(p, {"S": (0, 0), "r": (100, 0), "P": (10, 50)}, routes={("r", "P"): [(150, 0), (150, 50)]})
+    assert participant_consistency(routed) == 1.0
 
 
-def test_compartment_metrics(tmp_path):
+def test_compartment_metrics_use_the_drawn_boxes(tmp_path):
     path = make_sbml(
         tmp_path / "comp.xml",
         [("r1", ["A", "B"], ["C"], []), ("r2", ["X", "Y"], ["Z"], [])],
@@ -111,19 +160,18 @@ def test_compartment_metrics(tmp_path):
         species_compartment={"X": "c2", "Y": "c2", "Z": "c2"},
     )
     p = read_sbml(path)
-    separate = {
-        "A": (0, 0),
-        "B": (100, 0),
-        "C": (50, 100),
-        "X": (500, 0),
-        "Y": (600, 0),
-        "Z": (550, 100),
-        "r1": (50, 50),
-        "r2": (550, 50),
-    }
-    assert compartment_metrics(p, separate)["species_in_other_compartment"] == 0
-    mixed = dict(separate, Z=(50, 30))  # Z inside the hull of c1
-    assert compartment_metrics(p, mixed)["species_in_other_compartment"] == pytest.approx(1 / 6)
+    pos = {"A": (0, 0), "B": (100, 0), "C": (50, 100), "X": (500, 0), "Y": (600, 0), "Z": (550, 100)}
+    d = _drawn(p, {**pos, "r1": (50, 50), "r2": (550, 50)})
+    assert compartment_metrics(d, p)["species_outside_compartment"] is None  # no boxes drawn
+    d.compartments = {"c1": {"box": [-10, -10, 110, 110]}, "c2": {"box": [490, -10, 610, 110]}}
+    m = compartment_metrics(d, p)
+    assert m["species_outside_compartment"] == 0 and m["compartments_overlapping"] == 0
+    d.pos["Z"] = (50, 30)  # Z drawn in c1's box
+    assert compartment_metrics(d, p)["species_outside_compartment"] == pytest.approx(1 / 6)
+    d.compartments["c2"] = {"box": [20, 20, 40, 40]}  # nested in c1: fine
+    assert compartment_metrics(d, p)["compartments_overlapping"] == 0
+    d.compartments["c2"] = {"box": [100, 100, 200, 200]}  # half over c1
+    assert compartment_metrics(d, p)["compartments_overlapping"] == 1
 
 
 def test_reference_similarity_invariances():
@@ -221,6 +269,33 @@ def test_append_replaces_only_given_layouts(tmp_path, tiny_sbml):
     rows = list(csv.DictReader((out / "results.csv").open()))
     assert sorted(r["layout"] for r in rows) == ["graphviz-dot", "graphviz-neato"]
     assert next(r for r in rows if r["layout"] == "graphviz-dot")["seconds"] == first["graphviz-dot"]["seconds"]
+
+
+def test_append_of_some_layouts_keeps_the_reference_and_its_scores(tmp_path):
+    """`run --append --layouts X` keeps each model's reference row (with its metrics); "reference" among the
+    layouts redoes it."""
+    import csv
+    import json
+
+    from layout_benchmark.datasets import escher_to_sbml
+    from layout_benchmark.runner import REFERENCE, run
+
+    sbml, reference = escher_to_sbml(_escher_map(), "Test map")
+    (tmp_path / "m.xml").write_text(sbml)
+    (tmp_path / "m.escher.json").write_text(json.dumps(reference))
+    out = tmp_path / "out"
+
+    def reference_row():
+        return next(r for r in csv.DictReader((out / "results.csv").open()) if r["layout"] == REFERENCE)
+
+    run([tmp_path / "m.xml"], ["graphviz-dot"], out, metrics=True)
+    assert reference_row()["species_drawn"] != ""
+    run([tmp_path / "m.xml"], ["graphviz-neato"], out, append=True)
+    assert reference_row()["species_drawn"] != ""
+    layouts = sorted(r["layout"] for r in csv.DictReader((out / "results.csv").open()))
+    assert layouts == ["graphviz-dot", "graphviz-neato", REFERENCE]
+    run([tmp_path / "m.xml"], [REFERENCE], out, append=True)  # redone, without metrics this time
+    assert reference_row().get("species_drawn", "") == ""
 
 
 def test_a_second_command_on_the_same_folder_stops(tmp_path):
@@ -467,6 +542,54 @@ def test_timeout_kills_the_tools_a_layout_started(tiny_sbml, tmp_path, monkeypat
         time.sleep(0.1)
     else:
         raise AssertionError("the tool's process is still running")
+
+
+def test_score_drawings_times_out_and_runs_in_parallel(tiny_sbml, monkeypatch):
+    """A drawing whose metrics run past the timeout gets an error, the others their metrics; jobs run at once."""
+    import time
+
+    from layout_benchmark import runner
+    from layout_benchmark.graph import read_sbml
+
+    def metrics(drawing, pathway, reference, layout):
+        if layout == "slow":
+            time.sleep(60)
+        if layout == "broken":
+            raise ValueError("no\nmetrics here")
+        time.sleep(1)
+        return {"crossings": 0.0}
+
+    monkeypatch.setattr(runner, "all_metrics", metrics)
+    pathway = read_sbml(tiny_sbml)
+    tasks = [(name, None, pathway, None, name) for name in ("slow", "a", "b", "broken")]
+    start = time.perf_counter()
+    results = {key: (values, error) for key, values, error in runner.score_drawings(tasks, timeout=3, jobs=4)}
+    assert time.perf_counter() - start < 10
+    assert results["a"] == ({"crossings": 0.0}, None) and results["b"] == ({"crossings": 0.0}, None)
+    assert results["slow"] == (None, "metrics timeout after 3 s")
+    assert results["broken"] == (None, "ValueError: metrics here")
+
+
+def test_score_writes_the_metrics_of_saved_drawings(tmp_path, tiny_sbml):
+    """`score` computes the metrics from the saved drawings, the same as `run --metrics`, and keeps the other
+    columns."""
+    import csv
+
+    from click.testing import CliRunner
+
+    from layout_benchmark.__main__ import main
+    from layout_benchmark.runner import run
+
+    out = tmp_path / "out"
+    run([tiny_sbml], ["graphviz-dot", "igraph-fr"], out, metrics=True)
+    scored_by_run = {r["layout"]: r for r in csv.DictReader((out / "results.csv").open())}
+    run([tiny_sbml], ["graphviz-dot", "igraph-fr"], out)  # without metrics
+    result = CliRunner().invoke(main, ["score", str(out)])
+    assert result.exit_code == 0, result.output
+    rows = {r["layout"]: r for r in csv.DictReader((out / "results.csv").open())}
+    for name, row in rows.items():
+        assert row["crossings"] == scored_by_run[name]["crossings"] and row["seconds"] != ""
+    assert rows["graphviz-dot"]["overlapping_pairs"] != "" and rows["igraph-fr"]["overlapping_pairs"] == ""
 
 
 def test_brenda_map_reference(tmp_path):

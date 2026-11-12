@@ -27,8 +27,64 @@ def _layout_worker(name, pathway, seed, queue):
     try:
         queue.put(("ok", layout(name, pathway, seed)))
     except Exception as ex:  # noqa: BLE001 -- any failure is the run's result, reported as its error (last line)
-        lines = [line.strip() for line in str(ex).splitlines() if line.strip()]
-        queue.put(("error", f"{type(ex).__name__}: {lines[-1] if lines else ''}"))
+        queue.put(("error", _error_text(ex)))
+
+
+def _error_text(ex: Exception) -> str:
+    lines = [line.strip() for line in str(ex).splitlines() if line.strip()]
+    return f"{type(ex).__name__}: {lines[-1] if lines else ''}"
+
+
+def _metrics_worker(drawing, pathway, reference, layout_name, queue):
+    os.setsid()
+    try:
+        queue.put(("ok", all_metrics(drawing, pathway, reference, layout_name)))
+    except Exception as ex:  # noqa: BLE001 -- reported as the drawing's metrics error
+        queue.put(("error", _error_text(ex)))
+
+
+def score_drawings(tasks, timeout: float = 600.0, jobs: int = 1):
+    """The metrics of drawings, each in its own process with a timeout, ``jobs`` at a time. ``tasks``: an iterable
+    of (key, drawing, pathway, reference or None, layout name), read lazily. Yields (key, metrics or None, error or
+    None) as each finishes (not in order). On a timeout the worker's process group is killed."""
+    ctx = mp.get_context("fork")
+    tasks = iter(tasks)
+    running = {}  # process -> (key, queue, deadline)
+    more = True
+    while more or running:
+        while more and len(running) < max(1, jobs):
+            task = next(tasks, None)
+            if task is None:
+                more = False
+                break
+            key, *args = task
+            queue = ctx.Queue()
+            proc = ctx.Process(target=_metrics_worker, args=(*args, queue))
+            proc.start()
+            running[proc] = (key, queue, time.monotonic() + timeout)
+        for proc, (key, queue, deadline) in list(running.items()):
+            result = None
+            try:
+                result = queue.get_nowait()
+            except Exception:  # noqa: BLE001 -- queue.Empty: not finished yet
+                if not proc.is_alive():
+                    try:
+                        result = queue.get(timeout=1)
+                    except Exception:  # noqa: BLE001 -- died without a result
+                        result = ("error", f"metrics worker died (exit code {proc.exitcode})")
+                elif time.monotonic() > deadline:
+                    try:
+                        os.killpg(proc.pid, signal.SIGKILL)
+                    except (ProcessLookupError, PermissionError):
+                        proc.kill()
+                    result = ("error", f"metrics timeout after {timeout:.0f} s")
+            if result is None:
+                continue
+            proc.join(5)
+            del running[proc]
+            status, value = result
+            yield (key, value, None) if status == "ok" else (key, None, value)
+        time.sleep(0.05)
 
 
 def run_layout(name, pathway, seed=0, timeout=300.0):
@@ -152,11 +208,14 @@ def run(
                     notes.append(f"{drawing.graph.number_of_nodes()} drawn nodes (clones)")
                 row["note"] = "; ".join(notes)
                 # partial layouts (references, tools that leave nodes out) are drawn without the missing nodes
-                # the JSON keeps the tool's own coordinates; pictures and metrics use the common scale
+                # the JSON and the metrics keep the tool's own coordinates; pictures use the common scale
                 (folder / f"{name}.json").write_text(json.dumps(drawing.to_json(), indent=1))
                 scaled = drawing.normalised()
                 if metrics:
-                    row.update(all_metrics(pathway, scaled.node_positions(), reference if name != REFERENCE else None))
+                    task = (0, drawing, pathway, reference_drawing if name != REFERENCE else None, name)
+                    _, values, metrics_error = next(score_drawings([task], timeout))
+                    row.update(values or {})
+                    row["metrics_error"] = metrics_error or ""
                 (folder / f"{name}.svg").write_text(to_svg(scaled, f"{pathway.name}: {name}", pathway))
             rows.append(row)
             print(f"{pathway.name:30} {name:24} {row['seconds']:8.2f}s {row['error']}")
