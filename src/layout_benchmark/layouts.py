@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import random
 import subprocess
+import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -24,24 +25,57 @@ from .sbmlnet import autolayout
 
 # --- Graphviz ------------------------------------------------------------------------------------------------
 
+# The graph is built and laid out in a new Python process: called through pygraphviz in a process that has read an
+# SBML model, fdp gave a different drawing for the same graph and seed from one process to the next, while a clean
+# process always gave the same one (issue #19). The child gets the nodes and edges in order and builds the graph as
+# before (not from DOT text, which drops `label=""` and reorders edges, and so changes dot's and neato's drawings).
+_GRAPHVIZ_LAYOUT = """
+import json, sys
+import pygraphviz
+g = json.load(sys.stdin)
+a = pygraphviz.AGraph(directed=True, strict=False)
+a.graph_attr.update(g["graph"])
+a.node_attr.update(g["node"])
+for name, width, height in g["nodes"]:
+    a.add_node(name, width=width, height=height)
+for u, v in g["edges"]:
+    a.add_edge(u, v)
+a.layout(prog=g["prog"])
+json.dump({str(n): n.attr["pos"] for n in a.nodes()}, sys.stdout)
+"""
+
+
+def _graphviz_positions(graph: dict) -> dict[str, str]:
+    """Build and lay out a graph (``_GRAPHVIZ_LAYOUT``'s input) in a clean process (``-I``: no user site or
+    environment paths); each node's ``pos`` attribute by name."""
+    out = subprocess.run(
+        [sys.executable, "-I", "-c", _GRAPHVIZ_LAYOUT],
+        input=json.dumps(graph),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if out.returncode != 0:
+        raise RuntimeError(f"graphviz {graph['prog']} failed: {out.stderr.strip()[-500:]}")
+    return json.loads(out.stdout)
+
 
 def _graphviz(prog: str) -> Callable[[Pathway, int], Positions]:
     def run(pathway: Pathway, seed: int) -> Positions:
-        import pygraphviz
-
-        a = pygraphviz.AGraph(directed=True, strict=False)
-        # overlap removal: "scale" (the default, prism, needs Graphviz built with GTS, which distributions often lack)
-        a.graph_attr.update(start=str(seed), overlap="scale" if prog != "dot" else "true", splines="false")
-        a.node_attr.update(shape="box", fixedsize="true", label="")
         # stable ids for Graphviz (SBML ids can clash with its keywords)
         ids = {n: f"n{i}" for i, n in enumerate(pathway.graph)}
-        for n, d in pathway.graph.nodes(data=True):
-            a.add_node(ids[n], width=d["width"] / 72, height=d["height"] / 72)
-        for u, v in pathway.graph.edges():
-            a.add_edge(ids[u], ids[v])
-        a.layout(prog=prog)
+        graph = {
+            "prog": prog,
+            # overlap removal: "scale" (the default, prism, needs Graphviz built with GTS, which distributions often
+            # lack)
+            "graph": {"start": str(seed), "overlap": "scale" if prog != "dot" else "true", "splines": "false"},
+            "node": {"shape": "box", "fixedsize": "true", "label": ""},
+            "nodes": [[ids[n], d["width"] / 72, d["height"] / 72] for n, d in pathway.graph.nodes(data=True)],
+            "edges": [[ids[u], ids[v]] for u, v in pathway.graph.edges()],
+        }
+        positions = _graphviz_positions(graph)
         back = {i: n for n, i in ids.items()}
-        return {back[str(node)]: tuple(map(float, node.attr["pos"].split(",")[:2])) for node in a.nodes()}
+        return {back[node]: tuple(map(float, pos.split(",")[:2])) for node, pos in positions.items()}
 
     return run
 
