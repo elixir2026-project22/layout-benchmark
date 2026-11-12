@@ -224,10 +224,13 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
                 continue
             ok = [r for r in runs if not r.get("error")]
             seconds = [x for r in ok if (x := _number(r.get("seconds"))) is not None]
+            # the versions its runs were made with (several: the models were laid out at different times)
+            made_with = " / ".join(sorted({r["tool_version"] for r in runs if r.get("tool_version")}))
             cells = [
                 (
                     f'<td data-v="{expected_rank(layout)}">{escape(layout)}'
-                    f"{' <span class=t>(' + escape(GROUP[layout]) + ')</span>' if layout in GROUP else ''}</td>"
+                    f"{' <span class=t>(' + escape(GROUP[layout]) + ')</span>' if layout in GROUP else ''}"
+                    f"{'<br><span class=t>' + escape(made_with) + '</span>' if made_with else ''}</td>"
                 ),
                 f'<td data-v="{len(ok)}">{len(ok)} / {len(runs)}</td>',
                 (
@@ -316,6 +319,8 @@ def _figure(model: str, r: dict, out: Path) -> tuple[str, str]:
     else:
         body = f'<a href="{escape(svg)}" target="_blank"><img src="{escape(svg)}" loading="lazy" alt=""></a>'
     note = f" · {escape(r['note'])}" if r.get("note") else ""
+    if r.get("tool_version"):
+        note += f" · {escape(r['tool_version'])}"
     links = " ".join(
         f'<a href="{escape(f)}" target="_blank">{label}</a>'
         for f, label in ((svg, "SVG"), (f"{model}/{r['layout']}.json", "positions (JSON)"))

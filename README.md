@@ -120,10 +120,13 @@ In the output folder (`-o OUT`), for each model and layout:
   changes), so that nearest neighbours are 1.5 species widths apart;
 - `OUT/<model>/<layout>.json`: the drawing in the tool's own coordinates (every drawn node, clones included, with
   its own size where the tool has one; every edge with its arc class and route; compartment boxes);
-- a row in `OUT/results.csv`: the model, layout, time, error, notes (nodes not placed, clones), the model's set,
-  source, reference, credit and licence, and every metric.
+- a row in `OUT/results.csv`: the model, layout, time, error, notes (nodes not placed, clones), the version of the
+  layout's tool and packages (`tool_version`: a tool's git tag or commit, e.g. `sbml2map ca3873a`; package
+  versions, e.g. `cytoscape 3.33.1, cytoscape-fcose 2.2.0`), the model's set, source, reference, credit and
+  licence, and every metric.
 
-`OUT/index.html` shows per model the reference and then every layout side by side, with a table of scores under
+Each picture's caption names the versions it was made with, and the summary lists them per layout (several where
+models were laid out at different times). `OUT/index.html` shows per model the reference and then every layout side by side, with a table of scores under
 them (sortable; the best value per metric in bold; failures marked with their reason). `OUT/summary.html` gives
 per layout and metric the median rank over the models (all, or one set: 1 = the best of that model's layouts; ties
 share the mean rank), with the number of models ranked, the models laid out and the median time, and the table of
@@ -186,6 +189,7 @@ uv run layout-benchmark run benchmark.yaml -o results/all --append --layouts sbm
 uv run layout-benchmark score results/all --manifest benchmark.yaml --layouts sbml2map     # ... and its scores
 uv run layout-benchmark render results/all --manifest benchmark.yaml   # redraw pictures and report from the JSON
 uv run layout-benchmark report results/all                            # the report only, from results.csv
+uv run layout-benchmark versions results/all                          # record tool versions on rows without them
 uv run layout-benchmark run path/to/model.xml -o results/run1         # any SBML files
 uv run layout-benchmark reproducibility benchmark.yaml -o reproducibility.csv   # each layout twice with one seed: the same drawing?
 ```

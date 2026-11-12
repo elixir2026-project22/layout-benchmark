@@ -714,6 +714,54 @@ def test_ranks_share_ties_and_skip_missing_values():
     assert r[("m", "species_drawn")] == {"a": 1, "b": 2}  # higher is better; no value: not ranked
 
 
+def test_runs_record_tool_versions(tmp_path, tiny_sbml):
+    """`run` records each layout's versions; the report shows them; `versions` fills rows made without them."""
+    import csv
+
+    from click.testing import CliRunner
+
+    from layout_benchmark.__main__ import main
+    from layout_benchmark.runner import run
+
+    out = tmp_path / "out"
+    run([tiny_sbml], ["graphviz-dot", "networkx-spring"], out)
+    rows = {r["layout"]: r for r in csv.DictReader((out / "results.csv").open())}
+    assert (
+        rows["graphviz-dot"]["tool_version"].startswith("pygraphviz ")
+        and "Graphviz " in rows["graphviz-dot"]["tool_version"]
+    )
+    assert rows["networkx-spring"]["tool_version"].startswith("networkx ")
+    assert rows["graphviz-dot"]["tool_version"] in (out / "index.html").read_text()
+    assert rows["graphviz-dot"]["tool_version"] in (out / "summary.html").read_text()
+    # a run from before versions were recorded
+    old = [{k: v for k, v in r.items() if k != "tool_version"} for r in rows.values()]
+    with (out / "results.csv").open("w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(old[0]))
+        w.writeheader()
+        w.writerows(old)
+    assert CliRunner().invoke(main, ["versions", str(out)]).exit_code == 0
+    again = {r["layout"]: r["tool_version"] for r in csv.DictReader((out / "results.csv").open())}
+    assert again == {k: r["tool_version"] for k, r in rows.items()}
+
+
+def test_tool_version_is_the_tools_own(tmp_path):
+    """A tool folder that is no clone of its own (inside another repository) never gets that repository's commit."""
+    import subprocess
+
+    from layout_benchmark.versions import _tool_version
+
+    assert _tool_version(tmp_path / "missing", "x") == "not set up"
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    (tmp_path / "tool").mkdir()
+    assert _tool_version(tmp_path / "tool", "x") == "unknown"
+    clone = tmp_path / "clone"
+    subprocess.run(["git", "init", "-q", str(clone)], check=True)
+    git = ["git", "-C", str(clone), "-c", "user.name=t", "-c", "user.email=t@t"]
+    subprocess.run([*git, "commit", "-q", "--allow-empty", "-m", "x"], check=True)
+    subprocess.run([*git, "tag", "v1.2"], check=True)
+    assert _tool_version(clone, "x") == "v1.2"
+
+
 def test_report_has_score_tables_and_a_summary(tmp_path):
     from layout_benchmark.report import write_report
 
