@@ -19,6 +19,7 @@ COBRApy drops SBML's ``M_`` / ``R_`` id prefixes, and sbml2map also decodes the 
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 import tempfile
@@ -137,9 +138,16 @@ def escher_drawing(pathway: Pathway, escher_map: list | dict) -> Drawing:
     return Drawing(graph=g, pos=pos, routes=routes)
 
 
-def _run_tool(name: str, args: list[str], out_glob: str, pathway: Pathway) -> Drawing:
+def _tool_env(seed: int) -> dict[str, str]:
+    """The environment a tool's Python runs in: ours, with Python's hash randomisation fixed by the seed
+    (``PYTHONHASHSEED``). A tool that iterates over sets of strings (MetaCarto does) otherwise draws a different
+    map in every process, whatever its own options."""
+    return {**os.environ, "PYTHONHASHSEED": str(seed % 2**32)}
+
+
+def _run_tool(name: str, args: list[str], out_glob: str, pathway: Pathway, seed: int = 0) -> Drawing:
     """Run a tool under ``.tools/<name>`` (its own ``.venv``) with an output folder, read the Escher map it
-    writes (``out_glob`` inside that folder)."""
+    writes (``out_glob`` inside that folder). ``seed`` fixes Python's hash randomisation (``_tool_env``)."""
     tool = TOOLS_DIR / name
     python = _python(name)
     if pathway.source is None:
@@ -152,6 +160,7 @@ def _run_tool(name: str, args: list[str], out_glob: str, pathway: Pathway) -> Dr
             capture_output=True,
             text=True,
             check=False,
+            env=_tool_env(seed),
         )
         maps = sorted(Path(tmp).glob(out_glob))  # tools may exit non-zero on their own checks and still write it
         return _escher_file(pathway, maps[0] if maps else Path(tmp) / out_glob, result)
@@ -159,13 +168,13 @@ def _run_tool(name: str, args: list[str], out_glob: str, pathway: Pathway) -> Dr
 
 def metacarto(pathway: Pathway, seed: int) -> Drawing:
     """MetaCarto 2, the whole model on one canvas (``layout_v2.py --canvas-only``), with pFBA directions; for
-    models where FBA cannot run (no objective, no flux bounds), without them (``--no-fba``). Deterministic:
-    ``seed`` is ignored."""
+    models where FBA cannot run (no objective, no flux bounds), without them (``--no-fba``). It has no seed of
+    its own, but its map depends on the order of Python's sets: ``seed`` fixes that order (``_tool_env``)."""
     args = ["layout_v2.py", "--model", "{model}", "--canvas-only", "--out", "{out}", "--quiet"]
     try:
-        return _run_tool("MetaCarto", args, "**/*_Canvas.json", pathway)
+        return _run_tool("MetaCarto", args, "**/*_Canvas.json", pathway, seed)
     except RuntimeError:
-        return _run_tool("MetaCarto", [*args, "--no-fba"], "**/*_Canvas.json", pathway)
+        return _run_tool("MetaCarto", [*args, "--no-fba"], "**/*_Canvas.json", pathway, seed)
 
 
 def sbml2map(pathway: Pathway, seed: int) -> Drawing:
@@ -182,7 +191,7 @@ def sbml2map(pathway: Pathway, seed: int) -> Drawing:
         "--output-dir",
         "{out}",
     ]
-    return _run_tool("sbml2map", args, "escher_map.json", pathway)
+    return _run_tool("sbml2map", args, "escher_map.json", pathway, seed)
 
 
 def _python(name: str) -> Path:
@@ -216,7 +225,7 @@ def ecmapper(pathway: Pathway, seed: int, pack: bool = False) -> Drawing:
         args = ["-m", "ecmapper.draft_map.prepare", str(model), str(brenda / "BRENDA_map_reactions.json"), str(prep)]
         if model.with_suffix(".json").exists():
             args += ["--subsystems", str(model.with_suffix(".json"))]
-        result = subprocess.run([str(python), *args], capture_output=True, text=True, check=False)
+        result = subprocess.run([str(python), *args], capture_output=True, text=True, check=False, env=_tool_env(seed))
         if not prep.exists():
             raise RuntimeError((result.stderr or result.stdout).strip()[-500:] or "prepare failed")
         out = Path(tmp) / "out"
@@ -231,7 +240,7 @@ def ecmapper(pathway: Pathway, seed: int, pack: bool = False) -> Drawing:
             str(seed),
             *(["--pack"] if pack else []),
         ]
-        result = subprocess.run([str(python), *args], capture_output=True, text=True, check=False)
+        result = subprocess.run([str(python), *args], capture_output=True, text=True, check=False, env=_tool_env(seed))
         return _escher_file(pathway, out / "draft_map.escher.json", result)
 
 
@@ -257,5 +266,7 @@ def rules_layout(pathway: Pathway, seed: int) -> Drawing:
             "--escher",
             "--no-sbml-layout",
         ]
-        result = subprocess.run([str(python), *args], capture_output=True, text=True, check=False, cwd=tmp)
+        result = subprocess.run(
+            [str(python), *args], capture_output=True, text=True, check=False, cwd=tmp, env=_tool_env(seed)
+        )
         return _escher_file(pathway, Path(tmp) / "model.escher.json", result)
