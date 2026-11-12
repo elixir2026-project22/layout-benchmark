@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-from .layouts import EXPECTED
+from .layouts import REGISTRY
 
 
 @click.group()
@@ -12,9 +12,17 @@ def main():
 
 @main.command("layouts")
 def list_layouts():
-    """List the layout algorithms, from the expected most promising to the least, with their group."""
-    for name, group in EXPECTED:
-        click.echo(f"{name}\t{group}")
+    """List the layout algorithms, from the expected most promising to the least, with their group, documentation
+    and, for those that need a tool of their own, whether it is set up under .tools/."""
+    from .external import TOOLS_DIR
+
+    for spec in REGISTRY:
+        tool = (
+            ""
+            if spec.tool is None
+            else f"\t{'set up' if (TOOLS_DIR / spec.tool).is_dir() else 'not set up'}: {spec.tool}"
+        )
+        click.echo(f"{spec.name}\t{spec.group}\t{spec.link}{tool}")
 
 
 @main.command()

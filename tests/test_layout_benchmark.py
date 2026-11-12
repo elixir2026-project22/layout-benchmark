@@ -6,7 +6,7 @@ from scipy.spatial.distance import pdist
 
 from layout_benchmark.drawing import SPACING
 from layout_benchmark.graph import read_sbml
-from layout_benchmark.layouts import LAYOUTS, layout
+from layout_benchmark.layouts import REGISTRY, layout
 from layout_benchmark.metrics import (
     compartment_metrics,
     general_metrics,
@@ -28,17 +28,7 @@ def test_read_sbml(tiny_sbml):
     assert roles[("E", "r1")] == "modifier"
 
 
-EXTERNAL = (
-    "rules-claude",
-    "ecmapper-brenda",
-    "ecmapper-brenda-packed",
-    "metacarto",
-    "sbml2map",
-    "sbmlnetwork",
-)  # need their own environments under .tools/
-
-
-@pytest.mark.parametrize("name", [n for n in LAYOUTS if n not in EXTERNAL])
+@pytest.mark.parametrize("name", [s.name for s in REGISTRY if s.tool is None])  # tools: own environments
 def test_every_layout_places_every_node(tiny_sbml, name):
     p = read_sbml(tiny_sbml)
     d = layout(name, p, seed=1)
