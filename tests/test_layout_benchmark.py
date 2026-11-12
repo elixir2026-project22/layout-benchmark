@@ -689,3 +689,15 @@ def test_report_has_score_tables_and_a_summary(tmp_path):
     assert '<td data-v="0.9" class=best>0.9</td>' in index  # graphviz-dot's orthogonality: the highest
     summary = (tmp_path / "summary.html").read_text()
     assert "median rank" in summary and "igraph-fr" in summary
+    # where each metric comes from, in the headers; what each measures and how, on the summary page
+    assert "general graph drawing (gdMetriX)" in index and "pathway maps (this package)" in summary
+    assert "<h2 id=metrics>The metrics</h2>" in summary and "number_of_crossings on the drawn edge pieces" in summary
+
+
+def test_every_metric_says_where_it_comes_from_and_how():
+    from layout_benchmark.metrics import METRICS, SOURCES
+
+    assert len({m.column for m in METRICS}) == len(METRICS)
+    for m in METRICS:
+        assert m.source in SOURCES and m.description and m.how, m.column
+        assert m.better in ("lower", "higher", None), m.column

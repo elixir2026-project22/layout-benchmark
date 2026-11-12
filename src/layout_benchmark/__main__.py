@@ -227,8 +227,8 @@ def score(out, layouts, only, manifest, data, timeout, jobs):
     start, failed = time.perf_counter(), {model: 0 for model in todo}
     for i, values, error in score_drawings(tasks(), timeout, jobs):
         row = rows[i]
-        for column, *_ in METRICS:  # no stale values from an earlier scoring
-            row.pop(column, None)
+        for m in METRICS:  # no stale values from an earlier scoring
+            row.pop(m.column, None)
         row.update(values or {})
         row["metrics_error"] = error or ""
         model = row["model"]

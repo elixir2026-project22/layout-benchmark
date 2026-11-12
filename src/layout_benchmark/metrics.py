@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import itertools
 import math
+from dataclasses import dataclass
 
 import gdMetriX
 import networkx as nx
@@ -37,29 +38,265 @@ SYMMETRY_MAX_NODES = 300
 
 # The metrics: (column, label, group, better: "lower", "higher" or None, what it measures). The report's tables and
 # its summary page use this list; None: no direction (a property, not a score).
+@dataclass(frozen=True)
+class Metric:
+    """A metric as the report shows it: its results.csv column, short label, group, direction ("lower"/"higher"
+    is better, None: no direction, not ranked), what it measures, where it comes from (a key of SOURCES) and how
+    it is calculated."""
+
+    column: str
+    label: str
+    group: str
+    better: str | None
+    description: str
+    source: str = ""
+    how: str = ""
+
+
+# where a metric comes from: (band in the report's table headers, short name, explanation)
+SOURCES = {
+    "gdMetriX": (
+        "general graph drawing (gdMetriX)",
+        "gdMetriX",
+        "computed by gdMetriX, a library of general graph-drawing metrics",
+    ),
+    "gdMetriX definition": (
+        "general graph drawing (gdMetriX)",
+        "gdMetriX's definition, our code",
+        "gdMetriX's definition, computed by this package (on the drawn polylines)",
+    ),
+    "pathway": (
+        "pathway maps (this package)",
+        "this package: pathway maps",
+        "this package's metric, for the rules of pathway maps",
+    ),
+    "reference": (
+        "comparison with the reference",
+        "this package: reference",
+        "this package's comparison with the reference layout (standard shape-comparison measures)",
+    ),
+}
+
+_PIECES = (
+    "the drawn edge pieces (every straight piece of every drawn edge, route bends included; a piece several edges "
+    "share counted once)"
+)
 METRICS = [
-    ("species_drawn", "species", "drawn", "higher", "share of the model's species drawn"),
-    ("reactions_drawn", "reactions", "drawn", "higher", "share of the model's reactions drawn"),
-    ("drawn_per_node", "per node", "drawn", None, "drawn nodes per drawn model node (above 1: clones)"),
-    ("crossings", "crossings", "crossings", "lower", "edge crossings, on the drawn polylines"),
-    ("crossing_density", "density", "crossings", "higher", "1 - crossings / an estimated maximum (gdMetriX)"),
-    ("crossing_angular_resolution", "angles", "crossings", "higher", "crossings near 90 degrees (gdMetriX)"),
-    ("overlapping_pairs", "pairs", "overlaps", "lower", "node pairs that overlap, at the tool's own node sizes"),
-    ("overlap_area_share", "area", "overlaps", "lower", "overlap area / node area, at the tool's own node sizes"),
-    ("edge_length_deviation", "length dev.", "lines", "lower", "mean deviation from the mean drawn edge length"),
-    ("angular_resolution", "angle dev.", "lines", "lower", "smallest angle at a node against the ideal (deviation)"),
-    ("edge_orthogonality", "orthogonal", "lines", "higher", "horizontal and vertical edge pieces (1: all)"),
-    ("participant_consistency", "through", "reactions", "higher", "reactants and products on opposite sides"),
-    ("species_outside_compartment", "outside", "compartments", "lower", "species outside their compartment's box"),
-    ("compartments_overlapping", "overlapping", "compartments", "lower", "compartment boxes overlapping, not nested"),
-    ("aspect_ratio", "aspect", "shape", None, "longer side / shorter side"),
-    ("homogeneity", "homogeneity", "shape", None, "nodes spread over the four quadrants"),
-    ("coherence_to_average_flow", "flow", "shape", None, "edges along the main direction"),
-    ("visual_symmetry", "symmetry", "shape", None, "visual symmetry (up to 300 nodes)"),
-    ("procrustes", "procrustes", "reference", "lower", "distance to the reference after alignment"),
-    ("distance_correlation", "distances", "reference", "higher", "rank correlation of distances with the reference"),
-    ("knn_preservation", "neighbours", "reference", "higher", "shared 5 nearest neighbours with the reference"),
-    ("reference_nodes", "nodes", "reference", None, "model nodes both drawings have"),
+    Metric(
+        "crossings",
+        "crossings",
+        "crossings",
+        "lower",
+        "edge crossings",
+        "gdMetriX",
+        f"number_of_crossings on {_PIECES}; where more than two pieces cross in a point, each pair counts",
+    ),
+    Metric(
+        "crossing_density",
+        "density",
+        "crossings",
+        "higher",
+        "crossings against how many there could be",
+        "gdMetriX",
+        "crossing_density: 1 - crossings / Purchase's estimate of the most crossings possible (pairs of pieces that "
+        "don't share an end)",
+    ),
+    Metric(
+        "crossing_angular_resolution",
+        "angles",
+        "crossings",
+        "higher",
+        "edges cross at large angles (near 90 degrees)",
+        "gdMetriX",
+        "crossing_angular_resolution: 1 - the mean over crossings of |optimal - smallest angle| / optimal, the optimal "
+        "angle being 180 degrees / the number of crossing pieces (90 for two); empty without crossings",
+    ),
+    Metric(
+        "edge_length_deviation",
+        "length dev.",
+        "lines",
+        "lower",
+        "edges of even length",
+        "gdMetriX definition",
+        "Purchase's edge length deviation (gdMetriX's edge_length_deviation): the mean over drawn edges of "
+        "|mean length - length| / mean length, each length measured along the drawn polyline",
+    ),
+    Metric(
+        "angular_resolution",
+        "angle dev.",
+        "lines",
+        "lower",
+        "edges spread evenly around their nodes",
+        "gdMetriX",
+        "angular_resolution (Purchase): the mean over nodes with two or more edges of |optimal - smallest angle| / "
+        "optimal, optimal = 360 degrees / degree; the angles are those between the edges' first pieces at the node",
+    ),
+    Metric(
+        "edge_orthogonality",
+        "orthogonal",
+        "lines",
+        "higher",
+        "horizontal and vertical lines",
+        "gdMetriX",
+        f"edge_orthogonality (Purchase): 1 - the mean deviation of {_PIECES} from the nearest horizontal or "
+        "vertical direction (1: all axis-parallel)",
+    ),
+    Metric(
+        "aspect_ratio",
+        "aspect",
+        "shape",
+        None,
+        "how square the drawing is",
+        "gdMetriX",
+        "aspect_ratio: the shorter side / the longer side of the bounding box of the node centres (1: square)",
+    ),
+    Metric(
+        "homogeneity",
+        "homogeneity",
+        "shape",
+        None,
+        "nodes spread evenly over the drawing",
+        "gdMetriX",
+        "homogeneity (Taylor and Rodgers): from the numbers of nodes in the four quadrants of the bounding box, "
+        "against an even split",
+    ),
+    Metric(
+        "coherence_to_average_flow",
+        "flow",
+        "shape",
+        None,
+        "edges flowing in one main direction",
+        "gdMetriX",
+        "coherence_to_average_flow: the share of drawn edges (start to end, from substrate to reaction to product) "
+        "that point along the average edge direction (positive dot product with the mean unit edge vector)",
+    ),
+    Metric(
+        "visual_symmetry",
+        "symmetry",
+        "shape",
+        None,
+        "visual symmetry",
+        "gdMetriX",
+        "visual_symmetry: the drawing of the edge pieces rasterised and blurred, compared with its reflections and "
+        "rotations; left out above 300 nodes (too slow)",
+    ),
+    Metric(
+        "species_drawn",
+        "species",
+        "drawn",
+        "higher",
+        "the whole model is drawn: its species",
+        "pathway",
+        "the model's species with at least one drawn node / the model's species",
+    ),
+    Metric(
+        "reactions_drawn",
+        "reactions",
+        "drawn",
+        "higher",
+        "the whole model is drawn: its reactions",
+        "pathway",
+        "the model's reactions with a drawn node / the model's reactions",
+    ),
+    Metric(
+        "drawn_per_node",
+        "per node",
+        "drawn",
+        None,
+        "clones: nodes drawn more than once",
+        "pathway",
+        "drawn nodes (each clone counted) / the model nodes drawn; above 1 where species or reactions are drawn "
+        "more than once",
+    ),
+    Metric(
+        "overlapping_pairs",
+        "pairs",
+        "overlaps",
+        "lower",
+        "nodes don't overlap",
+        "pathway",
+        "pairs of drawn nodes whose shapes intersect with a positive area (touching isn't overlapping), every node "
+        "at the tool's own size and shape (the box Graphviz and cytoscape.js are given, Escher's circles, "
+        "SBMLNetwork's and the reference's glyphs); empty where the tool has no node sizes (igraph, networkx)",
+    ),
+    Metric(
+        "overlap_area_share",
+        "area",
+        "overlaps",
+        "lower",
+        "how much nodes overlap",
+        "pathway",
+        "the summed intersection area of the overlapping pairs / the summed area of all drawn nodes, at the tool's "
+        "own sizes",
+    ),
+    Metric(
+        "participant_consistency",
+        "through",
+        "reactions",
+        "higher",
+        "reactants and products on opposite sides of their reaction",
+        "pathway",
+        "over every drawn reaction, each (reactant, product) pair: whether the first pieces of their edges at the "
+        "reaction node point to opposite sides (more than 90 degrees apart); the share of such pairs. A reaction "
+        "drawn as a corner scores 0",
+    ),
+    Metric(
+        "species_outside_compartment",
+        "outside",
+        "compartments",
+        "lower",
+        "species inside their compartment",
+        "pathway",
+        "drawn species whose centre is outside the box of their own compartment / drawn species whose compartment "
+        "has a box; only where the tool draws compartment boxes",
+    ),
+    Metric(
+        "compartments_overlapping",
+        "overlapping",
+        "compartments",
+        "lower",
+        "compartments nested, not overlapping",
+        "pathway",
+        "pairs of compartment boxes that intersect without one holding the other / all pairs of boxes; only where "
+        "the tool draws compartment boxes",
+    ),
+    Metric(
+        "procrustes",
+        "procrustes",
+        "reference",
+        "lower",
+        "the same shape as the reference",
+        "reference",
+        "Procrustes disparity (scipy) between the layout's and the reference's positions of the model nodes both "
+        "draw (one position per node), after translation, scaling, rotation and mirroring; 0: the same shape",
+    ),
+    Metric(
+        "distance_correlation",
+        "distances",
+        "reference",
+        "higher",
+        "near and far as in the reference",
+        "reference",
+        "Spearman rank correlation between all pairwise node distances in the layout and in the reference",
+    ),
+    Metric(
+        "knn_preservation",
+        "neighbours",
+        "reference",
+        "higher",
+        "the same neighbours as in the reference",
+        "reference",
+        "for each node, the share of its 5 nearest neighbours that are among its 5 nearest in the reference; the mean",
+    ),
+    Metric(
+        "reference_nodes",
+        "nodes",
+        "reference",
+        None,
+        "how much of the model the comparison covers",
+        "reference",
+        "the model nodes placed in both the layout and the reference",
+    ),
 ]
 
 
@@ -302,6 +539,8 @@ def all_metrics(
 
 __all__ = [
     "METRICS",
+    "SOURCES",
+    "Metric",
     "all_metrics",
     "compartment_metrics",
     "coverage",

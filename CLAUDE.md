@@ -31,7 +31,8 @@ with changes (layouts, options, output).
 - `manifest.py` + `benchmark.yaml`: the benchmark's sets of models, with where each comes from (URLs, GitHub globs,
   local files), references, links and credits; the cache paths (`<data>/<set>/<name>`) and the lock file.
 - `metrics.py`: gdMetriX's general metrics plus our pathway-specific ones, on the drawing as shown (`score`,
-  `run --metrics`); `METRICS`: every metric's column, label, group, direction and description.
+  `run --metrics`); `METRICS`: one `Metric` per column (label, group, direction, what it measures, source, how it is
+  calculated), `SOURCES`: where metrics come from (shown in the report's headers and summary).
 - `datasets.py`: `fetch` (downloads a manifest's files, GitHub with a token for private repositories) and
   `escher_to_sbml` (models from Escher maps that come without one: the IMD maps).
 - `scripts/gallery_manifest.py`: writes the gallery's entries of `benchmark.yaml` (one-off, run when it changes).
@@ -108,9 +109,12 @@ time), check the report, and publish only on the user's go-ahead.
    for routes as drawn, `stub_graph` for angles at nodes, `own_sizes` for node sizes); use gdMetriX where it has
    the metric. Return None where it doesn't apply (no boxes, no sizes), never a made-up value; nothing that
    depends on our common picture scale.
-2. Call it from `all_metrics` (or `general_metrics`), and add `(column, label, group, better, description)` to
-   `METRICS`: `better` "lower"/"higher" ranks it in the summary and marks the best value; None shows it unranked.
-   The report's tables and summary take their columns from `METRICS`, so nothing else changes there.
+2. Call it from `all_metrics` (or `general_metrics`), and add a `Metric(column, label, group, better,
+   description, source, how)` to `METRICS`, next to the metrics of its source (the report's header bands follow
+   that order): `better` "lower"/"higher" ranks it in the summary and marks the best value, None shows it unranked;
+   `source` a key of `SOURCES` (gdMetriX, its definition in our code, our pathway-map metrics, the comparison with
+   the reference); `how` how it is calculated, precisely (shown on the summary page). The report's tables and
+   summary take their columns from `METRICS`, so nothing else changes there.
 3. A test with a drawing whose value is known; the README Metrics table (rule, metric, column, direction) and, for
    a decision about it, Decisions below.
 4. `score results/all --manifest benchmark.yaml --jobs 6` (all drawings: the new column for every model; about

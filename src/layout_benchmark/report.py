@@ -11,7 +11,7 @@ from html import escape
 from pathlib import Path
 
 from .layouts import GROUP, LINKS, expected_rank
-from .metrics import METRICS
+from .metrics import METRICS, SOURCES, Metric
 
 REFERENCE = "reference"
 
@@ -51,8 +51,16 @@ table.sortable { border-collapse: collapse; font-size: 12px; margin-top: 6px; }
 table.sortable th, table.sortable td { border: 1px solid var(--line); padding: 2px 6px; text-align: right; }
 table.sortable th { background: var(--bg); cursor: pointer; position: sticky; top: 0; }
 table.sortable th.group { cursor: default; text-align: center; }
+table.sortable th.band { background: #eaeef2; }
+table.metrics { border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+table.metrics th, table.metrics td { border: 1px solid var(--line); padding: 3px 6px; text-align: left;
+                                     vertical-align: top; }
+table.metrics th { background: var(--bg); }
+table.metrics td:nth-child(4) { min-width: 320px; }
+table.metrics .t { color: var(--muted); }
 table.sortable td:first-child, table.sortable th:first-child { text-align: left; white-space: nowrap; }
 table.sortable td.best { font-weight: 700; }
+table.sortable td { white-space: nowrap; }
 table.sortable tr.ref td { color: var(--ref); }
 .scroll { overflow-x: auto; }
 .error { height: 520px; display: flex; align-items: center; justify-content: center; text-align: center;
@@ -102,29 +110,39 @@ def _best(rows: list[dict], column: str, better: str | None) -> float | None:
     return min(values) if better == "lower" else max(values)
 
 
-def _header(first: str, columns: list[tuple]) -> str:
-    """Two header rows: the metrics' groups, then each column (sortable, with its description)."""
-    groups: list[list] = []
-    for _, _, group, _, _ in columns:
-        if groups and groups[-1][0] == group:
-            groups[-1][1] += 1
+def _spans(values: list[str]) -> list[list]:
+    """Runs of equal neighbouring values: [[value, length], ...]."""
+    out: list[list] = []
+    for v in values:
+        if out and out[-1][0] == v:
+            out[-1][1] += 1
         else:
-            groups.append([group, 1])
-    top = "<th></th>" + "".join(f"<th class=group colspan={n}>{escape(g)}</th>" for g, n in groups)
+            out.append([v, 1])
+    return out
+
+
+def _header(first: str, columns: list[Metric]) -> str:
+    """Three header rows: where the metrics come from (gdMetriX, this package's pathway metrics, the comparison
+    with the reference), their groups, then each column (sortable; its description, direction and source on hover)."""
+    bands = _spans([SOURCES[m.source][0] if m.source in SOURCES else "" for m in columns])
+    groups = _spans([m.group for m in columns])
+    band_row = "<th></th>" + "".join(f"<th class='group band' colspan={n}>{escape(b)}</th>" for b, n in bands)
+    group_row = "<th></th>" + "".join(f"<th class=group colspan={n}>{escape(g)}</th>" for g, n in groups)
     cells = [f"<th data-col=0>{escape(first)}</th>"]
-    for i, (_, label, _, better, description) in enumerate(columns, start=1):
-        direction = {"lower": " (lower is better)", "higher": " (higher is better)"}.get(better, "")
-        cells.append(f'<th data-col={i} title="{escape(description + direction)}">{escape(label)}</th>')
-    return f"<thead><tr>{top}</tr><tr>{''.join(cells)}</tr></thead>"
+    for i, m in enumerate(columns, start=1):
+        direction = {"lower": " (lower is better)", "higher": " (higher is better)"}.get(m.better, "")
+        source = f". Source: {SOURCES[m.source][2]}" if m.source in SOURCES else ""
+        cells.append(f'<th data-col={i} title="{escape(m.description + direction + source)}">{escape(m.label)}</th>')
+    return f"<thead><tr>{band_row}</tr><tr>{group_row}</tr><tr>{''.join(cells)}</tr></thead>"
 
 
 def _scores_table(model: str, mr: list[dict]) -> str:
     """A model's scores: a row per layout (the reference first), a column per metric; best values bold."""
-    columns = [m for m in METRICS if any(r.get(m[0]) not in (None, "") for r in mr)]
+    columns = [m for m in METRICS if any(r.get(m.column) not in (None, "") for r in mr)]
     if not columns:
         return ""
-    columns.append(("seconds", "seconds", "run", "lower", "time to lay out"))
-    best = {c: _best(mr, c, better) for c, _, _, better, _ in columns}
+    columns.append(Metric("seconds", "seconds", "run", "lower", "time to lay out"))
+    best = {m.column: _best(mr, m.column, m.better) for m in columns}
     body = []
     for r in sorted(mr, key=lambda r: (r["layout"] != REFERENCE, expected_rank(r["layout"]))):
         layout = r["layout"]
@@ -137,7 +155,7 @@ def _scores_table(model: str, mr: list[dict]) -> str:
                 f'<a href="#{escape(_anchor(model, layout))}">{escape(name)}</a>{" ✗" if failure else ""}</td>'
             )
         ]
-        for column, *_ in columns:
+        for column in (m.column for m in columns):
             x = None if r.get("error") and column != "seconds" else _number(r.get(column))
             mark = " class=best" if x is not None and x == best[column] and layout != REFERENCE else ""
             cells.append(f'<td data-v="{"" if x is None else x}"{mark}>{_fmt(column, x)}</td>')
@@ -155,7 +173,7 @@ def ranks(rows: list[dict]) -> dict[tuple[str, str], dict[str, float]]:
     out: dict[tuple[str, str], dict[str, float]] = {}
     for model in dict.fromkeys(r["model"] for r in rows):
         mr = [r for r in rows if r["model"] == model and r["layout"] != REFERENCE and not r.get("error")]
-        for column, _, _, better, _ in METRICS:
+        for column, better in ((m.column, m.better) for m in METRICS):
             if not better:
                 continue
             values = {r["layout"]: x for r in mr if (x := _number(r.get(column))) is not None}
@@ -170,11 +188,31 @@ def ranks(rows: list[dict]) -> dict[tuple[str, str], dict[str, float]]:
     return out
 
 
+def _metrics_table() -> str:
+    """Every metric: what it measures, where it comes from, how it is calculated, and which way is better."""
+    body = []
+    for m in METRICS:
+        better = {"lower": "lower", "higher": "higher"}.get(m.better, "– (not ranked)")
+        body.append(
+            f"<tr><td><b>{escape(m.label)}</b> <span class=t>({escape(m.group)}; <code>{escape(m.column)}</code>)"
+            f'</span></td><td title="{escape(SOURCES[m.source][2])}">{escape(SOURCES[m.source][1])}</td><td>{escape(m.description)}</td>'
+            f"<td>{escape(m.how)}</td><td>{better}</td></tr>"
+        )
+    return (
+        "<h2 id=metrics>The metrics</h2><p class=meta>Every metric is taken on the drawing as shown, in the tool's own "
+        "coordinates: clones are nodes, nodes a tool leaves out are absent, routed edges are the polylines drawn. "
+        "General graph-drawing metrics come from <a href='https://github.com/livus/gdMetriX' style='margin:0'>gdMetriX</a>; the "
+        "pathway-map metrics and the comparison with the reference are this package's.</p>"
+        "<div class=scroll><table class=metrics><thead><tr><th>metric</th><th>source</th><th>what it measures</th>"
+        f"<th>how it is calculated</th><th>better</th></tr></thead><tbody>{''.join(body)}</tbody></table></div>"
+    )
+
+
 def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Path:
     """Write ``out/summary.html``: per layout, its median rank per metric over the models (all, or one set's), how
     many models it laid out, its failures and median time. No combined score."""
     ranked = ranks(rows)
-    columns = [m for m in METRICS if m[3]]
+    columns = [m for m in METRICS if m.better]
     layouts = sorted({r["layout"] for r in rows if r["layout"] != REFERENCE}, key=expected_rank)
     tables = []
     for i, (set_name, models) in enumerate([("All sets", [m for ms in sets.values() for m in ms]), *sets.items()]):
@@ -197,15 +235,15 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
                     f"{_fmt('seconds', statistics.median(seconds) if seconds else None)}</td>"
                 ),
             ]
-            for column, *_ in columns:
+            for column in (m.column for m in columns):
                 values = [ranked[(m, column)][layout] for m in models if layout in ranked.get((m, column), {})]
                 median = statistics.median(values) if values else None
                 shown = f"{median:.3g} <span class=t>({len(values)})</span>" if median is not None else "–"
                 cells.append(f'<td data-v="{"" if median is None else median}">{shown}</td>')
             body.append(f"<tr>{''.join(cells)}</tr>")
         extra = [
-            ("laid_out", "laid out", "runs", None, "models laid out / attempted (failures: errors, timeouts)"),
-            ("seconds", "median s", "runs", "lower", "median time to lay out"),
+            Metric("laid_out", "laid out", "runs", None, "models laid out / attempted (failures: errors, timeouts)"),
+            Metric("seconds", "median s", "runs", "lower", "median time to lay out"),
         ]
         hidden = "" if i == 0 else " hidden"
         tables.append(
@@ -226,10 +264,12 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
             "node sizes, compartments without boxes, similarity without a reference). Every metric is taken on the "
             "drawing as shown, in the tool's own coordinates (see the README). There is no combined score yet: the "
             "weights of the metrics are still to be decided. Click a column to sort; hover a header for what it "
-            "measures.</p>"
+            "measures. The header's top row says where each metric comes from; "
+            "<a href='#metrics' style='margin:0'>the metrics</a> below says what each measures and how.</p>"
         ),
         f"<p class=meta>Models: <select id=set>{options}</select></p>",
         *tables,
+        _metrics_table(),
         (
             "<script>document.getElementById('set').addEventListener('change',e=>{"
             "document.querySelectorAll('[data-set]').forEach(d=>d.hidden=d.dataset.set!==e.target.value);});</script>"
@@ -329,7 +369,7 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
             f"<details><summary>{escape(set_name)} ({len(ms)})</summary>"
             f'<ul><li><a href="#{anchor}"><b>Jump to the start of {escape(set_name)}</b></a></li>{items}</ul></details>'
         )
-    if any(_number(r.get(m[0])) is not None for r in rows for m in METRICS):
+    if any(_number(r.get(m.column)) is not None for r in rows for m in METRICS):
         nav.append("<a href='summary.html'><b>Summary of scores</b></a>")
     nav.append("</nav>")
     # a menu closes on a click outside it, on a model chosen in it, and on Escape (one menu open at a time)
