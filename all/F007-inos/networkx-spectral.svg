@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1107" viewBox="0 0 900 1107" font-family="Helvetica, Arial, sans-serif">
+<title>F007-inos: networkx-spectral</title>
+<defs><marker id="production" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker><marker id="stimulation" viewBox="0 0 11 10" refX="10" refY="5" markerWidth="8.8" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L10,5 L1,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="catalysis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><circle cx="5" cy="5" r="4" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="inhibition" viewBox="0 0 4 10" refX="1" refY="5" markerWidth="3.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="2"/></marker><marker id="necessary-stimulation" viewBox="0 0 14 10" refX="13" refY="5" markerWidth="11.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="1.6"/><path d="M4,1 L13,5 L4,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="modulation" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9.6" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,5 L6,1 L11,5 L6,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker></defs>
+<rect width="100%" height="100%" fill="#fff"/>
+<rect x="8" y="6" width="14" height="11" rx="2" fill="#cfe2f3" stroke="#666" stroke-width="0.6"/><text x="28" y="15.5" font-size="11" fill="#333">CYTOSOL</text>
+<rect x="8" y="22" width="14" height="11" rx="2" fill="#fce5cd" stroke="#666" stroke-width="0.6"/><text x="28" y="31.5" font-size="11" fill="#333">NUCLEUS</text>
+<rect x="8" y="38" width="14" height="11" rx="2" fill="#d9ead3" stroke="#666" stroke-width="0.6"/><text x="28" y="47.5" font-size="11" fill="#333">PLASMA MEMBRANE</text>
+<rect x="8" y="54" width="14" height="11" rx="2" fill="#f4cccc" stroke="#666" stroke-width="0.6"/><text x="28" y="63.5" font-size="11" fill="#333">EXTRACELLULAR SPACE</text>
+<polyline points="521.5,1102.7 520.8,1093.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="473.7,1102.6 431.3,1101.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="4.9,370.7 6.5,375.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="14.1,398.2 6.7,376.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="22.7,424.0 24.1,427.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="12.0,392.0 24.1,427.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="18.0,410.9 14.5,401.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="206.6,886.4 166.4,802.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="206.9,888.4 205.2,899.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="562.5,1063.3 521.1,1092.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="563.9,1063.3 565.8,1082.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="5.2,371.7 5.2,371.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="821.7,392.5 798.0,481.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="845.9,300.3 843.8,306.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="771.2,576.2 743.0,669.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="127.3,707.2 90.7,613.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="165.3,804.5 166.1,802.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="90.5,613.1 90.5,613.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="56.2,518.2 24.4,428.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="3.5,366.4 5.1,371.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="4.9,370.7 6.5,375.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="712.0,765.5 680.1,855.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="681.3,860.0 680.1,856.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="642.1,932.9 604.1,1000.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="681.3,860.0 680.1,856.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="339.8,1077.1 340.0,1068.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="294.4,1015.0 251.0,955.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="339.8,1077.1 340.0,1068.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="383.5,1089.0 340.4,1068.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="896.6,78.1 894.1,89.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="885.3,129.0 874.3,177.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="860.0,238.8 843.8,306.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="896.6,78.1 894.1,89.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="5.9,374.1 7.5,378.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="520.4,1093.1 478.5,1102.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="166.0,801.2 128.1,709.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="24.1,427.5 14.8,400.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="24.1,427.5 18.7,412.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="5.4,372.1 11.4,390.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="5.1,371.3 3.5,366.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="797.7,482.0 771.7,574.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="565.9,1083.4 566.8,1092.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="205.1,899.9 204.3,904.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="843.6,307.4 822.2,390.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="6.5,375.5 5.2,371.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="90.4,612.7 56.9,520.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="679.8,856.3 643.1,931.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="339.7,1067.6 296.0,1016.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="874.2,178.1 860.5,236.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="7.8,379.5 11.4,390.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="14.2,400.6 12.7,396.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="893.9,90.4 885.7,127.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="742.8,670.7 712.6,763.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="603.6,1001.7 564.5,1061.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="430.5,1101.5 387.9,1090.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="250.5,954.9 207.7,888.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<ellipse cx="521.5" cy="1103.7" rx="2.4" ry="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>s_n0_n0</title></ellipse>
+<rect x="473.7" y="1101.7" width="4.8" height="1.9" rx="0.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>IRF1</title></rect>
+<rect x="1.3" y="364.5" width="3.8" height="1.9" rx="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>fumarate</title></rect>
+<rect x="2.7" y="368.8" width="3.8" height="1.9" rx="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>aspartate</title></rect>
+<rect x="12.5" y="398.2" width="3.8" height="1.9" rx="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>citrulline</title></rect>
+<rect x="20.4" y="422.1" width="3.8" height="1.9" rx="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>O2</title></rect>
+<rect x="9.8" y="390.1" width="3.8" height="1.9" rx="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>arginine</title></rect>
+<rect x="16.4" y="410.9" width="3.8" height="1.9" rx="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>NO</title></rect>
+<path d="M204.7,886.4 H209.4 V887.9 Q209.4,888.4 209.0,888.4 H205.1 Q204.7,888.4 204.7,887.9 Z" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>iNOS</title></path>
+<path d="M561.4,1061.4 H566.2 V1062.9 Q566.2,1063.3 565.8,1063.3 H561.9 Q561.4,1063.3 561.4,1062.9 Z" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>IRF1</title></path>
+<rect x="3.0" y="369.8" width="3.8" height="1.9" rx="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>argininosuccinate</title></rect>
+<rect x="819.6" y="390.6" width="4.8" height="1.9" rx="0.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>STAT1</title></rect>
+<rect x="843.8" y="298.4" width="4.8" height="1.9" rx="0.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>STAT1</title></rect>
+<rect x="769.1" y="574.3" width="4.8" height="1.9" rx="0.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>STAT1</title></rect>
+<ellipse cx="566.9" cy="1093.4" rx="2.4" ry="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>s_n0_n14</title></ellipse>
+<ellipse cx="204.2" cy="905.7" rx="2.4" ry="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>s_n0_n15</title></ellipse>
+<rect x="125.3" y="707.2" width="4.8" height="1.9" rx="0.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>iNOS</title></rect>
+<ellipse cx="165.0" cy="805.5" rx="2.4" ry="1.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>s_n0_n17</title></ellipse>
+<rect x="86.5" y="611.6" width="4.8" height="1.9" rx="0.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>CaM</title></rect>
+<polygon points="54.5,518.2 58.5,518.2 58.9,518.6 58.9,519.8 58.5,520.1 54.5,520.1 54.1,519.8 54.1,518.6" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>CaM:iNOS</title></polygon>
+<rect x="0.8" y="364.5" width="4.8" height="1.9" rx="0.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ASL</title></rect>
+<rect x="2.2" y="368.8" width="4.8" height="1.9" rx="0.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ASS1</title></rect>
+<rect x="709.9" y="763.6" width="4.8" height="1.9" rx="0.3" fill="#fce5cd" stroke="#222" stroke-width="1"><title>STAT1</title></rect>
+<path d="M679.2,860.0 H684.0 V861.5 Q684.0,861.9 683.6,861.9 H679.7 Q679.2,861.9 679.2,861.5 Z" fill="#fce5cd" stroke="#222" stroke-width="1"><title>IRF1</title></path>
+<path d="M640.2,931.0 H645.0 V932.5 Q645.0,932.9 644.6,932.9 H640.7 Q640.2,932.9 640.2,932.5 Z" fill="#fce5cd" stroke="#222" stroke-width="1"><title>IRF1</title></path>
+<ellipse cx="681.6" cy="861.0" rx="2.4" ry="1.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>s_n1_n3</title></ellipse>
+<ellipse cx="339.8" cy="1078.1" rx="2.4" ry="1.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>s_n1_n4</title></ellipse>
+<path d="M292.8,1015.0 H297.5 V1016.5 Q297.5,1016.9 297.1,1016.9 H293.2 Q292.8,1016.9 292.8,1016.5 Z" fill="#fce5cd" stroke="#222" stroke-width="1"><title>iNOS</title></path>
+<path d="M337.4,1077.1 H342.2 V1078.6 Q342.2,1079.0 341.7,1079.0 H337.8 Q337.4,1079.0 337.4,1078.6 Z" fill="#fce5cd" stroke="#222" stroke-width="1"><title>iNOS</title></path>
+<rect x="383.1" y="1089.0" width="4.8" height="1.9" rx="0.3" fill="#fce5cd" stroke="#222" stroke-width="1"><title>IRF1</title></rect>
+<polygon points="894.8,76.2 898.8,76.2 899.2,76.6 899.2,77.8 898.8,78.1 894.8,78.1 894.4,77.8 894.4,76.6" fill="#d9ead3" stroke="#222" stroke-width="1"><title>JAK1:JAK2:IFNGR2:IFNGR1</title></polygon>
+<polygon points="883.5,127.0 887.5,127.0 887.9,127.4 887.9,128.6 887.5,129.0 883.5,129.0 883.1,128.6 883.1,127.4" fill="#d9ead3" stroke="#222" stroke-width="1"><title>IFNG:IFNGR2:JAK1:JAK2:IFNGR1</title></polygon>
+<polygon points="858.3,236.8 862.3,236.8 862.7,237.2 862.7,238.4 862.3,238.8 858.3,238.8 857.9,238.4 857.9,237.2" fill="#d9ead3" stroke="#222" stroke-width="1"><title>IFNG:IFNGR1:IFNGR2:JAK1:JAK2</title></polygon>
+<rect x="894.4" y="76.2" width="4.8" height="1.9" rx="0.3" fill="#f4cccc" stroke="#222" stroke-width="1"><title>IFNG</title></rect>
+<rect x="3.7" y="372.1" width="3.8" height="1.9" rx="1.0" fill="#f4cccc" stroke="#222" stroke-width="1"><title>arginine</title></rect>
+<rect x="10.4" y="394.5" width="3.8" height="1.9" rx="1.0" fill="#f4cccc" stroke="#222" stroke-width="1"><title>NO</title></rect>
+<rect x="520.4" y="1092.6" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n22</title></rect>
+<rect x="165.8" y="801.2" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n23</title></rect>
+<rect x="23.9" y="427.5" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n24</title></rect>
+<rect x="4.8" y="371.3" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n25</title></rect>
+<rect x="797.5" y="481.2" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n26</title></rect>
+<rect x="565.5" y="1082.6" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n27</title></rect>
+<rect x="204.7" y="899.1" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n28</title></rect>
+<rect x="843.3" y="306.6" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n29</title></rect>
+<rect x="6.2" y="375.5" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n30</title></rect>
+<rect x="90.1" y="612.7" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n0_n31</title></rect>
+<rect x="679.6" y="855.5" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n1_n9</title></rect>
+<rect x="339.6" y="1067.6" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n1_n10</title></rect>
+<rect x="873.8" y="177.3" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n2_n3</title></rect>
+<rect x="7.3" y="378.7" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n2_n4</title></rect>
+<rect x="13.9" y="400.6" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n2_n5</title></rect>
+<rect x="893.6" y="89.6" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n2_n6</title></rect>
+<rect x="742.5" y="669.9" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n4</title></rect>
+<rect x="603.4" y="1000.9" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n5</title></rect>
+<rect x="430.5" y="1101.2" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n6</title></rect>
+<rect x="250.3" y="954.9" width="0.8" height="0.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n7</title></rect>
+</svg>

@@ -1,0 +1,216 @@
+{
+ "nodes": [
+  {
+   "id": "species_0",
+   "of": "species_0",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": -5.0446807298628835,
+   "y": -0.758358877180408,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_1",
+   "of": "species_1",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": 1.601330460195087,
+   "y": -2.618751141102976,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_2",
+   "of": "species_2",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "carbamoyl-P",
+   "x": -2.2380919903297682,
+   "y": 1.2929382648296257,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_3",
+   "of": "species_3",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "ADP",
+   "x": 1.6663697344094957,
+   "y": -0.25561747292876913,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_4",
+   "of": "species_4",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "ATP",
+   "x": -0.5171251292211778,
+   "y": -2.5460508292173167,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_5",
+   "of": "species_5",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "ERK1/2",
+   "x": -3.9089475608632114,
+   "y": -4.047165050785362,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_6",
+   "of": "species_6",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamine",
+   "x": 4.387273298356356,
+   "y": -0.5892119110433864,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_7",
+   "of": "species_7",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "HCO3-",
+   "x": 1.7728487061542504,
+   "y": 4.142679174728369,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_8",
+   "of": "species_8",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "Pi",
+   "x": 3.9527367012226393,
+   "y": 2.381668808208691,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_9",
+   "of": "species_9",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamate",
+   "x": -0.9862330951043237,
+   "y": 3.6546386021570085,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "re_n13",
+   "of": "re_n13",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n13",
+   "x": -1.6581503345001027,
+   "y": -1.4501378336842676,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n9",
+   "of": "re_n9",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n9",
+   "x": 0.9726699395436277,
+   "y": 0.7933682660187894,
+   "width": 10.0,
+   "height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "species_0",
+   "target": "re_n13",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_1",
+   "target": "re_n9",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_4",
+   "target": "re_n13",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_4",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_5",
+   "target": "re_n13",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_6",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_7",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "re_n13",
+   "target": "species_1",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n13",
+   "target": "species_3",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_2",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_3",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_8",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_9",
+   "arc": "production",
+   "route": []
+  }
+ ]
+}

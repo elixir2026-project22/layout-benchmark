@@ -1,0 +1,263 @@
+{
+ "nodes": [
+  {
+   "id": "species_0_Glyph_0",
+   "of": "species_0",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": 255.23,
+   "y": -1200.54,
+   "width": 60.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 60.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "species_1_Glyph_0",
+   "of": "species_1",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": 414.78,
+   "y": -419.05,
+   "width": 60.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 60.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "species_2_Glyph_0",
+   "of": "species_2",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "carbamoyl-P",
+   "x": 1149.05,
+   "y": -294.76,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 165.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "species_3_Glyph_0",
+   "of": "species_3",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "ADP",
+   "x": 571.11,
+   "y": -664.42,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 60.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "species_4_Glyph_0",
+   "of": "species_4",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "ATP",
+   "x": 635.05,
+   "y": -974.33,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 60.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "species_5_Glyph_0",
+   "of": "species_5",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "ERK1/2",
+   "x": 75.0,
+   "y": -708.02,
+   "width": 60.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 90.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "species_6_Glyph_0",
+   "of": "species_6",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamine",
+   "x": 639.24,
+   "y": -56.35,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 135.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "species_7_Glyph_0",
+   "of": "species_7",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "HCO3-",
+   "x": 1135.86,
+   "y": -670.27,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 75.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "species_8_Glyph_0",
+   "of": "species_8",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "Pi",
+   "x": 965.67,
+   "y": -973.13,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 60.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "species_9_Glyph_0",
+   "of": "species_9",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamate",
+   "x": 918.71,
+   "y": -48.0,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "box",
+   "own_width": 135.0,
+   "own_height": 36.0
+  },
+  {
+   "id": "re_n13_Glyph_0",
+   "of": "re_n13",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n13",
+   "x": 347.23,
+   "y": -799.4,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "box",
+   "own_width": 20.0,
+   "own_height": 20.0
+  },
+  {
+   "id": "re_n9_Glyph_0",
+   "of": "re_n9",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n9",
+   "x": 769.99,
+   "y": -502.42,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "box",
+   "own_width": 20.0,
+   "own_height": 20.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "species_0_Glyph_0",
+   "target": "re_n13_Glyph_0",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_1_Glyph_0",
+   "target": "re_n9_Glyph_0",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_4_Glyph_0",
+   "target": "re_n13_Glyph_0",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_4_Glyph_0",
+   "target": "re_n9_Glyph_0",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_5_Glyph_0",
+   "target": "re_n13_Glyph_0",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_6_Glyph_0",
+   "target": "re_n9_Glyph_0",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_7_Glyph_0",
+   "target": "re_n9_Glyph_0",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "re_n13_Glyph_0",
+   "target": "species_1_Glyph_0",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n13_Glyph_0",
+   "target": "species_3_Glyph_0",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9_Glyph_0",
+   "target": "species_2_Glyph_0",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9_Glyph_0",
+   "target": "species_3_Glyph_0",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9_Glyph_0",
+   "target": "species_8_Glyph_0",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9_Glyph_0",
+   "target": "species_9_Glyph_0",
+   "arc": "production",
+   "route": []
+  }
+ ],
+ "compartments": {
+  "default": {
+   "box": [
+    0.0,
+    -1248.54,
+    1261.55,
+    -0.0
+   ],
+   "label": "default"
+  }
+ }
+}

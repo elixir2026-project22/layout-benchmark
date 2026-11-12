@@ -1,0 +1,221 @@
+{
+ "nodes": [
+  {
+   "id": "M_mt_637605909b@1",
+   "of": "M_mt_637605909b",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "L-cysteine",
+   "x": 263.059,
+   "y": -148.254,
+   "width": 28.799999999999997,
+   "height": 14.399999999999999,
+   "own_shape": "circle",
+   "own_width": 20.0,
+   "own_height": 20.0
+  },
+  {
+   "id": "M_mt_d7c3ed87a4@2",
+   "of": "M_mt_d7c3ed87a4",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "(R)-4'-phosphopantothenate",
+   "x": 129.49,
+   "y": -173.0,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 40.0,
+   "own_height": 40.0
+  },
+  {
+   "id": "M_mt_f1ced368a9@3",
+   "of": "M_mt_f1ced368a9",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "3'-dephospho-CoA",
+   "x": 129.5,
+   "y": -487.25,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 40.0,
+   "own_height": 40.0
+  },
+  {
+   "id": "M_mt_e9e7556073@4",
+   "of": "M_mt_e9e7556073",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "4'-phosphopantetheine",
+   "x": 129.497,
+   "y": -382.5,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 40.0,
+   "own_height": 40.0
+  },
+  {
+   "id": "M_mt_f71cddb700@5",
+   "of": "M_mt_f71cddb700",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "4-phosphopantothenoyl-L-Cys",
+   "x": 129.493,
+   "y": -277.75,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 40.0,
+   "own_height": 40.0
+  },
+  {
+   "id": "M_mt_e64c807c73@6",
+   "of": "M_mt_e64c807c73",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "pantothenate",
+   "x": 129.488,
+   "y": -68.25,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 40.0,
+   "own_height": 40.0
+  },
+  {
+   "id": "R_rx_6accf4db5b",
+   "of": "R_rx_6accf4db5b",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "BR295",
+   "x": 129.495,
+   "y": -330.125,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "circle",
+   "own_width": 10.0,
+   "own_height": 10.0
+  },
+  {
+   "id": "R_rx_7966130d64",
+   "of": "R_rx_7966130d64",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "BR48388",
+   "x": 129.491,
+   "y": -225.375,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "circle",
+   "own_width": 10.0,
+   "own_height": 10.0
+  },
+  {
+   "id": "R_rx_9872bc6566",
+   "of": "R_rx_9872bc6566",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "BR48063",
+   "x": 129.501,
+   "y": -539.625,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "circle",
+   "own_width": 10.0,
+   "own_height": 10.0
+  },
+  {
+   "id": "R_rx_b3c051aa44",
+   "of": "R_rx_b3c051aa44",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "BR47773",
+   "x": 129.488,
+   "y": -120.625,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "circle",
+   "own_width": 10.0,
+   "own_height": 10.0
+  },
+  {
+   "id": "R_rx_d7cfc385b4",
+   "of": "R_rx_d7cfc385b4",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "BR47876",
+   "x": 129.499,
+   "y": -434.875,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "circle",
+   "own_width": 10.0,
+   "own_height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "M_mt_637605909b@1",
+   "target": "R_rx_7966130d64",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "M_mt_d7c3ed87a4@2",
+   "target": "R_rx_7966130d64",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "M_mt_f1ced368a9@3",
+   "target": "R_rx_9872bc6566",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "M_mt_e9e7556073@4",
+   "target": "R_rx_d7cfc385b4",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "M_mt_f71cddb700@5",
+   "target": "R_rx_6accf4db5b",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "M_mt_e64c807c73@6",
+   "target": "R_rx_b3c051aa44",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "R_rx_6accf4db5b",
+   "target": "M_mt_e9e7556073@4",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "R_rx_7966130d64",
+   "target": "M_mt_f71cddb700@5",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "R_rx_b3c051aa44",
+   "target": "M_mt_d7c3ed87a4@2",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "R_rx_d7cfc385b4",
+   "target": "M_mt_f1ced368a9@3",
+   "arc": "production",
+   "route": []
+  }
+ ],
+ "compartments": {}
+}

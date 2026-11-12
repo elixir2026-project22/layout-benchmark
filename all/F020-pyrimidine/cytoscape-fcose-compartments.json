@@ -1,0 +1,216 @@
+{
+ "nodes": [
+  {
+   "id": "species_0",
+   "of": "species_0",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": -110.10402183805692,
+   "y": 38.12499054089471,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_1",
+   "of": "species_1",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": 68.92554288602608,
+   "y": -61.000508279708306,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_2",
+   "of": "species_2",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "carbamoyl-P",
+   "x": 0.8824861272218953,
+   "y": -99.42134954484777,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_3",
+   "of": "species_3",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "ADP",
+   "x": 97.50425713069623,
+   "y": -14.054203621345778,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_4",
+   "of": "species_4",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "ATP",
+   "x": -32.232829980966045,
+   "y": 53.22880004035346,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_5",
+   "of": "species_5",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "ERK1/2",
+   "x": -37.0500148419691,
+   "y": 99.42134954484777,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_6",
+   "of": "species_6",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamine",
+   "x": 116.10402183805692,
+   "y": 33.87685275789044,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_7",
+   "of": "species_7",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "HCO3-",
+   "x": 48.333786432577114,
+   "y": 68.66413734938635,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_8",
+   "of": "species_8",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "Pi",
+   "x": -51.011957577031325,
+   "y": -60.38722932124153,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_9",
+   "of": "species_9",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamate",
+   "x": -69.71304500960528,
+   "y": -10.259598639940052,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "re_n13",
+   "of": "re_n13",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n13",
+   "x": 2.3736079156632144,
+   "y": 12.900234089444034,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n9",
+   "of": "re_n9",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n9",
+   "x": 21.83151030278129,
+   "y": -13.207904192050215,
+   "width": 10.0,
+   "height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "species_0",
+   "target": "re_n13",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_1",
+   "target": "re_n9",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_4",
+   "target": "re_n13",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_4",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_5",
+   "target": "re_n13",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_6",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_7",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "re_n13",
+   "target": "species_1",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n13",
+   "target": "species_3",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_2",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_3",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_8",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_9",
+   "arc": "production",
+   "route": []
+  }
+ ]
+}

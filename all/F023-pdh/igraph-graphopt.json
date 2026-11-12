@@ -1,0 +1,291 @@
+{
+ "nodes": [
+  {
+   "id": "s_n0_n0",
+   "of": "s_n0_n0",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "pyruvate",
+   "x": 47.77883868282349,
+   "y": -84.60850008511996,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n2",
+   "of": "s_n0_n2",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "PDK",
+   "x": -53.63149335966393,
+   "y": -129.83001212711778,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n3",
+   "of": "s_n0_n3",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "PDP",
+   "x": -238.1642631602288,
+   "y": 84.38036061172036,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n6",
+   "of": "s_n0_n6",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "CoA",
+   "x": 227.1952080365194,
+   "y": 34.34509286254763,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n7",
+   "of": "s_n0_n7",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "NAD+",
+   "x": 162.12667157474388,
+   "y": 105.71660265796797,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n8",
+   "of": "s_n0_n8",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "CO2",
+   "x": 208.10013660086202,
+   "y": -61.20075205314791,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n9",
+   "of": "s_n0_n9",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "NADH",
+   "x": 96.88927393106003,
+   "y": -50.524882271884906,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n10",
+   "of": "s_n0_n10",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "acetyl-CoA",
+   "x": 57.27554321960635,
+   "y": 38.995802950832584,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n11",
+   "of": "s_n0_n11",
+   "kind": "species",
+   "sbgn": "complex",
+   "label": "PDHA1:PDHB:DLAT:DLD",
+   "x": -39.08870404082805,
+   "y": 23.669580198122322,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n12",
+   "of": "s_n0_n12",
+   "kind": "species",
+   "sbgn": "complex",
+   "label": "PDHA1:PDHB:DLAT:DLD",
+   "x": -115.02882168251493,
+   "y": -31.740525197313293,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n13",
+   "of": "s_n0_n13",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "Ca2+",
+   "x": -253.56926713426998,
+   "y": -29.132108062561162,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n16",
+   "of": "s_n0_n16",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "dichloroacetate",
+   "x": -40.23950836753603,
+   "y": 100.94965450708587,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "re_n0_n1",
+   "of": "re_n0_n1",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n0_n1",
+   "x": 122.35564432081055,
+   "y": 7.79617993232765,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n0_n4",
+   "of": "re_n0_n4",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n0_n4",
+   "x": -8.726976709039388,
+   "y": -28.37073738450173,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n0_n5",
+   "of": "re_n0_n5",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n0_n5",
+   "x": -173.27228191234465,
+   "y": 19.554243461042393,
+   "width": 10.0,
+   "height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "s_n0_n0",
+   "target": "re_n0_n1",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n0_n0",
+   "target": "re_n0_n4",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0_n2",
+   "target": "re_n0_n4",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0_n3",
+   "target": "re_n0_n5",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0_n6",
+   "target": "re_n0_n1",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n0_n7",
+   "target": "re_n0_n1",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n0_n9",
+   "target": "re_n0_n1",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0_n9",
+   "target": "re_n0_n4",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0_n10",
+   "target": "re_n0_n1",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0_n10",
+   "target": "re_n0_n4",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0_n11",
+   "target": "re_n0_n1",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0_n11",
+   "target": "re_n0_n4",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n0_n12",
+   "target": "re_n0_n5",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n0_n13",
+   "target": "re_n0_n5",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0_n16",
+   "target": "re_n0_n4",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "re_n0_n1",
+   "target": "s_n0_n10",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n0_n1",
+   "target": "s_n0_n8",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n0_n1",
+   "target": "s_n0_n9",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n0_n4",
+   "target": "s_n0_n12",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n0_n5",
+   "target": "s_n0_n11",
+   "arc": "production",
+   "route": []
+  }
+ ]
+}

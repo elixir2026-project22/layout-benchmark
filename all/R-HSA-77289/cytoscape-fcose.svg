@@ -1,0 +1,514 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="531" viewBox="0 0 900 531" font-family="Helvetica, Arial, sans-serif">
+<title>R-HSA-77289: cytoscape-fcose</title>
+<defs><marker id="production" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker><marker id="stimulation" viewBox="0 0 11 10" refX="10" refY="5" markerWidth="8.8" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L10,5 L1,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="catalysis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><circle cx="5" cy="5" r="4" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="inhibition" viewBox="0 0 4 10" refX="1" refY="5" markerWidth="3.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="2"/></marker><marker id="necessary-stimulation" viewBox="0 0 14 10" refX="13" refY="5" markerWidth="11.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="1.6"/><path d="M4,1 L13,5 L4,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="modulation" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9.6" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,5 L6,1 L11,5 L6,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker></defs>
+<rect width="100%" height="100%" fill="#fff"/>
+<rect x="8" y="6" width="14" height="11" rx="2" fill="#cfe2f3" stroke="#666" stroke-width="0.6"/><text x="28" y="15.5" font-size="11" fill="#333">mitochondrial matrix</text>
+<rect x="8" y="22" width="14" height="11" rx="2" fill="#fce5cd" stroke="#666" stroke-width="0.6"/><text x="28" y="31.5" font-size="11" fill="#333">cytosol</text>
+<rect x="8" y="38" width="14" height="11" rx="2" fill="#d9ead3" stroke="#666" stroke-width="0.6"/><text x="28" y="47.5" font-size="11" fill="#333">endoplasmic reticulum lumen</text>
+<rect x="8" y="54" width="14" height="11" rx="2" fill="#f4cccc" stroke="#666" stroke-width="0.6"/><text x="28" y="63.5" font-size="11" fill="#333">mitochondrial inner membrane</text>
+<polyline points="479.5,314.6 403.1,332.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="487.5,307.3 470.3,265.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="479.5,316.3 389.8,352.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="490.2,317.2 498.2,377.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="483.3,307.3 425.6,261.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="479.5,313.5 369.7,327.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="479.9,307.3 448.7,291.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="487.8,317.2 467.7,375.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="486.1,307.3 457.2,264.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="492.8,187.9 458.3,211.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="340.9,331.9 385.6,352.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="338.2,322.4 397.0,282.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="323.8,259.6 408.8,260.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="580.3,228.2 471.5,262.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="717.2,445.7 676.9,390.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="577.8,200.1 588.4,263.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="192.5,300.4 216.9,342.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="385.1,216.7 394.0,244.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="395.9,208.8 470.1,191.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="395.9,211.9 454.1,212.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="395.9,215.6 421.4,223.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="384.6,216.7 398.6,278.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="430.2,299.3 523.6,323.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="513.0,276.9 510.2,353.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="503.2,269.7 396.8,246.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="518.2,266.9 539.2,246.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="515.7,276.9 549.0,341.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="510.6,266.9 473.2,193.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="508.4,266.9 458.2,214.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="518.1,276.9 565.3,324.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="503.8,266.9 425.5,225.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="503.2,272.7 401.1,280.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="513.1,276.9 511.2,364.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="791.7,382.8 718.7,352.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="476.0,482.2 442.9,428.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="716.1,393.8 716.6,354.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="189.5,236.7 137.1,230.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="709.6,95.6 720.3,139.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="662.1,227.3 654.9,274.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="652.9,219.7 613.7,209.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="667.0,227.3 708.4,276.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="541.2,223.0 591.4,282.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="583.1,405.1 539.6,361.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="873.5,233.6 826.3,209.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="604.3,332.6 512.2,355.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="614.1,325.2 613.3,290.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="611.9,325.2 594.1,287.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="604.3,329.4 527.8,323.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="618.0,325.2 653.0,278.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="609.1,335.1 574.6,369.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="612.2,325.2 589.5,267.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="612.2,335.1 593.9,379.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="623.5,325.2 708.0,280.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="604.3,333.7 513.2,365.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="322.3,416.4 366.6,329.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="684.9,196.3 613.7,208.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="479.9,395.5 508.5,357.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="671.5,164.2 718.7,142.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="377.7,312.1 394.2,248.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="727.6,301.4 656.7,277.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="132.9,426.2 89.0,382.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="471.0,429.8 509.8,368.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="616.2,262.2 582.7,307.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="381.9,169.5 459.7,230.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="783.4,292.7 712.2,279.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="213.6,395.2 217.9,346.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="456.7,168.0 424.3,257.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="136.5,390.6 89.0,380.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="379.7,438.6 425.7,398.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="728.3,265.1 656.7,276.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="290.4,373.6 385.6,353.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="641.1,359.8 595.1,380.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="792.5,338.4 718.7,351.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="491.4,217.0 539.2,243.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="662.9,247.8 613.7,210.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="75.3,432.8 86.4,382.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="784.2,174.3 822.1,207.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="671.7,295.5 569.5,326.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="573.2,443.7 500.5,381.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="532.7,310.5 511.1,353.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="547.6,302.8 611.2,288.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="535.6,300.6 541.0,246.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="547.6,301.1 591.0,285.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="532.5,310.5 526.8,321.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="537.1,310.5 549.2,341.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="547.6,306.6 579.1,309.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="538.0,310.5 571.3,369.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="541.8,300.6 586.7,267.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="535.4,310.5 537.4,357.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="538.9,310.5 591.4,379.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="533.2,310.5 511.9,364.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="483.4,299.0 509.1,353.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="479.5,289.0 462.4,233.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="471.1,289.2 412.9,261.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="478.6,289.0 450.2,230.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="472.6,289.0 425.2,261.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="491.0,295.5 579.1,309.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="484.1,289.0 516.2,236.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="485.3,299.0 535.8,357.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="483.1,299.0 510.2,364.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="374.5,261.6 421.4,225.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="503.4,409.9 509.8,357.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="502.2,409.9 498.7,381.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="498.0,409.9 469.0,379.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="503.7,409.9 510.8,368.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="29.0,366.4 84.8,379.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="511.9,148.7 517.3,232.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="458.1,310.9 369.7,327.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="416.9,374.3 401.8,335.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="334.5,199.0 421.5,258.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="477.0,337.0 403.1,333.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="488.1,332.7 470.0,265.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="477.4,342.7 399.3,374.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="438.9,204.3 460.0,229.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="432.8,204.3 411.7,258.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="437.3,204.3 448.2,226.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="433.8,204.3 423.6,258.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="446.6,204.3 515.4,233.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="362.0,410.6 425.7,397.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="526.1,424.4 469.1,379.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="339.6,469.1 428.1,480.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="325.7,462.5 306.1,397.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="170.9,193.1 137.0,228.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="495.0,261.3 448.7,288.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="598.3,348.6 673.4,386.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="617.5,321.7 569.5,326.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="513.2,466.4 432.2,480.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="392.9,481.6 439.8,428.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="288.2,306.3 365.5,327.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="538.6,377.4 549.3,345.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="449.0,329.9 403.1,332.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="468.6,334.2 508.0,354.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="459.8,324.3 469.1,265.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="462.9,334.2 496.8,377.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="456.4,324.3 424.6,261.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="452.4,334.2 399.3,374.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="457.4,324.3 447.2,292.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="458.1,334.2 442.0,424.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="459.8,334.2 466.7,375.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="458.7,324.3 455.9,264.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="465.9,334.2 509.0,365.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="456.7,334.2 428.7,394.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="281.1,347.0 304.4,393.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="343.1,288.4 421.1,260.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="340.2,358.4 385.6,353.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="751.6,418.1 677.5,388.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="520.6,175.6 474.3,190.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="617.4,418.7 574.5,373.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="409.1,410.7 398.0,377.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="545.3,275.5 457.8,263.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="581.4,140.8 610.7,206.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="761.7,230.3 712.2,277.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="365.1,242.8 444.5,288.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="368.9,241.0 453.7,262.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="405.6,184.3 447.2,226.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="557.2,261.2 611.2,287.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="399.0,332.9 340.9,328.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="403.1,332.8 427.9,329.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="509.1,353.6 491.9,317.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="508.2,353.6 472.5,314.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="508.0,354.9 447.9,332.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="510.3,357.7 522.6,459.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="512.2,355.3 578.6,345.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="470.9,261.0 527.2,177.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="468.5,265.1 440.3,323.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="392.6,246.5 323.8,257.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="714.5,351.5 624.2,332.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="718.7,352.4 751.7,359.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="431.8,479.0 463.8,439.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="611.2,287.8 565.2,278.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="612.4,290.3 590.8,338.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="389.8,354.9 412.9,374.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="386.6,355.3 374.5,377.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="543.3,244.5 609.9,255.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="593.0,282.9 590.5,230.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="592.9,287.1 589.0,338.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="523.6,324.6 428.4,374.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="527.8,324.2 578.6,340.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="673.4,386.0 619.5,335.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="675.3,390.0 672.3,435.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="500.5,379.5 527.0,381.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="496.4,377.6 443.8,333.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="462.5,233.7 487.8,307.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="461.9,233.7 467.6,304.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="463.9,232.2 537.3,253.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="551.2,345.6 585.2,405.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="412.9,261.6 482.0,307.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="411.4,262.3 419.0,291.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="412.9,262.0 462.2,304.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="450.2,230.3 487.1,307.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="449.7,230.3 466.9,304.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="448.6,226.1 424.9,145.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="656.7,275.3 710.9,235.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="652.5,276.8 565.2,276.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="656.0,278.9 687.7,324.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="473.9,189.1 507.5,148.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="425.2,261.7 483.2,307.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="425.2,259.3 527.1,221.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="425.1,262.1 463.5,304.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="84.8,381.3 37.5,402.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="87.6,378.3 106.0,327.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="85.3,378.3 52.1,333.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="579.1,309.5 499.5,312.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="579.1,309.5 478.0,309.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="583.3,310.8 643.4,350.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="826.1,206.7 857.3,172.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="425.6,257.8 476.1,217.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="424.0,261.6 436.9,323.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="571.1,373.2 535.8,424.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="573.7,369.0 585.7,348.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="454.1,211.5 408.9,184.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="516.7,236.3 491.3,307.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="516.1,236.3 471.3,304.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="519.5,232.9 569.4,200.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="365.5,328.1 288.6,340.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="369.7,327.1 471.1,297.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="395.2,376.9 328.2,416.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="399.0,373.6 433.6,333.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="444.5,289.4 378.0,269.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="446.1,292.1 439.0,323.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="441.5,424.2 438.1,333.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="441.5,428.4 436.5,509.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="133.0,228.1 98.6,193.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="464.9,376.4 383.8,322.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="465.8,375.7 440.8,333.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="586.7,265.4 513.3,257.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="588.7,267.7 588.6,338.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="609.5,210.8 495.4,307.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="613.7,207.3 655.4,173.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="611.5,206.9 609.7,168.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="612.5,206.9 641.4,140.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="456.9,260.7 497.4,187.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="455.2,264.9 439.3,323.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="569.5,327.0 604.3,329.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="565.3,326.5 499.5,314.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="569.5,328.7 625.4,379.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="306.2,393.7 329.1,332.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="421.8,222.1 379.5,169.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="539.6,361.2 615.5,418.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="535.5,357.6 494.5,317.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="535.5,358.2 474.9,314.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="592.6,383.6 580.0,443.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="592.8,379.5 589.2,348.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="710.4,276.9 716.9,235.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="709.3,281.0 693.1,324.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="712.2,278.4 784.9,260.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="397.0,281.1 343.1,290.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="510.3,364.4 491.5,317.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="509.0,367.5 420.7,410.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="509.6,364.4 471.8,314.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="509.0,365.4 447.5,333.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="513.2,365.8 578.6,346.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="428.0,394.5 437.2,333.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="427.6,398.6 423.8,449.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="722.9,142.7 768.5,164.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="216.1,344.4 171.3,349.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<rect x="479.5" y="307.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>H+ [mitochondrial matrix]</title></rect>
+<text x="489.5" y="313.7" font-size="4.0" text-anchor="middle">H+ [mit…<title>H+ [mitochondrial matrix]</title></text>
+<rect x="490.2" y="178.0" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Crotonoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="500.1" y="184.4" font-size="4.0" text-anchor="middle">Crotono…<title>Crotonoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="321.0" y="322.4" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>tdec2-CoA [mitochondrial matrix]</title></rect>
+<text x="330.9" y="328.7" font-size="4.0" text-anchor="middle">tdec2-C…<title>tdec2-CoA [mitochondrial matrix]</title></text>
+<rect x="303.9" y="254.5" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>(S)-3-Hydroxydodecanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="313.8" y="260.9" font-size="4.0" text-anchor="middle">(S)-3-H…<title>(S)-3-Hydroxydodecanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="580.3" y="220.1" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Octanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="590.3" y="226.5" font-size="4.0" text-anchor="middle">Octanoy…<title>Octanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="710.8" y="445.7" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>acyl-CoA [mitochondrial matrix]</title></rect>
+<text x="720.8" y="452.1" font-size="4.0" text-anchor="middle">acyl-Co…<title>acyl-CoA [mitochondrial matrix]</title></text>
+<rect x="567.0" y="190.1" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3-Oxooctanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="576.9" y="196.5" font-size="4.0" text-anchor="middle">3-Oxooc…<title>3-Oxooctanoyl-CoA [mitochondrial matrix]</title></text>
+<ellipse cx="189.6" cy="295.4" rx="12.4" ry="5.0" fill="#d9ead3" stroke="#222" stroke-width="1"><title>MCFA-CoA, LCFA-CoA [endoplasmic reticulum lumen]</title></ellipse>
+<text x="189.6" y="296.8" font-size="4.0" text-anchor="middle">MCFA-CoA,…<title>MCFA-CoA, LCFA-CoA [endoplasmic reticulum lumen]</title></text>
+<polygon points="373.0,206.8 393.9,206.8 395.9,208.7 395.9,214.7 393.9,216.7 373.0,216.7 371.1,214.7 371.1,208.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ECHS1 hexamer [mitochondrial matrix]</title></polygon>
+<text x="383.5" y="213.1" font-size="4.0" text-anchor="middle">ECHS1 hex…<title>ECHS1 hexamer [mitochondrial matrix]</title></text>
+<rect x="410.3" y="291.8" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3-Oxododecanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="420.2" y="298.2" font-size="4.0" text-anchor="middle">3-Oxodo…<title>3-Oxododecanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="503.2" y="266.9" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>H2O [mitochondrial matrix]</title></rect>
+<text x="513.2" y="273.3" font-size="4.0" text-anchor="middle">H2O [mi…<title>H2O [mitochondrial matrix]</title></text>
+<rect x="791.4" y="382.8" width="24.9" height="10.0" rx="1.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>NDUFAB1 [mitochondrial inner membrane]</title></rect>
+<text x="803.8" y="389.2" font-size="4.0" text-anchor="middle">NDUFAB1 […<title>NDUFAB1 [mitochondrial inner membrane]</title></text>
+<rect x="469.1" y="482.2" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>S-2MPDA-CoA [mitochondrial matrix]</title></rect>
+<text x="479.0" y="488.5" font-size="4.0" text-anchor="middle">S-2MPDA…<title>S-2MPDA-CoA [mitochondrial matrix]</title></text>
+<rect x="706.1" y="393.8" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Malonyl-CoA [mitochondrial matrix]</title></rect>
+<text x="716.1" y="400.2" font-size="4.0" text-anchor="middle">Malonyl…<title>Malonyl-CoA [mitochondrial matrix]</title></text>
+<rect x="189.5" y="233.2" width="24.9" height="10.0" rx="1.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>ACBD6 [cytosol]</title></rect>
+<text x="201.9" y="239.6" font-size="4.0" text-anchor="middle">ACBD6 [cy…<title>ACBD6 [cytosol]</title></text>
+<rect x="695.9" y="85.6" width="24.9" height="10.0" rx="1.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MCEE [mitochondrial matrix]</title></rect>
+<text x="708.3" y="92.0" font-size="4.0" text-anchor="middle">MCEE [mit…<title>MCEE [mitochondrial matrix]</title></text>
+<rect x="707.8" y="225.7" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>PPi [mitochondrial matrix]</title></rect>
+<text x="717.7" y="232.0" font-size="4.0" text-anchor="middle">PPi [mi…<title>PPi [mitochondrial matrix]</title></text>
+<rect x="652.9" y="217.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ATP [mitochondrial matrix]</title></rect>
+<text x="662.9" y="223.7" font-size="4.0" text-anchor="middle">ATP [mi…<title>ATP [mitochondrial matrix]</title></text>
+<rect x="527.1" y="213.0" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3-Oxodecanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="537.1" y="219.4" font-size="4.0" text-anchor="middle">3-Oxode…<title>3-Oxodecanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="578.1" y="405.1" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>(S)-3-Hydroxytetradecanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="588.1" y="411.5" font-size="4.0" text-anchor="middle">(S)-3-H…<title>(S)-3-Hydroxytetradecanoyl-CoA [mitochondrial matrix]</title></text>
+<ellipse cx="630.9" cy="384.1" rx="12.4" ry="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MCFA, LCFA [mitochondrial matrix]</title></ellipse>
+<text x="630.9" y="385.5" font-size="4.0" text-anchor="middle">MCFA, LCF…<title>MCFA, LCFA [mitochondrial matrix]</title></text>
+<polygon points="873.0,233.6 893.9,233.6 895.9,235.6 895.9,241.6 893.9,243.6 873.0,243.6 871.0,241.6 871.0,235.6" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>2xMMAA:2xMUT:AdoCbl [mitochondrial matrix]</title></polygon>
+<text x="883.4" y="240.0" font-size="4.0" text-anchor="middle">2xMMAA:2x…<title>2xMMAA:2xMUT:AdoCbl [mitochondrial matrix]</title></text>
+<rect x="413.5" y="135.2" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACA-CoA [mitochondrial matrix]</title></rect>
+<text x="423.5" y="141.6" font-size="4.0" text-anchor="middle">ACA-CoA…<title>ACA-CoA [mitochondrial matrix]</title></text>
+<rect x="604.3" y="325.2" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>CoA-SH [mitochondrial matrix]</title></rect>
+<text x="614.2" y="331.6" font-size="4.0" text-anchor="middle">CoA-SH …<title>CoA-SH [mitochondrial matrix]</title></text>
+<rect x="309.8" y="416.4" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>2-trans-4-cis-decadienoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="319.8" y="422.8" font-size="4.0" text-anchor="middle">2-trans…<title>2-trans-4-cis-decadienoyl-CoA [mitochondrial matrix]</title></text>
+<polygon points="686.9,189.1 707.8,189.1 709.8,191.1 709.8,197.1 707.8,199.1 686.9,199.1 684.9,197.1 684.9,191.1" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>6x(Btn-PCCA:PCCB) [mitochondrial matrix]</title></polygon>
+<text x="697.3" y="195.5" font-size="4.0" text-anchor="middle">6x(Btn-PC…<title>6x(Btn-PCCA:PCCB) [mitochondrial matrix]</title></text>
+<rect x="413.4" y="449.0" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>DHB-CoA [mitochondrial matrix]</title></rect>
+<text x="423.4" y="455.4" font-size="4.0" text-anchor="middle">DHB-CoA…<title>DHB-CoA [mitochondrial matrix]</title></text>
+<rect x="466.1" y="395.5" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>LIN-CoA [mitochondrial matrix]</title></rect>
+<text x="476.1" y="401.9" font-size="4.0" text-anchor="middle">LIN-CoA…<title>LIN-CoA [mitochondrial matrix]</title></text>
+<rect x="633.6" y="130.8" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Pi [mitochondrial matrix]</title></rect>
+<text x="643.5" y="137.1" font-size="4.0" text-anchor="middle">Pi [mit…<title>Pi [mitochondrial matrix]</title></text>
+<rect x="651.6" y="163.7" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MEMA-CoA [mitochondrial matrix]</title></rect>
+<text x="661.6" y="170.1" font-size="4.0" text-anchor="middle">MEMA-Co…<title>MEMA-CoA [mitochondrial matrix]</title></text>
+<rect x="366.4" y="312.1" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>2-trans-Dodecenoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="376.4" y="318.5" font-size="4.0" text-anchor="middle">2-trans…<title>2-trans-Dodecenoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="727.6" y="299.8" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>BUT [mitochondrial matrix]</title></rect>
+<text x="737.6" y="306.1" font-size="4.0" text-anchor="middle">BUT [mi…<title>BUT [mitochondrial matrix]</title></text>
+<ellipse cx="137.9" cy="431.1" rx="12.4" ry="5.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>MCFA-CoA, LCFA-CoA [cytosol]</title></ellipse>
+<text x="137.9" y="432.5" font-size="4.0" text-anchor="middle">MCFA-CoA,…<title>MCFA-CoA, LCFA-CoA [cytosol]</title></text>
+<rect x="457.9" y="429.8" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>trans,cis-Lauro-2,6-dienoyl-CoA  [mitochondrial matrix]</title></rect>
+<text x="467.8" y="436.2" font-size="4.0" text-anchor="middle">trans,c…<title>trans,cis-Lauro-2,6-dienoyl-CoA  [mitochondrial matrix]</title></text>
+<rect x="609.9" y="252.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>(S)-3-Hydroxyhexadecanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="619.9" y="258.6" font-size="4.0" text-anchor="middle">(S)-3-H…<title>(S)-3-Hydroxyhexadecanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="365.5" y="159.6" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>(S)-Hydroxyhexanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="375.5" y="165.9" font-size="4.0" text-anchor="middle">(S)-Hyd…<title>(S)-Hydroxyhexanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="783.4" y="290.0" width="24.9" height="10.0" rx="1.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACSF2 [mitochondrial matrix]</title></rect>
+<text x="795.8" y="296.4" font-size="4.0" text-anchor="middle">ACSF2 [mi…<title>ACSF2 [mitochondrial matrix]</title></text>
+<ellipse cx="213.2" cy="400.2" rx="12.4" ry="5.0" fill="#d9ead3" stroke="#222" stroke-width="1"><title>DBI, (ACBD7) [endoplasmic reticulum lumen]</title></ellipse>
+<text x="213.2" y="401.6" font-size="4.0" text-anchor="middle">DBI, (ACB…<title>DBI, (ACBD7) [endoplasmic reticulum lumen]</title></text>
+<rect x="427.9" y="323.4" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>FADH2 [mitochondrial matrix]</title></rect>
+<text x="437.9" y="329.8" font-size="4.0" text-anchor="middle">FADH2 […<title>FADH2 [mitochondrial matrix]</title></text>
+<polygon points="148.4,346.0 169.3,346.0 171.3,348.0 171.3,354.0 169.3,356.0 148.4,356.0 146.4,354.0 146.4,348.0" fill="#d9ead3" stroke="#222" stroke-width="1"><title>DBI,ACBD7:MCFA-CoA,LCFA-CoA [endoplasmic reticulum lumen]</title></polygon>
+<text x="158.8" y="352.4" font-size="4.0" text-anchor="middle">DBI,ACBD7…<title>DBI,ACBD7:MCFA-CoA,LCFA-CoA [endoplasmic reticulum lumen]</title></text>
+<rect x="448.6" y="158.1" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>PalmCoA [mitochondrial matrix]</title></rect>
+<text x="458.5" y="164.5" font-size="4.0" text-anchor="middle">PalmCoA…<title>PalmCoA [mitochondrial matrix]</title></text>
+<rect x="136.5" y="387.7" width="19.9" height="10.0" rx="5.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>H2O [cytosol]</title></rect>
+<text x="146.4" y="394.1" font-size="4.0" text-anchor="middle">H2O [cy…<title>H2O [cytosol]</title></text>
+<rect x="364.0" y="438.6" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>BH-CoA [mitochondrial matrix]</title></rect>
+<text x="374.0" y="445.0" font-size="4.0" text-anchor="middle">BH-CoA …<title>BH-CoA [mitochondrial matrix]</title></text>
+<ellipse cx="740.8" cy="263.2" rx="12.4" ry="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACSM3,ACSM6 [mitochondrial matrix]</title></ellipse>
+<text x="740.8" y="264.6" font-size="4.0" text-anchor="middle">ACSM3,ACS…<title>ACSM3,ACSM6 [mitochondrial matrix]</title></text>
+<rect x="784.9" y="253.4" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MCFA-CoA [mitochondrial matrix]</title></rect>
+<text x="794.9" y="259.7" font-size="4.0" text-anchor="middle">MCFA-Co…<title>MCFA-CoA [mitochondrial matrix]</title></text>
+<polygon points="267.5,371.2 288.4,371.2 290.4,373.2 290.4,379.2 288.4,381.1 267.5,381.1 265.5,379.2 265.5,373.2" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MECR dimer [mitochondrial matrix]</title></polygon>
+<text x="278.0" y="377.6" font-size="4.0" text-anchor="middle">MECR dime…<title>MECR dimer [mitochondrial matrix]</title></text>
+<rect x="641.1" y="350.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3-Oxopalmitoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="651.0" y="356.6" font-size="4.0" text-anchor="middle">3-Oxopa…<title>3-Oxopalmitoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="792.5" y="331.2" width="24.9" height="10.0" rx="1.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MCAT [mitochondrial matrix]</title></rect>
+<text x="804.9" y="337.5" font-size="4.0" text-anchor="middle">MCAT [mit…<title>MCAT [mitochondrial matrix]</title></text>
+<rect x="472.3" y="207.1" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>trans-Hexadec-2-enoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="482.2" y="213.4" font-size="4.0" text-anchor="middle">trans-H…<title>trans-Hexadec-2-enoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="659.5" y="247.8" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>HCO3- [mitochondrial matrix]</title></rect>
+<text x="669.5" y="254.2" font-size="4.0" text-anchor="middle">HCO3- […<title>HCO3- [mitochondrial matrix]</title></text>
+<rect x="61.7" y="432.8" width="24.9" height="10.0" rx="1.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>PCTP [cytosol]</title></rect>
+<text x="74.2" y="439.2" font-size="4.0" text-anchor="middle">PCTP [cyt…<title>PCTP [cytosol]</title></text>
+<rect x="768.5" y="164.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-MM-CoA [mitochondrial matrix]</title></rect>
+<text x="778.4" y="170.7" font-size="4.0" text-anchor="middle">L-MM-Co…<title>L-MM-CoA [mitochondrial matrix]</title></text>
+<ellipse cx="684.2" cy="291.8" rx="12.4" ry="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACOT2,9, THEM4,5 dimer [mitochondrial matrix]</title></ellipse>
+<text x="684.2" y="293.2" font-size="4.0" text-anchor="middle">ACOT2,9, …<title>ACOT2,9, THEM4,5 dimer [mitochondrial matrix]</title></text>
+<rect x="569.0" y="443.7" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MYS-CoA [mitochondrial matrix]</title></rect>
+<text x="579.0" y="450.0" font-size="4.0" text-anchor="middle">MYS-CoA…<title>MYS-CoA [mitochondrial matrix]</title></text>
+<polygon points="524.7,300.6 545.6,300.6 547.6,302.6 547.6,308.5 545.6,310.5 524.7,310.5 522.7,308.5 522.7,302.6" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Trifunctional Protein [mitochondrial matrix]</title></polygon>
+<text x="535.1" y="306.9" font-size="4.0" text-anchor="middle">Trifuncti…<title>Trifunctional Protein [mitochondrial matrix]</title></text>
+<rect x="471.1" y="289.0" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>NAD+ [mitochondrial matrix]</title></rect>
+<text x="481.0" y="295.4" font-size="4.0" text-anchor="middle">NAD+ [m…<title>NAD+ [mitochondrial matrix]</title></text>
+<rect x="358.1" y="261.6" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>trans-Hex-2-enoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="368.0" y="268.0" font-size="4.0" text-anchor="middle">trans-H…<title>trans-Hex-2-enoyl-CoA [mitochondrial matrix]</title></text>
+<polygon points="492.4,409.9 513.3,409.9 515.3,411.9 515.3,417.9 513.3,419.9 492.4,419.9 490.4,417.9 490.4,411.9" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACADL tetramer [mitochondrial matrix]</title></polygon>
+<text x="502.8" y="416.3" font-size="4.0" text-anchor="middle">ACADL tet…<title>ACADL tetramer [mitochondrial matrix]</title></text>
+<rect x="17.5" y="401.8" width="19.9" height="10.0" rx="5.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>H+ [cytosol]</title></rect>
+<text x="27.5" y="408.2" font-size="4.0" text-anchor="middle">H+ [cyt…<title>H+ [cytosol]</title></text>
+<ellipse cx="16.6" cy="363.4" rx="12.4" ry="5.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>Cytosolic ACOTs, THEM4 [cytosol]</title></ellipse>
+<text x="16.6" y="364.7" font-size="4.0" text-anchor="middle">Cytosolic…<title>Cytosolic ACOTs, THEM4 [cytosol]</title></text>
+<rect x="501.6" y="138.8" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>(S)-Hydroxyoctanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="511.6" y="145.1" font-size="4.0" text-anchor="middle">(S)-Hyd…<title>(S)-Hydroxyoctanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="458.1" y="304.1" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>NADH [mitochondrial matrix]</title></rect>
+<text x="468.0" y="310.5" font-size="4.0" text-anchor="middle">NADH [m…<title>NADH [mitochondrial matrix]</title></text>
+<rect x="599.5" y="158.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ADP [mitochondrial matrix]</title></rect>
+<text x="609.5" y="164.7" font-size="4.0" text-anchor="middle">ADP [mi…<title>ADP [mitochondrial matrix]</title></text>
+<rect x="408.9" y="374.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>DEC-CoA [mitochondrial matrix]</title></rect>
+<text x="418.8" y="380.7" font-size="4.0" text-anchor="middle">DEC-CoA…<title>DEC-CoA [mitochondrial matrix]</title></text>
+<polygon points="316.8,189.1 337.7,189.1 339.6,191.1 339.6,197.0 337.7,199.0 316.8,199.0 314.8,197.0 314.8,191.1" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACADVL dimer [mitochondrial matrix]</title></polygon>
+<text x="327.2" y="195.4" font-size="4.0" text-anchor="middle">ACADVL di…<title>ACADVL dimer [mitochondrial matrix]</title></text>
+<polygon points="479.0,332.7 499.9,332.7 501.9,334.7 501.9,340.7 499.9,342.7 479.0,342.7 477.0,340.7 477.0,334.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACADM tetramer [mitochondrial matrix]</title></polygon>
+<text x="489.4" y="339.1" font-size="4.0" text-anchor="middle">ACADM tet…<title>ACADM tetramer [mitochondrial matrix]</title></text>
+<polygon points="424.3,194.4 445.2,194.4 447.2,196.4 447.2,202.3 445.2,204.3 424.3,204.3 422.3,202.3 422.3,196.4" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>HADH dimer [mitochondrial matrix]</title></polygon>
+<text x="434.8" y="200.7" font-size="4.0" text-anchor="middle">HADH dime…<title>HADH dimer [mitochondrial matrix]</title></text>
+<rect x="337.1" y="408.3" width="24.9" height="10.0" rx="1.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>ACAD11 [mitochondrial inner membrane]</title></rect>
+<text x="349.6" y="414.7" font-size="4.0" text-anchor="middle">ACAD11 [m…<title>ACAD11 [mitochondrial inner membrane]</title></text>
+<rect x="522.4" y="424.4" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>LAU-CoA [mitochondrial matrix]</title></rect>
+<text x="532.4" y="430.8" font-size="4.0" text-anchor="middle">LAU-CoA…<title>LAU-CoA [mitochondrial matrix]</title></text>
+<polygon points="316.7,462.5 337.6,462.5 339.6,464.5 339.6,470.4 337.6,472.4 316.7,472.4 314.7,470.4 314.7,464.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>DCI dimer [mitochondrial matrix]</title></polygon>
+<text x="327.2" y="468.8" font-size="4.0" text-anchor="middle">DCI dimer…<title>DCI dimer [mitochondrial matrix]</title></text>
+<rect x="165.8" y="183.1" width="19.9" height="10.0" rx="5.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>LCFA-CoA [cytosol]</title></rect>
+<text x="175.8" y="189.5" font-size="4.0" text-anchor="middle">LCFA-Co…<title>LCFA-CoA [cytosol]</title></text>
+<rect x="361.9" y="377.8" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>NADP+ [mitochondrial matrix]</title></rect>
+<text x="371.9" y="384.2" font-size="4.0" text-anchor="middle">NADP+ […<title>NADP+ [mitochondrial matrix]</title></text>
+<rect x="493.4" y="251.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>HX-CoA [mitochondrial matrix]</title></rect>
+<text x="503.4" y="257.7" font-size="4.0" text-anchor="middle">HX-CoA …<title>HX-CoA [mitochondrial matrix]</title></text>
+<rect x="426.3" y="509.0" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>S-2MDPDA-CoA [mitochondrial matrix]</title></rect>
+<text x="436.2" y="515.4" font-size="4.0" text-anchor="middle">S-2MDPD…<title>S-2MDPDA-CoA [mitochondrial matrix]</title></text>
+<rect x="578.6" y="338.6" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Ac-CoA [mitochondrial matrix]</title></rect>
+<text x="588.6" y="345.0" font-size="4.0" text-anchor="middle">Ac-CoA …<title>Ac-CoA [mitochondrial matrix]</title></text>
+<rect x="681.3" y="324.2" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>AMP [mitochondrial matrix]</title></rect>
+<text x="691.2" y="330.6" font-size="4.0" text-anchor="middle">AMP [mi…<title>AMP [mitochondrial matrix]</title></text>
+<polygon points="83.2,183.7 104.1,183.7 106.1,185.7 106.1,191.6 104.1,193.6 83.2,193.6 81.2,191.6 81.2,185.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>ACBD6:LCFA-CoA [cytosol]</title></polygon>
+<text x="93.6" y="190.1" font-size="4.0" text-anchor="middle">ACBD6:LCF…<title>ACBD6:LCFA-CoA [cytosol]</title></text>
+<ellipse cx="629.9" cy="320.4" rx="12.4" ry="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MCFA-CoA, LCFA-CoA [mitochondrial matrix]</title></ellipse>
+<text x="629.9" y="321.8" font-size="4.0" text-anchor="middle">MCFA-CoA,…<title>MCFA-CoA, LCFA-CoA [mitochondrial matrix]</title></text>
+<rect x="513.2" y="459.7" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>cis,cis-3,6-Dodecadienoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="523.2" y="466.1" font-size="4.0" text-anchor="middle">cis,cis…<title>cis,cis-3,6-Dodecadienoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="851.9" y="162.9" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>SUCC-CoA [mitochondrial matrix]</title></rect>
+<text x="861.9" y="169.3" font-size="4.0" text-anchor="middle">SUCC-Co…<title>SUCC-CoA [mitochondrial matrix]</title></text>
+<rect x="376.1" y="481.6" width="24.9" height="10.0" rx="1.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACAD10 [mitochondrial matrix]</title></rect>
+<text x="388.5" y="488.0" font-size="4.0" text-anchor="middle">ACAD10 [m…<title>ACAD10 [mitochondrial matrix]</title></text>
+<rect x="751.7" y="357.5" width="24.9" height="10.0" rx="1.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>Mal-PPANT-S112-NDUFAB1 [mitochondrial inner membrane]</title></rect>
+<text x="764.1" y="363.9" font-size="4.0" text-anchor="middle">Mal-PPANT…<title>Mal-PPANT-S112-NDUFAB1 [mitochondrial inner membrane]</title></text>
+<polygon points="265.3,298.0 286.2,298.0 288.2,300.0 288.2,305.9 286.2,307.9 265.3,307.9 263.3,305.9 263.3,300.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>DECR1 tetramer [mitochondrial matrix]</title></polygon>
+<text x="275.7" y="304.3" font-size="4.0" text-anchor="middle">DECR1 tet…<title>DECR1 tetramer [mitochondrial matrix]</title></text>
+<rect x="527.0" y="377.4" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>trans-Tetradec-2-enoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="536.9" y="383.8" font-size="4.0" text-anchor="middle">trans-T…<title>trans-Tetradec-2-enoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="449.0" y="324.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>FAD [mitochondrial matrix]</title></rect>
+<text x="459.0" y="330.7" font-size="4.0" text-anchor="middle">FAD [mi…<title>FAD [mitochondrial matrix]</title></text>
+<ellipse cx="48.4" cy="328.9" rx="12.4" ry="5.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>MCFA, LCFA [cytosol]</title></ellipse>
+<text x="48.4" y="330.3" font-size="4.0" text-anchor="middle">MCFA, LCF…<title>MCFA, LCFA [cytosol]</title></text>
+<rect x="662.0" y="435.7" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3OA-CoA [mitochondrial matrix]</title></rect>
+<text x="671.9" y="442.1" font-size="4.0" text-anchor="middle">3OA-CoA…<title>3OA-CoA [mitochondrial matrix]</title></text>
+<rect x="268.7" y="337.1" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3-trans-decenoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="278.7" y="343.4" font-size="4.0" text-anchor="middle">3-trans…<title>3-trans-decenoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="323.2" y="287.0" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>(S)-Hydroxydecanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="333.2" y="293.4" font-size="4.0" text-anchor="middle">(S)-Hyd…<title>(S)-Hydroxydecanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="320.3" y="354.6" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>NADPH [mitochondrial matrix]</title></rect>
+<text x="330.3" y="360.9" font-size="4.0" text-anchor="middle">NADPH […<title>NADPH [mitochondrial matrix]</title></text>
+<polygon points="753.6,418.0 774.5,418.0 776.5,420.0 776.5,426.0 774.5,428.0 753.6,428.0 751.6,426.0 751.6,420.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACAA2 tetramer [mitochondrial matrix]</title></polygon>
+<text x="764.1" y="424.4" font-size="4.0" text-anchor="middle">ACAA2 tet…<title>ACAA2 tetramer [mitochondrial matrix]</title></text>
+<rect x="520.6" y="167.4" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>trans-Oct-2-enoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="530.6" y="173.8" font-size="4.0" text-anchor="middle">trans-O…<title>trans-Oct-2-enoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="612.1" y="418.7" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3-Oxotetradecanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="622.1" y="425.1" font-size="4.0" text-anchor="middle">3-Oxote…<title>3-Oxotetradecanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="400.8" y="410.7" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>4-cis-decenoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="410.7" y="417.1" font-size="4.0" text-anchor="middle">4-cis-d…<title>4-cis-decenoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="545.3" y="272.0" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>BT-CoA [mitochondrial matrix]</title></rect>
+<text x="555.2" y="278.3" font-size="4.0" text-anchor="middle">BT-CoA …<title>BT-CoA [mitochondrial matrix]</title></text>
+<rect x="569.2" y="130.9" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>PROP-CoA [mitochondrial matrix]</title></rect>
+<text x="579.2" y="137.2" font-size="4.0" text-anchor="middle">PROP-Co…<title>PROP-CoA [mitochondrial matrix]</title></text>
+<rect x="757.1" y="220.4" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MCFA [mitochondrial matrix]</title></rect>
+<text x="767.0" y="226.8" font-size="4.0" text-anchor="middle">MCFA [m…<title>MCFA [mitochondrial matrix]</title></text>
+<polygon points="346.1,232.9 367.0,232.9 368.9,234.8 368.9,240.8 367.0,242.8 346.1,242.8 344.1,240.8 344.1,234.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ACADS tetramer [mitochondrial matrix]</title></polygon>
+<text x="356.5" y="239.2" font-size="4.0" text-anchor="middle">ACADS tet…<title>ACADS tetramer [mitochondrial matrix]</title></text>
+<rect x="97.8" y="317.7" width="19.9" height="10.0" rx="5.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>CoA-SH [cytosol]</title></rect>
+<text x="107.8" y="324.1" font-size="4.0" text-anchor="middle">CoA-SH …<title>CoA-SH [cytosol]</title></text>
+<rect x="390.7" y="174.3" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3HB-CoA [mitochondrial matrix]</title></rect>
+<text x="400.6" y="180.7" font-size="4.0" text-anchor="middle">3HB-CoA…<title>3HB-CoA [mitochondrial matrix]</title></text>
+<rect x="537.3" y="251.4" width="19.9" height="10.0" rx="5.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3-Oxohexanoyl-CoA [mitochondrial matrix]</title></rect>
+<text x="547.3" y="257.8" font-size="4.0" text-anchor="middle">3-Oxohe…<title>3-Oxohexanoyl-CoA [mitochondrial matrix]</title></text>
+<rect x="399.0" y="331.0" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Decanoyl-CoA+FAD =&gt; trans-Dec-2-enoyl-CoA+FADH2</title></rect>
+<rect x="508.0" y="353.6" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Linoleoyl-CoA is converted to cis,cis-3,6- dodecadienoyl-CoA by three cycles of beta-oxidation</title></rect>
+<rect x="467.4" y="261.0" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Octanoyl-CoA+FAD =&gt; trans-Oct-2-enoyl-CoA+FADH2</title></rect>
+<rect x="392.6" y="244.1" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>2-trans-Dodecenoyl-CoA+H2O =&gt;( S)-3-Hydroxydodecanoyl-CoA</title></rect>
+<rect x="714.5" y="349.8" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>MCAT transfers Mal from Mal-CoA to NDUFAB1</title></rect>
+<rect x="428.1" y="479.0" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Isomerization of cis,cis-3,6-Dodecadienoyl-CoA to form trans,cis-Lauro-2,6-dienoyl-CoA</title></rect>
+<rect x="611.2" y="286.1" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>3-Oxohexanoyl-CoA+CoA-SH =&gt; Butanoyl-CoA + acetyl-CoA</title></rect>
+<rect x="385.6" y="351.1" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>MECR dimer reduces tdec2-CoA to DEC-CoA</title></rect>
+<rect x="539.2" y="242.0" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>trans-Hexadec-2-enoyl-CoA+H2O =&gt; (S)-3-Hydroxyhexadecanoyl-CoA</title></rect>
+<rect x="591.0" y="282.9" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>3-Oxodecanoyl-CoA+CoA-SH =&gt; Octanoyl-CoA + acetyl-CoA</title></rect>
+<rect x="523.6" y="321.5" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>3-Oxododecanoyl-CoA+CoA-SH =&gt; Decanoyl-CoA + acetyl-CoA</title></rect>
+<rect x="673.4" y="385.9" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>ACAA2 tetramer transfers acyl group from Ac-CoA to acyl-CoA forming 3OA-CoA and CoA-SH</title></rect>
+<rect x="496.4" y="377.3" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>myristoyl-CoA+FAD =&gt; trans-tetradec-2-enoyl-CoA+FADH2</title></rect>
+<rect x="459.7" y="229.5" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>(S)-Hydroxyhexanoyl-CoA+NAD =&gt; 3-Oxohexanoyl-CoA+NADH+H</title></rect>
+<rect x="548.0" y="341.4" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>trans-Tetradec-2-enoyl-CoA+H2O =&gt; (S)-3-Hydroxytetradecanoyl-CoA</title></rect>
+<rect x="408.8" y="258.2" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>(S)-3-Hydroxydodecanoyl-CoA+NAD =&gt; 3-Oxododecanoyl-CoA+NADH+H</title></rect>
+<rect x="447.2" y="226.1" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>(S)-Hydroxybutanoyl-CoA+NAD =&gt; Acetoacetyl-CoA+NADH+H</title></rect>
+<rect x="652.5" y="274.7" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>ACSM3,ACSM6 ligate CoA to BUT</title></rect>
+<rect x="470.1" y="189.1" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>trans-Oct-2-enoyl-CoA+H2O =&gt; (S)-Hydroxyoctanoyl-CoA</title></rect>
+<rect x="421.1" y="258.0" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>(S)-Hydroxydecanoyl-CoA+NAD =&gt; 3-Oxodecanoyl-CoA+NADH+H</title></rect>
+<rect x="84.8" y="378.3" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Cytosolic ACOTs hydrolyse MCFA-CoA, LCFA-CoA</title></rect>
+<rect x="579.1" y="307.4" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>(S)-3-Hydroxyhexadecanoyl-CoA+NAD =&gt; 3-Oxopalmitoyl-CoA+NADH+H</title></rect>
+<rect x="822.1" y="206.7" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>MUT isomerises L-MM-CoA to SUCC-CoA</title></rect>
+<rect x="421.5" y="257.5" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>palmitoyl-CoA+FAD =&gt; trans-Hexadec-2-enoyl-CoA+FADH2</title></rect>
+<rect x="570.5" y="369.0" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>3-Oxotetradecanoyl-CoA+CoA-SH =&gt; Lauroyl-CoA + acetyl-CoA</title></rect>
+<rect x="454.1" y="210.7" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Crotonoyl-CoA+H2O =&gt; (S)-3-Hydroxybutanoyl-CoA</title></rect>
+<rect x="515.4" y="232.1" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>(S)-Hydroxyoctanoyl-CoA+NAD =&gt; 3-Oxooctanoyl-CoA+NADH+H</title></rect>
+<rect x="365.5" y="325.7" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Reduction of 2-trans-4-cis-decadienoyl-CoA to form 3-trans-decenoyl-CoA</title></rect>
+<rect x="395.2" y="373.6" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>dehydrogenation of 4-cis-decenoyl-CoA to form 2-trans-4-cis-decadienoyl-CoA</title></rect>
+<rect x="444.5" y="287.9" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Hexanoyl-CoA+FAD =&gt; trans-Hex-2-enoyl-CoA+FADH2</title></rect>
+<rect x="439.6" y="424.2" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>ACAD10 dehydrogenates S-2MPDA-CoA</title></rect>
+<rect x="133.0" y="228.1" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>ACBD6 binds LCFA-CoA</title></rect>
+<rect x="464.9" y="375.7" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>lauroyl-CoA+FAD =&gt; 2-trans-Dodecenoyl-CoA+FADH2</title></rect>
+<rect x="586.7" y="263.6" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>3-Oxooctanoyl-CoA+CoA-SH =&gt; Hexanoyl-CoA + acetyl-CoA</title></rect>
+<rect x="609.5" y="206.9" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>propionyl-CoA + CO2 + ATP &lt;=&gt; D-methylmalonyl-CoA + ADP + orthophosphate</title></rect>
+<rect x="453.7" y="260.7" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Butanoyl-CoA+FAD =&gt; Crotonoyl-CoA+FADH2</title></rect>
+<rect x="565.3" y="324.8" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>ACOT2,9,THEM4,5 hydrolyse MCFA-CoA, LCFA-CoA</title></rect>
+<rect x="303.4" y="393.7" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Isomerization of 3-trans-decenoyl-CoA to form trans-dec-2-enoyl-CoA</title></rect>
+<rect x="421.4" y="222.1" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>trans-Hex-2-enoyl-CoA+H2O&lt;=&gt;(S)-Hydroxyhexanoyl-CoA</title></rect>
+<rect x="535.5" y="357.6" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>(S)-3-Hydroxytetradecanoyl-CoA+NAD =&gt; 3-Oxotetradecanoyl-CoA+NADH+H</title></rect>
+<rect x="590.9" y="379.5" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>3-Oxopalmitoyl-CoA+CoA-SH =&gt; myristoyl-CoA+acetyl-CoA</title></rect>
+<rect x="708.0" y="276.9" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>ACSF2 ligates CoA-SH to MCFA</title></rect>
+<rect x="397.0" y="278.7" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>trans-Dec-2-enoyl-CoA+H2O =&gt; (S)-Hydroxydecanoyl-CoA</title></rect>
+<rect x="509.0" y="364.4" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>Trans,cis-lauro-2,6-dienoyl-CoA is converted to cis,cis-3,6- 4-cis-decenoyl-CoA by one cycle of beta-oxidation</title></rect>
+<rect x="425.7" y="394.5" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>ACAD11 dehydrogenates BH-CoA</title></rect>
+<rect x="718.7" y="139.7" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>D-methylmalonyl-CoA &lt;=&gt; L-methylmalonyl-CoA</title></rect>
+<rect x="216.1" y="342.1" width="4.1" height="4.1" fill="#fff" stroke="#222" stroke-width="1"><title>DBI, ACBD7 bind MCFA-CoA and LCFA-CoA</title></rect>
+</svg>

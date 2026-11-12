@@ -1,0 +1,161 @@
+{
+ "nodes": [
+  {
+   "id": "species_13@1",
+   "of": "species_13",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamine",
+   "x": 488.0491115372402,
+   "y": -105.0,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_2@2",
+   "of": "species_2",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "H2O",
+   "x": 557.4449999999999,
+   "y": -385.0,
+   "width": 28.799999999999997,
+   "height": 14.399999999999999
+  },
+  {
+   "id": "species_3@3",
+   "of": "species_3",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamate",
+   "x": 248.555,
+   "y": -105.0,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_4@4",
+   "of": "species_4",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "NH3",
+   "x": 248.555,
+   "y": -385.0,
+   "width": 28.799999999999997,
+   "height": 14.399999999999999
+  },
+  {
+   "id": "re_n14",
+   "of": "re_n14",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n14",
+   "x": 400.175,
+   "y": -221.0,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n14@24",
+   "of": "re_n14",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n14",
+   "x": 400.175,
+   "y": -501.0,
+   "width": 10.0,
+   "height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "species_13@1",
+   "target": "re_n14",
+   "arc": "consumption",
+   "route": [
+    [
+     380.175,
+     -221.0
+    ]
+   ]
+  },
+  {
+   "source": "species_13@1",
+   "target": "re_n14@24",
+   "arc": "consumption",
+   "route": [
+    [
+     380.175,
+     -501.0
+    ]
+   ]
+  },
+  {
+   "source": "species_2@2",
+   "target": "re_n14",
+   "arc": "consumption",
+   "route": [
+    [
+     380.175,
+     -221.0
+    ]
+   ]
+  },
+  {
+   "source": "species_2@2",
+   "target": "re_n14@24",
+   "arc": "consumption",
+   "route": [
+    [
+     380.175,
+     -501.0
+    ]
+   ]
+  },
+  {
+   "source": "species_3@3",
+   "target": "re_n14",
+   "arc": "consumption",
+   "route": [
+    [
+     380.175,
+     -221.0
+    ]
+   ]
+  },
+  {
+   "source": "species_3@3",
+   "target": "re_n14@24",
+   "arc": "consumption",
+   "route": [
+    [
+     380.175,
+     -501.0
+    ]
+   ]
+  },
+  {
+   "source": "species_4@4",
+   "target": "re_n14",
+   "arc": "consumption",
+   "route": [
+    [
+     380.175,
+     -221.0
+    ]
+   ]
+  },
+  {
+   "source": "species_4@4",
+   "target": "re_n14@24",
+   "arc": "consumption",
+   "route": [
+    [
+     380.175,
+     -501.0
+    ]
+   ]
+  }
+ ],
+ "compartments": {}
+}

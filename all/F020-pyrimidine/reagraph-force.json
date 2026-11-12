@@ -1,0 +1,253 @@
+{
+ "nodes": [
+  {
+   "id": "species_0",
+   "of": "species_0",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": -13.279707277696714,
+   "y": -112.20509025052237,
+   "width": 60.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "species_1",
+   "of": "species_1",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": -13.660569149841951,
+   "y": -19.634715429220616,
+   "width": 60.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "species_2",
+   "of": "species_2",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "carbamoyl-P",
+   "x": 80.74029937386955,
+   "y": 4.422707762222211,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "species_3",
+   "of": "species_3",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "ADP",
+   "x": 23.295356396487453,
+   "y": -43.33006313224208,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "species_4",
+   "of": "species_4",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "ATP",
+   "x": -52.05474410072505,
+   "y": 5.38632008763738,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "species_5",
+   "of": "species_5",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "ERK1/2",
+   "x": -93.82774959598875,
+   "y": -98.70391993004557,
+   "width": 60.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "species_6",
+   "of": "species_6",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamine",
+   "x": 46.98481610179998,
+   "y": 89.48675946614345,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "species_7",
+   "of": "species_7",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "HCO3-",
+   "x": -33.03770992549087,
+   "y": 61.85478237746323,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "species_8",
+   "of": "species_8",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "Pi",
+   "x": 81.43274713011009,
+   "y": 54.54145072716432,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "species_9",
+   "of": "species_9",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamate",
+   "x": 0.24376534134971384,
+   "y": 90.97614985639153,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "re_n13",
+   "of": "re_n13",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n13",
+   "x": -49.83800004820678,
+   "y": -63.94052383637019,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  },
+  {
+   "id": "re_n9",
+   "of": "re_n9",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n9",
+   "x": 22.895255293730333,
+   "y": 30.956524175864434,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "circle",
+   "own_width": 20,
+   "own_height": 20
+  }
+ ],
+ "edges": [
+  {
+   "source": "species_0",
+   "target": "re_n13",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_1",
+   "target": "re_n9",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_4",
+   "target": "re_n13",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_4",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_5",
+   "target": "re_n13",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_6",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_7",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "re_n13",
+   "target": "species_1",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n13",
+   "target": "species_3",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_2",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_3",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_8",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_9",
+   "arc": "production",
+   "route": []
+  }
+ ],
+ "compartments": {}
+}

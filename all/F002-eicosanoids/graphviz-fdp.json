@@ -1,0 +1,306 @@
+{
+ "nodes": [
+  {
+   "id": "species_0",
+   "of": "species_0",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "phosphatidylcholine",
+   "x": 126.41,
+   "y": 291.97,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_1",
+   "of": "species_1",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "MEK1/2",
+   "x": 42.332,
+   "y": 62.676,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_2",
+   "of": "species_2",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "ERK1/2",
+   "x": 149.6,
+   "y": 140.87,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_3",
+   "of": "species_3",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "RAF1",
+   "x": 217.6,
+   "y": 114.3,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_4",
+   "of": "species_4",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "RAF1",
+   "x": 357.16,
+   "y": 104.29,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_5",
+   "of": "species_5",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "cPLA2",
+   "x": 58.253,
+   "y": 150.77,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_6",
+   "of": "species_6",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "arachidonate",
+   "x": 212.58,
+   "y": 244.17,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_7",
+   "of": "species_7",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "PGG2",
+   "x": 274.57,
+   "y": 312.57,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_8",
+   "of": "species_8",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "COX-1/2",
+   "x": 350.66,
+   "y": 200.88,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_9",
+   "of": "species_9",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "cPLA2",
+   "x": 30.0,
+   "y": 240.22,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_10",
+   "of": "species_10",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "ERK1/2",
+   "x": 229.1,
+   "y": 14.123,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "species_11",
+   "of": "species_11",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "MEK1/2",
+   "x": 122.48,
+   "y": 12.0,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "re_n1",
+   "of": "re_n1",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n1",
+   "x": 140.75,
+   "y": 231.6,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n13",
+   "of": "re_n13",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n13",
+   "x": 174.41,
+   "y": 66.742,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n14",
+   "of": "re_n14",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n14",
+   "x": 119.3,
+   "y": 85.233,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n5",
+   "of": "re_n5",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n5",
+   "x": 273.82,
+   "y": 238.47,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n17",
+   "of": "re_n17",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n17",
+   "x": 306.34,
+   "y": 97.471,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n11",
+   "of": "re_n11",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n11",
+   "x": 75.234,
+   "y": 215.26,
+   "width": 10.0,
+   "height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "species_0",
+   "target": "re_n1",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_1",
+   "target": "re_n14",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_2",
+   "target": "re_n11",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_3",
+   "target": "re_n14",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_4",
+   "target": "re_n17",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_5",
+   "target": "re_n1",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_6",
+   "target": "re_n5",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_8",
+   "target": "re_n5",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "species_9",
+   "target": "re_n11",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_10",
+   "target": "re_n13",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_11",
+   "target": "re_n13",
+   "arc": "catalysis",
+   "route": []
+  },
+  {
+   "source": "re_n1",
+   "target": "species_6",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n13",
+   "target": "species_2",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n14",
+   "target": "species_11",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n5",
+   "target": "species_7",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n17",
+   "target": "species_3",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n11",
+   "target": "species_5",
+   "arc": "production",
+   "route": []
+  }
+ ]
+}

@@ -1,0 +1,286 @@
+{
+ "nodes": [
+  {
+   "id": "s_n0",
+   "of": "s_n0",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "COX-2",
+   "x": 4.341847896575928,
+   "y": 6.985060214996338,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n1",
+   "of": "s_n1",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "arachidonate",
+   "x": 32.92815399169922,
+   "y": -13.106407165527344,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n2",
+   "of": "s_n2",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "COX-2",
+   "x": 9.558837890625,
+   "y": -34.912841796875,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n4",
+   "of": "s_n4",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "PGG2",
+   "x": 22.63750648498535,
+   "y": 30.06337547302246,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n5",
+   "of": "s_n5",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "PGH2",
+   "x": 6.853102207183838,
+   "y": 50.56684494018555,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n8",
+   "of": "s_n8",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "aspirin",
+   "x": -33.671661376953125,
+   "y": -18.296504974365234,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n9",
+   "of": "s_n9",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "salicylate",
+   "x": -27.550264358520508,
+   "y": -10.07757568359375,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n10",
+   "of": "s_n10",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "15R-HETE",
+   "x": 39.38985824584961,
+   "y": -45.650001525878906,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n12",
+   "of": "s_n12",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "COX-1",
+   "x": -9.190099716186523,
+   "y": 20.736404418945312,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n13",
+   "of": "s_n13",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "COX-1",
+   "x": -52.15543746948242,
+   "y": 6.102336406707764,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "re_n3",
+   "of": "re_n3",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n3",
+   "x": -11.859707832336426,
+   "y": -19.691648483276367,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n6",
+   "of": "re_n6",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n6",
+   "x": 19.840566635131836,
+   "y": 11.406683921813965,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n7",
+   "of": "re_n7",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n7",
+   "x": 5.990564823150635,
+   "y": 34.39082336425781,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n11",
+   "of": "re_n11",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n11",
+   "x": 30.94406509399414,
+   "y": -35.22822189331055,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n14",
+   "of": "re_n14",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n14",
+   "x": -36.93330001831055,
+   "y": 2.5552000999450684,
+   "width": 10.0,
+   "height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "s_n0",
+   "target": "re_n3",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n0",
+   "target": "re_n6",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n0",
+   "target": "re_n7",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n1",
+   "target": "re_n6",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n1",
+   "target": "re_n11",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n2",
+   "target": "re_n11",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n4",
+   "target": "re_n7",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n8",
+   "target": "re_n3",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n8",
+   "target": "re_n14",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "s_n12",
+   "target": "re_n6",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n12",
+   "target": "re_n7",
+   "arc": "modulation",
+   "route": []
+  },
+  {
+   "source": "s_n12",
+   "target": "re_n14",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "re_n3",
+   "target": "s_n2",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n3",
+   "target": "s_n9",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n6",
+   "target": "s_n4",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n7",
+   "target": "s_n5",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n11",
+   "target": "s_n10",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n14",
+   "target": "s_n13",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n14",
+   "target": "s_n9",
+   "arc": "production",
+   "route": []
+  }
+ ],
+ "compartments": {}
+}

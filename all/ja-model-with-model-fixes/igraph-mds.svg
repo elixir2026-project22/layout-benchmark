@@ -1,0 +1,427 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="687" viewBox="0 0 900 687" font-family="Helvetica, Arial, sans-serif">
+<title>ja-model-with-model-fixes: igraph-mds</title>
+<defs><marker id="production" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker><marker id="stimulation" viewBox="0 0 11 10" refX="10" refY="5" markerWidth="8.8" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L10,5 L1,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="catalysis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><circle cx="5" cy="5" r="4" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="inhibition" viewBox="0 0 4 10" refX="1" refY="5" markerWidth="3.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="2"/></marker><marker id="necessary-stimulation" viewBox="0 0 14 10" refX="13" refY="5" markerWidth="11.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="1.6"/><path d="M4,1 L13,5 L4,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="modulation" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9.6" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,5 L6,1 L11,5 L6,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker></defs>
+<rect width="100%" height="100%" fill="#fff"/>
+<rect x="8" y="6" width="14" height="11" rx="2" fill="#cfe2f3" stroke="#666" stroke-width="0.6"/><text x="28" y="15.5" font-size="11" fill="#333">cytoplasm</text>
+<rect x="8" y="22" width="14" height="11" rx="2" fill="#fce5cd" stroke="#666" stroke-width="0.6"/><text x="28" y="31.5" font-size="11" fill="#333">peroxisome</text>
+<rect x="8" y="38" width="14" height="11" rx="2" fill="#d9ead3" stroke="#666" stroke-width="0.6"/><text x="28" y="47.5" font-size="11" fill="#333">nucleus</text>
+<rect x="8" y="54" width="14" height="11" rx="2" fill="#f4cccc" stroke="#666" stroke-width="0.6"/><text x="28" y="63.5" font-size="11" fill="#333">chloroplast</text>
+<rect x="8" y="70" width="14" height="11" rx="2" fill="#d9d2e9" stroke="#666" stroke-width="0.6"/><text x="28" y="79.5" font-size="11" fill="#333">endoplasmic reticulum</text>
+<polyline points="637.3,101.6 629.5,117.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="620.5,136.6 628.4,120.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="617.9,141.9 609.7,158.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="310.7,296.6 320.7,300.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="333.0,305.5 322.9,301.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="339.1,310.9 331.7,344.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="341.3,305.5 359.1,275.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="333.0,305.5 322.8,301.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="333.0,305.5 322.9,301.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="333.3,305.5 322.8,301.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="333.0,307.3 318.1,305.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="333.9,305.5 320.3,299.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="310.8,513.7 322.2,505.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="343.1,490.0 354.5,481.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="310.8,513.7 322.2,505.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="649.6,172.2 677.7,183.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="579.3,154.0 608.0,159.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="439.1,186.2 465.2,174.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="432.3,186.2 426.2,170.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="506.6,159.0 535.0,155.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="462.5,157.2 466.0,172.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="382.1,237.4 404.7,215.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="377.9,242.8 360.4,273.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="377.9,242.8 360.4,273.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.8,237.4 366.2,226.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="376.8,237.4 366.3,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#inhibition)"><title>inhibition</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 365.6,225.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="376.9,237.4 366.4,226.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="376.9,237.4 366.5,226.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#inhibition)"><title>inhibition</title></polyline>
+<polyline points="717.9,201.1 744.8,215.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="690.8,169.7 679.8,182.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="776.4,244.9 797.4,274.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="761.1,205.9 747.0,215.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="814.8,320.9 816.2,372.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="814.3,432.5 811.4,486.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="834.6,373.0 817.4,373.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="847.9,372.9 865.1,372.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="791.7,545.7 767.3,591.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="828.2,493.1 812.4,487.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="717.8,604.9 680.8,613.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="782.7,605.7 767.8,593.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="631.6,615.0 596.2,614.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="691.4,631.4 680.4,615.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="548.2,610.4 513.9,606.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="600.9,632.9 595.4,615.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="602.6,638.2 608.0,656.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="469.3,597.7 446.2,581.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="512.5,625.8 512.8,607.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="512.4,631.1 512.1,649.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="415.9,556.0 396.1,535.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="439.6,596.5 444.7,581.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="370.6,511.8 360.3,522.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="371.6,506.4 356.3,481.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="385.4,547.6 394.2,535.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="347.7,534.9 358.1,524.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="347.9,534.6 358.1,524.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="335.1,453.5 323.2,459.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="339.4,448.1 330.4,419.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="343.5,489.5 354.5,481.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="298.8,472.1 287.0,478.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="309.8,466.3 321.0,460.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="315.0,423.4 328.9,418.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="307.9,423.0 302.4,387.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="325.3,379.8 331.3,346.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="310.5,296.5 320.6,300.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="297.1,291.2 286.9,287.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="310.7,296.6 320.7,300.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="342.2,266.1 322.4,299.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="345.3,260.8 364.5,226.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="229.9,452.8 243.5,448.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="229.9,452.8 243.5,448.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="187.6,467.5 200.9,462.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#inhibition)"><title>inhibition</title></polyline>
+<polyline points="38.0,616.2 28.5,615.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="48.1,619.5 56.2,625.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="33.0,591.3 47.7,592.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="15.6,617.0 26.2,615.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="258.1,196.9 244.2,186.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#inhibition)"><title>inhibition</title></polyline>
+<polyline points="875.3,509.8 859.6,504.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="308.2,348.4 302.4,385.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="309.2,343.1 316.7,306.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="718.3,671.2 707.4,655.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="718.3,671.2 707.4,655.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="814.2,270.8 799.3,275.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="349.8,209.1 363.5,223.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="344.5,203.7 330.7,190.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="344.5,203.7 330.7,190.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="312.9,171.1 328.6,187.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="308.6,171.1 281.0,211.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="312.9,171.1 328.6,187.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="308.6,171.1 281.0,211.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="353.9,213.0 364.3,224.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="614.2,675.8 608.7,658.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="885.7,372.5 867.3,372.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="511.8,669.0 512.1,651.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="90.1,652.1 83.6,647.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="73.3,639.3 81.4,645.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="419.1,153.3 425.3,168.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="417.0,148.0 410.8,132.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="403.8,115.2 409.9,130.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="637.3,101.6 629.5,117.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="637.3,101.6 629.5,117.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="347.9,534.6 358.1,524.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="272.4,438.2 285.9,433.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="230.6,452.4 243.5,448.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="273.1,485.3 284.8,479.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="292.4,282.7 275.4,272.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="292.4,282.7 275.4,272.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="292.4,282.7 275.4,272.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="297.5,229.9 274.9,270.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="297.5,229.9 274.9,270.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="297.5,229.9 274.9,270.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="300.7,224.5 325.5,185.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="295.5,224.5 281.4,213.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="295.5,224.5 281.4,213.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="295.4,224.5 281.5,214.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="307.7,169.1 281.4,212.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="341.5,200.6 327.2,185.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="341.6,200.6 329.7,187.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="346.7,206.0 360.9,220.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="230.6,452.4 243.5,448.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="315.2,172.0 327.3,185.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="315.7,172.9 327.6,185.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="283.5,137.8 295.8,151.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="315.0,171.8 327.3,185.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="283.5,137.8 295.8,151.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#modulation)"><title>modulation</title></polyline>
+<polyline points="629.5,117.9 637.3,101.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="320.7,300.6 310.7,296.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="324.4,503.7 335.8,495.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="610.3,160.2 638.9,168.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="467.4,173.2 493.4,162.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="406.9,212.9 430.4,191.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="679.9,184.0 707.5,196.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="747.0,217.1 771.6,239.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="816.2,374.2 814.5,427.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="810.9,488.2 794.0,540.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="765.6,592.8 728.5,602.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="678.5,614.1 642.3,615.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="594.0,614.0 558.9,611.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="511.7,606.6 478.4,601.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="444.0,579.3 421.8,561.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="394.1,533.4 375.5,511.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="358.1,524.3 347.7,534.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="355.0,479.7 341.7,453.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="321.0,460.7 309.2,466.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="329.8,417.1 325.2,385.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="359.1,275.7 341.3,305.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="358.6,273.7 346.6,264.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="320.6,300.6 310.5,296.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="320.7,300.6 310.7,296.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="320.6,300.3 310.5,296.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.1,224.1 353.6,213.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.6,226.4 345.3,260.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="203.2,462.1 216.5,457.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="27.3,614.1 26.4,593.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="242.0,185.0 228.0,174.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="857.3,503.4 841.6,497.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="301.1,386.7 289.5,387.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="315.8,304.7 305.1,300.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="705.9,652.9 695.0,636.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="798.6,277.2 813.6,315.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.0,225.2 344.5,259.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="328.6,187.7 316.8,175.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="328.6,187.7 316.8,175.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.3,224.1 353.9,213.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="364.4,224.1 354.0,213.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="608.7,658.2 614.2,675.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="867.3,372.7 885.7,372.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="512.1,651.2 511.8,669.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="83.6,647.3 90.1,652.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="425.3,168.7 419.1,153.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="409.9,130.5 403.8,115.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="628.4,120.2 620.5,136.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="360.3,522.1 370.6,511.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="245.7,447.4 259.0,442.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="284.8,479.3 273.1,485.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="273.2,271.2 259.8,264.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="273.2,271.2 259.8,264.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="273.2,271.2 259.8,264.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="325.1,183.5 311.8,169.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="281.0,211.8 307.6,169.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="281.0,211.8 307.6,169.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="245.7,447.4 259.0,442.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="327.6,185.6 315.1,172.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="297.8,153.2 310.1,166.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="329.4,187.3 341.6,200.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="58.4,627.6 66.5,633.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="288.1,432.7 301.6,428.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="318.1,298.0 301.3,288.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="363.0,223.0 376.8,237.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="537.3,155.4 566.0,153.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="279.2,212.6 265.3,202.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="281.8,214.4 295.4,224.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="48.6,593.5 45.1,614.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="286.9,287.1 297.1,291.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<rect x="633.3" y="96.2" width="10.7" height="5.4" rx="2.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>ROS</title></rect>
+<rect x="613.9" y="136.6" width="10.7" height="5.4" rx="2.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>ALA</title></rect>
+<rect x="633.3" y="96.2" width="10.7" height="5.4" rx="2.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>MDA</title></rect>
+<polygon points="298.4,291.2 309.6,291.2 310.7,292.3 310.7,295.5 309.6,296.6 298.4,296.6 297.3,295.5 297.3,292.3" fill="#d9ead3" stroke="#222" stroke-width="1"><title>EIN3(like)</title></polygon>
+<polygon points="334.1,305.5 345.3,305.5 346.4,306.6 346.4,309.8 345.3,310.9 334.1,310.9 333.0,309.8 333.0,306.6" fill="#d9ead3" stroke="#222" stroke-width="1"><title>JAZ</title></polygon>
+<polygon points="298.4,291.2 309.6,291.2 310.7,292.3 310.7,295.5 309.6,296.6 298.4,296.6 297.3,295.5 297.3,292.3" fill="#d9ead3" stroke="#222" stroke-width="1"><title>EIN3(like)|JAZ</title></polygon>
+<rect x="301.8" y="513.7" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Thr</title></rect>
+<rect x="334.1" y="490.0" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Ile</title></rect>
+<polygon points="301.5,513.7 312.8,513.7 313.9,514.8 313.9,518.0 312.8,519.0 301.5,519.0 300.5,518.0 300.5,514.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>OMR1</title></polygon>
+<rect x="638.9" y="167.4" width="10.7" height="5.4" rx="2.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>13-HPOT</title></rect>
+<polygon points="567.0,150.0 578.3,150.0 579.3,151.1 579.3,154.3 578.3,155.4 567.0,155.4 566.0,154.3 566.0,151.1" fill="#f4cccc" stroke="#222" stroke-width="1"><title>LOX</title></polygon>
+<polygon points="427.8,186.2 439.0,186.2 440.1,187.3 440.1,190.5 439.0,191.6 427.8,191.6 426.7,190.5 426.7,187.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>LOX</title></polygon>
+<polygon points="494.3,157.1 505.5,157.1 506.6,158.2 506.6,161.4 505.5,162.5 494.3,162.5 493.2,161.4 493.2,158.2" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>LOX</title></polygon>
+<polygon points="456.2,151.9 467.5,151.9 468.5,153.0 468.5,156.2 467.5,157.2 456.2,157.2 455.1,156.2 455.1,153.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MPK4</title></polygon>
+<polygon points="373.8,237.4 385.0,237.4 386.1,238.5 386.1,241.7 385.0,242.8 373.8,242.8 372.7,241.7 372.7,238.5" fill="#d9ead3" stroke="#222" stroke-width="1"><title>MYC2</title></polygon>
+<rect x="707.5" y="195.7" width="10.7" height="5.4" rx="2.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>12,13-EOT</title></rect>
+<polygon points="687.5,164.4 698.8,164.4 699.8,165.4 699.8,168.7 698.8,169.7 687.5,169.7 686.5,168.7 686.5,165.4" fill="#f4cccc" stroke="#222" stroke-width="1"><title>AOS</title></polygon>
+<rect x="769.2" y="239.5" width="10.7" height="5.4" rx="2.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>OPDA</title></rect>
+<polygon points="759.4,200.6 770.7,200.6 771.8,201.7 771.8,204.9 770.7,205.9 759.4,205.9 758.4,204.9 758.4,201.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>AOC</title></polygon>
+<rect x="809.3" y="315.5" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>OPDA</title></rect>
+<rect x="809.0" y="427.2" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>OPDA</title></rect>
+<polygon points="835.6,370.2 846.9,370.2 847.9,371.3 847.9,374.5 846.9,375.6 835.6,375.6 834.6,374.5 834.6,371.3" fill="#fce5cd" stroke="#222" stroke-width="1"><title>CTS</title></polygon>
+<rect x="787.7" y="540.3" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>OPC8</title></rect>
+<polygon points="829.2,492.8 840.5,492.8 841.6,493.9 841.6,497.1 840.5,498.1 829.2,498.1 828.2,497.1 828.2,493.9" fill="#fce5cd" stroke="#222" stroke-width="1"><title>OPR</title></polygon>
+<rect x="717.8" y="600.9" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>OPC8-CoA</title></rect>
+<polygon points="780.3,605.7 791.6,605.7 792.6,606.8 792.6,610.0 791.6,611.1 780.3,611.1 779.3,610.0 779.3,606.8" fill="#fce5cd" stroke="#222" stroke-width="1"><title>OPCL1</title></polygon>
+<rect x="631.6" y="612.4" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>OPC6-CoA</title></rect>
+<polygon points="687.6,631.4 698.8,631.4 699.9,632.4 699.9,635.6 698.8,636.7 687.6,636.7 686.5,635.6 686.5,632.4" fill="#fce5cd" stroke="#222" stroke-width="1"><title>ACX</title></polygon>
+<rect x="548.2" y="608.3" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>OPC4-CoA</title></rect>
+<polygon points="596.1,632.9 607.4,632.9 608.4,634.0 608.4,637.2 607.4,638.2 596.1,638.2 595.0,637.2 595.0,634.0" fill="#fce5cd" stroke="#222" stroke-width="1"><title>MFP</title></polygon>
+<rect x="467.7" y="597.7" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>JA-CoA</title></rect>
+<polygon points="506.8,625.8 518.1,625.8 519.1,626.8 519.1,630.1 518.1,631.1 506.8,631.1 505.8,630.1 505.8,626.8" fill="#fce5cd" stroke="#222" stroke-width="1"><title>KAT</title></polygon>
+<rect x="413.1" y="556.0" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>JA</title></rect>
+<polygon points="433.0,596.5 444.3,596.5 445.3,597.6 445.3,600.8 444.3,601.9 433.0,601.9 432.0,600.8 432.0,597.6" fill="#fce5cd" stroke="#222" stroke-width="1"><title>ACH</title></polygon>
+<rect x="367.9" y="506.4" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JA</title></rect>
+<polygon points="377.9,547.6 389.1,547.6 390.2,548.6 390.2,551.8 389.1,552.9 377.9,552.9 376.8,551.8 376.8,548.6" fill="#fce5cd" stroke="#222" stroke-width="1"><title>JAT2</title></polygon>
+<rect x="339.7" y="534.9" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MeJA</title></rect>
+<polygon points="339.6,534.6 350.9,534.6 351.9,535.6 351.9,538.9 350.9,539.9 339.6,539.9 338.6,538.9 338.6,535.6" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JMT</title></polygon>
+<rect x="334.9" y="448.1" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JA-Ile</title></rect>
+<polygon points="334.2,489.5 345.4,489.5 346.5,490.5 346.5,493.7 345.4,494.8 334.2,494.8 333.1,493.7 333.1,490.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JAR</title></polygon>
+<rect x="298.7" y="466.8" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>12-OH-JA-Ile</title></rect>
+<polygon points="298.8,466.3 310.1,466.3 311.1,467.3 311.1,470.6 310.1,471.6 298.8,471.6 297.8,470.6 297.8,467.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>CYP94</title></polygon>
+<polygon points="302.7,423.0 313.9,423.0 315.0,424.1 315.0,427.3 313.9,428.4 302.7,428.4 301.6,427.3 301.6,424.1" fill="#d9ead3" stroke="#222" stroke-width="1"><title>COI1</title></polygon>
+<polygon points="319.2,379.8 330.4,379.8 331.5,380.9 331.5,384.1 330.4,385.2 319.2,385.2 318.1,384.1 318.1,380.9" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>COI1|JA-Ile|SCF</title></polygon>
+<polygon points="337.4,259.4 348.6,259.4 349.7,260.4 349.7,263.7 348.6,264.7 337.4,264.7 336.3,263.7 336.3,260.4" fill="#d9ead3" stroke="#222" stroke-width="1"><title>MYC2</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>CLH</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JR1</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>PR13</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>VSP</title></polygon>
+<polygon points="298.2,291.2 309.4,291.2 310.5,292.3 310.5,295.5 309.4,296.5 298.2,296.5 297.1,295.5 297.1,292.3" fill="#d9ead3" stroke="#222" stroke-width="1"><title>WD/bHLH/MYB</title></polygon>
+<polygon points="298.2,291.2 309.4,291.2 310.5,292.3 310.5,295.5 309.4,296.5 298.2,296.5 297.1,295.5 297.1,292.3" fill="#d9ead3" stroke="#222" stroke-width="1"><title>WD/bHLH/MYB</title></polygon>
+<polygon points="298.4,291.2 309.6,291.2 310.7,292.3 310.7,295.5 309.6,296.6 298.4,296.6 297.3,295.5 297.3,292.3" fill="#d9ead3" stroke="#222" stroke-width="1"><title>WRKY57</title></polygon>
+<polygon points="298.4,291.2 309.6,291.2 310.7,292.3 310.7,295.5 309.6,296.6 298.4,296.6 297.3,295.5 297.3,292.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JAZ|WRKY57</title></polygon>
+<polygon points="338.2,260.8 349.4,260.8 350.5,261.9 350.5,265.1 349.4,266.1 338.2,266.1 337.1,265.1 337.1,261.9" fill="#d9ead3" stroke="#222" stroke-width="1"><title>DELLA</title></polygon>
+<polygon points="298.3,290.8 309.5,290.8 310.6,291.8 310.6,295.1 309.5,296.1 298.3,296.1 297.2,295.1 297.2,291.8" fill="#d9ead3" stroke="#222" stroke-width="1"><title>DELLA|JAZ</title></polygon>
+<polygon points="345.5,207.6 356.7,207.6 357.8,208.7 357.8,211.9 356.7,213.0 345.5,213.0 344.4,211.9 344.4,208.7" fill="#d9ead3" stroke="#222" stroke-width="1"><title>DELLA|MYC</title></polygon>
+<polygon points="217.6,452.5 228.8,452.5 229.9,453.6 229.9,456.8 228.8,457.9 217.6,457.9 216.5,456.8 216.5,453.6" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>COI1</title></polygon>
+<polygon points="175.3,467.1 186.5,467.1 187.6,468.1 187.6,471.4 186.5,472.4 175.3,472.4 174.2,471.4 174.2,468.1" fill="#d9ead3" stroke="#222" stroke-width="1"><title>CML|Ca2+</title></polygon>
+<polygon points="39.1,614.2 50.3,614.2 51.4,615.2 51.4,618.5 50.3,619.5 39.1,619.5 38.0,618.5 38.0,615.2" fill="#d9d2e9" stroke="#222" stroke-width="1"><title>SAHH</title></polygon>
+<polygon points="20.7,588.2 31.9,588.2 33.0,589.3 33.0,592.5 31.9,593.5 20.7,593.5 19.6,592.5 19.6,589.3" fill="#d9d2e9" stroke="#222" stroke-width="1"><title>SAHH</title></polygon>
+<polygon points="3.3,615.4 14.5,615.4 15.6,616.5 15.6,619.7 14.5,620.7 3.3,620.7 2.2,619.7 2.2,616.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>HC-Pro</title></polygon>
+<polygon points="218.8,169.3 230.0,169.3 231.1,170.4 231.1,173.6 230.0,174.7 218.8,174.7 217.7,173.6 217.7,170.4" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>ERF1</title></polygon>
+<polygon points="256.1,196.9 267.3,196.9 268.4,198.0 268.4,201.2 267.3,202.3 256.1,202.3 255.0,201.2 255.0,198.0" fill="#d9ead3" stroke="#222" stroke-width="1"><title>JAM</title></polygon>
+<polygon points="876.4,509.5 887.6,509.5 888.7,510.5 888.7,513.8 887.6,514.8 876.4,514.8 875.3,513.8 875.3,510.5" fill="#d9ead3" stroke="#222" stroke-width="1"><title>TGA</title></polygon>
+<polygon points="303.0,343.1 314.3,343.1 315.3,344.2 315.3,347.4 314.3,348.4 303.0,348.4 302.0,347.4 302.0,344.2" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>RBC</title></polygon>
+<polygon points="277.1,385.6 288.4,385.6 289.5,386.7 289.5,389.9 288.4,391.0 277.1,391.0 276.1,389.9 276.1,386.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>COI1|RBC</title></polygon>
+<polygon points="292.8,295.9 304.0,295.9 305.1,297.0 305.1,300.2 304.0,301.2 292.8,301.2 291.7,300.2 291.7,297.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JAZ|RBC</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#d9ead3" stroke="#222" stroke-width="1"><title>ORA59</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#d9ead3" stroke="#222" stroke-width="1"><title>NAC019</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#d9ead3" stroke="#222" stroke-width="1"><title>NAC055</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#d9ead3" stroke="#222" stroke-width="1"><title>NAC072</title></polygon>
+<polygon points="714.5,671.2 725.8,671.2 726.8,672.3 726.8,675.5 725.8,676.6 714.5,676.6 713.5,675.5 713.5,672.3" fill="#fce5cd" stroke="#222" stroke-width="1"><title>ACX</title></polygon>
+<polygon points="714.5,671.2 725.8,671.2 726.8,672.3 726.8,675.5 725.8,676.6 714.5,676.6 713.5,675.5 713.5,672.3" fill="#fce5cd" stroke="#222" stroke-width="1"><title>CAT</title></polygon>
+<polygon points="815.2,266.0 826.5,266.0 827.5,267.0 827.5,270.2 826.5,271.3 815.2,271.3 814.2,270.2 814.2,267.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JASSY</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>YUC</title></polygon>
+<polygon points="341.5,203.7 352.8,203.7 353.8,204.8 353.8,208.0 352.8,209.1 341.5,209.1 340.5,208.0 340.5,204.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>NPR1</title></polygon>
+<polygon points="304.7,165.7 316.0,165.7 317.0,166.8 317.0,170.0 316.0,171.1 304.7,171.1 303.7,170.0 303.7,166.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MYC3</title></polygon>
+<polygon points="308.6,170.0 319.9,170.0 321.0,171.0 321.0,174.2 319.9,175.3 308.6,175.3 307.6,174.2 307.6,171.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MYC3|NPR1</title></polygon>
+<polygon points="304.7,165.7 316.0,165.7 317.0,166.8 317.0,170.0 316.0,171.1 304.7,171.1 303.7,170.0 303.7,166.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MYC4</title></polygon>
+<polygon points="308.6,170.0 319.9,170.0 321.0,171.0 321.0,174.2 319.9,175.3 308.6,175.3 307.6,174.2 307.6,171.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MYC4|NPR1</title></polygon>
+<polygon points="345.8,207.6 357.0,207.6 358.1,208.7 358.1,211.9 357.0,213.0 345.8,213.0 344.7,211.9 344.7,208.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>PYL</title></polygon>
+<polygon points="345.8,207.6 357.0,207.6 358.1,208.7 358.1,211.9 357.0,213.0 345.8,213.0 344.7,211.9 344.7,208.7" fill="#d9ead3" stroke="#222" stroke-width="1"><title>MYC|PYL</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MKK4,5</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>RIN4</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#f4cccc" stroke="#222" stroke-width="1"><title>ICS</title></polygon>
+<polygon points="345.8,207.7 357.1,207.7 358.1,208.8 358.1,212.0 357.1,213.1 345.8,213.1 344.8,212.0 344.8,208.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>PEPR</title></polygon>
+<rect x="609.7" y="675.8" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>CA-CoA</title></rect>
+<rect x="609.7" y="675.8" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>3H3PP-CoA</title></rect>
+<rect x="885.7" y="369.8" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>CA</title></rect>
+<rect x="885.7" y="369.8" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>CA</title></rect>
+<rect x="506.4" y="669.0" width="10.7" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>3O3PP-CoA</title></rect>
+<rect x="506.4" y="669.0" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>BA-CoA</title></rect>
+<rect x="88.3" y="652.1" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>SAH</title></rect>
+<rect x="88.3" y="652.1" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-homo-cys</title></rect>
+<polygon points="64.3,633.9 75.5,633.9 76.6,635.0 76.6,638.2 75.5,639.3 64.3,639.3 63.2,638.2 63.2,635.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>SAHH</title></polygon>
+<polygon points="412.4,148.0 423.7,148.0 424.7,149.1 424.7,152.3 423.7,153.3 412.4,153.3 411.4,152.3 411.4,149.1" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>VPg</title></polygon>
+<polygon points="412.4,148.5 423.6,148.5 424.7,149.6 424.7,152.8 423.6,153.9 412.4,153.9 411.3,152.8 411.3,149.6" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>LOX2|VPg</title></polygon>
+<polygon points="397.1,109.9 408.3,109.9 409.4,110.9 409.4,114.1 408.3,115.2 397.1,115.2 396.0,114.1 396.0,110.9" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>RCA</title></polygon>
+<polygon points="397.1,109.9 408.3,109.9 409.4,110.9 409.4,114.1 408.3,115.2 397.1,115.2 396.0,114.1 396.0,110.9" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>RCA|VPg</title></polygon>
+<rect x="633.3" y="96.2" width="10.7" height="5.4" rx="2.7" fill="#f4cccc" stroke="#222" stroke-width="1"><title>phospholipids</title></rect>
+<polygon points="633.0,96.2 644.3,96.2 645.3,97.3 645.3,100.5 644.3,101.6 633.0,101.6 631.9,100.5 631.9,97.3" fill="#f4cccc" stroke="#222" stroke-width="1"><title>DAD1</title></polygon>
+<polygon points="339.6,534.6 350.9,534.6 351.9,535.6 351.9,538.9 350.9,539.9 339.6,539.9 338.6,538.9 338.6,535.6" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MES10</title></polygon>
+<polygon points="260.1,437.8 271.3,437.8 272.4,438.9 272.4,442.1 271.3,443.2 260.1,443.2 259.0,442.1 259.0,438.9" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>COI1</title></polygon>
+<polygon points="218.3,451.9 229.5,451.9 230.6,453.0 230.6,456.2 229.5,457.3 218.3,457.3 217.2,456.2 217.2,453.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>HSP70|HSP90|SGT1</title></polygon>
+<rect x="262.5" y="485.3" width="10.7" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>12-OH-JA</title></rect>
+<polygon points="262.2,485.3 273.5,485.3 274.6,486.3 274.6,489.5 273.5,490.6 262.2,490.6 261.2,489.5 261.2,486.3" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>IAR</title></polygon>
+<polygon points="291.2,282.7 302.4,282.7 303.5,283.7 303.5,287.0 302.4,288.0 291.2,288.0 290.1,287.0 290.1,283.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JAZ</title></polygon>
+<polygon points="248.6,259.4 259.9,259.4 260.9,260.5 260.9,263.7 259.9,264.8 248.6,264.8 247.6,263.7 247.6,260.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JAZ</title></polygon>
+<polygon points="293.4,224.5 304.6,224.5 305.7,225.6 305.7,228.8 304.6,229.9 293.4,229.9 292.3,228.8 292.3,225.6" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JAM</title></polygon>
+<polygon points="303.7,163.7 314.9,163.7 316.0,164.8 316.0,168.0 314.9,169.1 303.7,169.1 302.6,168.0 302.6,164.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>JAM</title></polygon>
+<polygon points="338.5,200.6 349.7,200.6 350.8,201.7 350.8,204.9 349.7,206.0 338.5,206.0 337.4,204.9 337.4,201.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MYC2</title></polygon>
+<polygon points="218.3,451.9 229.5,451.9 230.6,453.0 230.6,456.2 229.5,457.3 218.3,457.3 217.2,456.2 217.2,453.0" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>HOP3</title></polygon>
+<polygon points="307.1,166.7 318.3,166.7 319.4,167.8 319.4,171.0 318.3,172.0 307.1,172.0 306.0,171.0 306.0,167.8" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MYC2</title></polygon>
+<polygon points="307.5,167.6 318.8,167.6 319.8,168.7 319.8,171.9 318.8,172.9 307.5,172.9 306.5,171.9 306.5,168.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>EDR1</title></polygon>
+<polygon points="275.4,132.4 286.7,132.4 287.7,133.5 287.7,136.7 286.7,137.8 275.4,137.8 274.4,136.7 274.4,133.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>PP2AB1</title></polygon>
+<polygon points="306.9,166.5 318.2,166.5 319.3,167.6 319.3,170.8 318.2,171.8 306.9,171.8 305.9,170.8 305.9,167.6" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>PP2AB1</title></polygon>
+<polygon points="275.4,132.4 286.7,132.4 287.7,133.5 287.7,136.7 286.7,137.8 275.4,137.8 274.4,136.7 274.4,133.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>MPK15</title></polygon>
+<rect x="627.9" y="117.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00014</title></rect>
+<rect x="320.7" y="299.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00018</title></rect>
+<rect x="322.2" y="503.4" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00020</title></rect>
+<rect x="608.0" y="158.8" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00026</title></rect>
+<rect x="465.2" y="172.5" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00027</title></rect>
+<rect x="404.7" y="212.8" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00028</title></rect>
+<rect x="677.7" y="182.4" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00029</title></rect>
+<rect x="744.8" y="214.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00030</title></rect>
+<rect x="815.1" y="372.0" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00031</title></rect>
+<rect x="810.2" y="486.0" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00033</title></rect>
+<rect x="765.6" y="591.4" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00034</title></rect>
+<rect x="678.5" y="612.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00035</title></rect>
+<rect x="594.0" y="612.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00036</title></rect>
+<rect x="511.7" y="605.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00037</title></rect>
+<rect x="444.0" y="579.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00038</title></rect>
+<rect x="393.9" y="533.4" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00039</title></rect>
+<rect x="358.1" y="522.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00040</title></rect>
+<rect x="354.5" y="479.7" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00041</title></rect>
+<rect x="321.0" y="459.0" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00042</title></rect>
+<rect x="328.9" y="417.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00043</title></rect>
+<rect x="330.4" y="344.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00044</title></rect>
+<rect x="358.7" y="273.5" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00046</title></rect>
+<rect x="358.6" y="273.4" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00047</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00049</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00050</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00051</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00052</title></rect>
+<rect x="320.6" y="299.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00062</title></rect>
+<rect x="320.7" y="299.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00128</title></rect>
+<rect x="320.6" y="299.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00159</title></rect>
+<rect x="364.1" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00162</title></rect>
+<rect x="364.1" y="224.2" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00163</title></rect>
+<rect x="200.9" y="461.4" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00196</title></rect>
+<rect x="26.2" y="614.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00198</title></rect>
+<rect x="242.0" y="184.7" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00206</title></rect>
+<rect x="857.3" y="502.7" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00209</title></rect>
+<rect x="301.1" y="385.5" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00232</title></rect>
+<rect x="315.8" y="304.0" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00233</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00250</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00251</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00252</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00253</title></rect>
+<rect x="705.6" y="652.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00312</title></rect>
+<rect x="797.0" y="274.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00396</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00410</title></rect>
+<rect x="363.5" y="223.0" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00432</title></rect>
+<rect x="328.5" y="187.7" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00444</title></rect>
+<rect x="328.5" y="187.7" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00446</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00459</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00507</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00508</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00509</title></rect>
+<rect x="364.3" y="224.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00510</title></rect>
+<rect x="607.3" y="656.0" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00530</title></rect>
+<rect x="865.1" y="371.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00531</title></rect>
+<rect x="511.0" y="649.0" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00535</title></rect>
+<rect x="81.4" y="645.3" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00594</title></rect>
+<rect x="424.6" y="168.7" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00634</title></rect>
+<rect x="409.3" y="130.5" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00679</title></rect>
+<rect x="627.9" y="117.9" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00693</title></rect>
+<rect x="358.1" y="522.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00696</title></rect>
+<rect x="243.5" y="446.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00730</title></rect>
+<rect x="284.8" y="477.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00757</title></rect>
+<rect x="273.2" y="270.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00872</title></rect>
+<rect x="273.2" y="270.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00873</title></rect>
+<rect x="273.2" y="270.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00874</title></rect>
+<rect x="325.0" y="183.5" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00877</title></rect>
+<rect x="279.2" y="211.8" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00879</title></rect>
+<rect x="279.2" y="211.8" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00880</title></rect>
+<rect x="243.5" y="446.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx00925</title></rect>
+<rect x="327.5" y="185.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx01004</title></rect>
+<rect x="295.7" y="151.0" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx01005</title></rect>
+<rect x="327.2" y="185.1" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>rx01006</title></rect>
+<rect x="56.2" y="625.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>transport_SAHH_pa_er_to_cyt</title></rect>
+<rect x="285.9" y="432.0" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>transport_COI1_pa_cyt_to_nuc</title></rect>
+<rect x="318.1" y="297.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>transport_JAZ_pa_nuc_to_cyt</title></rect>
+<rect x="360.8" y="220.8" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>transport_MYC2_pa_cyt_to_nuc</title></rect>
+<rect x="535.0" y="154.4" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>transport_LOX_pa_cyt_to_chl</title></rect>
+<rect x="279.2" y="212.3" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>transport_JAM_pa_cyt_to_nuc</title></rect>
+<rect x="279.6" y="212.5" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>activation_JAM_pa_cyt</title></rect>
+<rect x="47.7" y="591.2" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>activation_SAHH_pa_er</title></rect>
+<rect x="284.7" y="285.6" width="2.2" height="2.2" fill="#fff" stroke="#222" stroke-width="1"><title>activation_WDbHLHMYB_ca_nuc</title></rect>
+</svg>

@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650" font-family="Helvetica, Arial, sans-serif">
+<title>F019-glutaminase: graphviz-circo</title>
+<defs><marker id="production" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker><marker id="stimulation" viewBox="0 0 11 10" refX="10" refY="5" markerWidth="8.8" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L10,5 L1,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="catalysis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><circle cx="5" cy="5" r="4" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="inhibition" viewBox="0 0 4 10" refX="1" refY="5" markerWidth="3.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="2"/></marker><marker id="necessary-stimulation" viewBox="0 0 14 10" refX="13" refY="5" markerWidth="11.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="1.6"/><path d="M4,1 L13,5 L4,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="modulation" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9.6" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,5 L6,1 L11,5 L6,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker></defs>
+<rect width="100%" height="100%" fill="#fff"/>
+<polyline points="19.7,291.6 617.5,291.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="628.6,635.0 505.6,587.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="427.3,466.1 423.3,484.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="383.2,512.1 421.6,487.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#catalysis)"><title>catalysis</title></polyline>
+<polyline points="308.1,559.2 355.3,530.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="371.7,587.3 357.0,530.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="881.9,162.0 620.3,291.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#necessary-stimulation)"><title>necessary stimulation</title></polyline>
+<polyline points="608.4,318.7 504.7,585.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#necessary-stimulation)"><title>necessary stimulation</title></polyline>
+<polyline points="511.1,14.7 618.3,290.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="472.1,574.1 358.1,529.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#stimulation)"><title>stimulation</title></polyline>
+<polyline points="406.4,482.6 421.6,485.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="422.7,487.6 418.8,506.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="424.5,486.5 439.7,489.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="502.7,586.1 489.0,580.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="618.3,293.1 611.0,311.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="358.1,528.3 372.7,518.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="355.3,528.1 312.0,492.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<ellipse cx="11.3" cy="291.6" rx="8.5" ry="3.4" fill="#fff" stroke="#222" stroke-width="1"><title> </title></ellipse>
+<ellipse cx="637.0" cy="638.3" rx="8.5" ry="3.4" fill="#fff" stroke="#222" stroke-width="1"><title> </title></ellipse>
+<rect x="421.3" y="459.4" width="13.5" height="6.8" rx="3.4" fill="#fff" stroke="#222" stroke-width="1"><title>H2O</title></rect>
+<rect x="411.3" y="506.2" width="13.5" height="6.8" rx="3.4" fill="#fff" stroke="#222" stroke-width="1"><title>glutamate</title></rect>
+<rect x="439.7" y="487.8" width="13.5" height="6.8" rx="3.4" fill="#fff" stroke="#222" stroke-width="1"><title>NH3</title></rect>
+<rect x="369.5" y="512.1" width="16.9" height="6.8" rx="1.2" fill="#fff" stroke="#222" stroke-width="1"><title>GAC</title></rect>
+<rect x="295.9" y="559.2" width="13.5" height="6.8" rx="3.4" fill="#fff" stroke="#222" stroke-width="1"><title>ATP</title></rect>
+<rect x="301.1" y="485.2" width="13.5" height="6.8" rx="3.4" fill="#fff" stroke="#222" stroke-width="1"><title>ADP</title></rect>
+<rect x="364.1" y="587.3" width="16.9" height="6.8" rx="1.2" fill="#fff" stroke="#222" stroke-width="1"><title>GAC</title></rect>
+<path d="M880.3,155.3 H897.2 V160.5 Q897.2,162.0 895.7,162.0 H881.8 Q880.3,162.0 880.3,160.5 Z" fill="#fff" stroke="#222" stroke-width="1"><title>PKCε</title></path>
+<path d="M601.2,311.9 H618.1 V317.1 Q618.1,318.7 616.6,318.7 H602.7 Q601.2,318.7 601.2,317.1 Z" fill="#fff" stroke="#222" stroke-width="1"><title>PKCε</title></path>
+<rect x="501.4" y="7.9" width="16.9" height="6.8" rx="1.2" fill="#fff" stroke="#222" stroke-width="1"><title>NF-κB</title></rect>
+<rect x="472.1" y="574.0" width="16.9" height="6.8" rx="1.2" fill="#fff" stroke="#222" stroke-width="1"><title>PKCε</title></rect>
+<rect x="392.9" y="477.8" width="13.5" height="6.8" rx="3.4" fill="#fff" stroke="#222" stroke-width="1"><title>glutamine</title></rect>
+<rect x="421.6" y="484.7" width="2.8" height="2.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n14</title></rect>
+<rect x="502.7" y="585.2" width="2.8" height="2.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n5</title></rect>
+<rect x="617.5" y="290.2" width="2.8" height="2.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n7</title></rect>
+<rect x="355.3" y="527.8" width="2.8" height="2.8" fill="#fff" stroke="#222" stroke-width="1"><title>re_n16</title></rect>
+</svg>

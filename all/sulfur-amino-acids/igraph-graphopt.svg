@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="803" viewBox="0 0 900 803" font-family="Helvetica, Arial, sans-serif">
+<title>sulfur-amino-acids: igraph-graphopt</title>
+<defs><marker id="production" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker><marker id="stimulation" viewBox="0 0 11 10" refX="10" refY="5" markerWidth="8.8" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L10,5 L1,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="catalysis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><circle cx="5" cy="5" r="4" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="inhibition" viewBox="0 0 4 10" refX="1" refY="5" markerWidth="3.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="2"/></marker><marker id="necessary-stimulation" viewBox="0 0 14 10" refX="13" refY="5" markerWidth="11.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="1.6"/><path d="M4,1 L13,5 L4,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="modulation" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9.6" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,5 L6,1 L11,5 L6,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker></defs>
+<rect width="100%" height="100%" fill="#fff"/>
+<rect x="8" y="6" width="14" height="11" rx="2" fill="#cfe2f3" stroke="#666" stroke-width="0.6"/><text x="28" y="15.5" font-size="11" fill="#333">cytosol</text>
+<rect x="8" y="22" width="14" height="11" rx="2" fill="#fce5cd" stroke="#666" stroke-width="0.6"/><text x="28" y="31.5" font-size="11" fill="#333">extracellular space</text>
+<polyline points="441.7,543.3 445.8,439.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="441.8,618.9 390.0,648.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="464.4,359.2 447.4,428.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="469.8,332.2 481.9,253.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="567.1,426.1 592.1,465.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="353.9,349.5 332.5,358.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="396.8,510.9 311.7,556.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="660.2,508.1 601.4,473.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="680.7,535.0 669.3,592.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="548.6,348.5 593.6,465.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="538.7,348.5 504.2,446.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="570.4,323.8 724.2,259.9" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="388.7,528.9 496.6,456.2" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="248.9,457.7 303.0,553.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="607.8,565.2 662.6,595.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="646.6,224.0 724.2,255.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="330.4,236.9 477.1,247.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="305.9,248.5 325.8,355.6" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="316.2,497.1 381.9,645.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="333.0,731.9 380.8,657.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="87.4,219.2 136.2,178.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="71.9,148.7 136.2,172.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="446.7,439.7 464.1,591.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="451.7,433.0 531.5,417.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="442.2,428.5 390.0,351.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="590.1,471.5 449.0,493.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="595.9,476.2 600.5,617.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="601.4,467.2 662.5,429.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="311.7,557.9 341.7,549.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="311.7,561.0 438.6,597.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="300.5,562.0 225.4,595.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="506.8,458.0 572.3,538.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="500.4,446.8 472.1,359.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="673.8,603.9 730.0,658.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="673.8,597.2 755.1,578.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="662.6,598.6 492.6,604.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="488.4,246.6 592.7,220.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="486.7,253.7 534.0,321.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="735.4,262.0 797.5,310.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="735.4,257.1 828.1,250.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="734.2,251.9 779.2,194.7" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="387.8,645.8 433.1,570.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="386.4,657.1 417.6,745.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="321.3,366.6 255.2,430.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="332.5,360.5 516.5,338.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="326.1,366.8 312.1,470.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="141.4,168.6 136.3,100.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="147.4,176.3 276.5,224.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<rect x="414.2" y="543.3" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>5-Methyltetrahydrofolate</title></rect>
+<text x="441.2" y="560.5" font-size="10.8" text-anchor="middle">5-Methy…<title>5-Methyltetrahydrofolate</title></text>
+<rect x="438.6" y="591.9" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Proton</title></rect>
+<text x="465.6" y="609.2" font-size="10.8" text-anchor="middle">Proton<title>Proton</title></text>
+<rect x="440.8" y="332.2" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-Homocysteine</title></rect>
+<text x="467.7" y="349.5" font-size="10.8" text-anchor="middle">L-Homoc…<title>L-Homocysteine</title></text>
+<rect x="531.5" y="399.2" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-Methionine</title></rect>
+<text x="558.5" y="416.4" font-size="10.8" text-anchor="middle">L-Methi…<title>L-Methionine</title></text>
+<rect x="353.9" y="324.4" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>5,6,7,8-Tetrahydrofolate</title></rect>
+<text x="380.9" y="341.6" font-size="10.8" text-anchor="middle">5,6,7,8…<title>5,6,7,8-Tetrahydrofolate</title></text>
+<rect x="395.1" y="484.0" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>S-Adenosyl-L-Methionine</title></rect>
+<text x="422.1" y="501.2" font-size="10.8" text-anchor="middle">S-Adeno…<title>S-Adenosyl-L-Methionine</title></text>
+<rect x="656.4" y="508.1" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Adenosine Triphosphate</title></rect>
+<text x="683.4" y="525.3" font-size="10.8" text-anchor="middle">Adenosi…<title>Adenosine Triphosphate</title></text>
+<rect x="516.5" y="321.6" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Water</title></rect>
+<text x="543.4" y="338.8" font-size="10.8" text-anchor="middle">Water<title>Water</title></text>
+<rect x="573.9" y="617.2" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Orthophosphate</title></rect>
+<text x="600.9" y="634.5" font-size="10.8" text-anchor="middle">Orthoph…<title>Orthophosphate</title></text>
+<rect x="657.5" y="402.5" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Diphosphate</title></rect>
+<text x="684.4" y="419.8" font-size="10.8" text-anchor="middle">Diphosp…<title>Diphosphate</title></text>
+<rect x="341.7" y="528.9" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>S-Adenosyl-L-Homocysteine</title></rect>
+<text x="368.7" y="546.2" font-size="10.8" text-anchor="middle">S-Adeno…<title>S-Adenosyl-L-Homocysteine</title></text>
+<rect x="214.4" y="430.8" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Glycine</title></rect>
+<text x="241.4" y="448.0" font-size="10.8" text-anchor="middle">Glycine<title>Glycine</title></text>
+<rect x="171.5" y="594.6" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Sarcosine</title></rect>
+<text x="198.5" y="611.8" font-size="10.8" text-anchor="middle">Sarcosi…<title>Sarcosine</title></text>
+<rect x="556.4" y="538.3" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Adenosine</title></rect>
+<text x="583.3" y="555.5" font-size="10.8" text-anchor="middle">Adenosi…<title>Adenosine</title></text>
+<rect x="716.8" y="658.8" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Adenosine Diphosphate</title></rect>
+<text x="743.8" y="676.1" font-size="10.8" text-anchor="middle">Adenosi…<title>Adenosine Diphosphate</title></text>
+<rect x="755.1" y="558.5" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Adenosine Monophosphate</title></rect>
+<text x="782.1" y="575.8" font-size="10.8" text-anchor="middle">Adenosi…<title>Adenosine Monophosphate</title></text>
+<rect x="592.7" y="199.6" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-Cystathionine</title></rect>
+<text x="619.6" y="216.9" font-size="10.8" text-anchor="middle">L-Cysta…<title>L-Cystathionine</title></text>
+<rect x="276.5" y="221.5" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-Serine</title></rect>
+<text x="303.4" y="238.8" font-size="10.8" text-anchor="middle">L-Serine<title>L-Serine</title></text>
+<rect x="787.7" y="310.6" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>2-Oxobutanoate</title></rect>
+<text x="814.7" y="327.9" font-size="10.8" text-anchor="middle">2-Oxobu…<title>2-Oxobutanoate</title></text>
+<rect x="828.1" y="235.1" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-Cysteine</title></rect>
+<text x="855.1" y="252.3" font-size="10.8" text-anchor="middle">L-Cyste…<title>L-Cysteine</title></text>
+<rect x="762.8" y="167.7" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Ammonium</title></rect>
+<text x="789.7" y="185.0" font-size="10.8" text-anchor="middle">Ammonium<title>Ammonium</title></text>
+<rect x="283.3" y="470.1" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>5,10-Methylenetetrahydrofolate</title></rect>
+<text x="310.2" y="487.4" font-size="10.8" text-anchor="middle">5,10-Me…<title>5,10-Methylenetetrahydrofolate</title></text>
+<rect x="395.4" y="745.0" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Nicotinamide Adenine Dinucleotide Phosphate</title></rect>
+<text x="422.4" y="762.3" font-size="10.8" text-anchor="middle">Nicotin…<title>Nicotinamide Adenine Dinucleotide Phosphate</title></text>
+<rect x="297.4" y="731.9" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Nicotinamide Adenine Dinucleotide Phosphate - Reduced</title></rect>
+<text x="324.4" y="749.1" font-size="10.8" text-anchor="middle">Nicotin…<title>Nicotinamide Adenine Dinucleotide Phosphate - Reduced</title></text>
+<rect x="108.3" y="73.4" width="53.9" height="27.0" rx="13.5" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Sodium</title></rect>
+<text x="135.3" y="90.7" font-size="10.8" text-anchor="middle">Sodium<title>Sodium</title></text>
+<rect x="44.2" y="219.2" width="53.9" height="27.0" rx="13.5" fill="#fce5cd" stroke="#222" stroke-width="1"><title>Sodium</title></rect>
+<text x="71.1" y="236.5" font-size="10.8" text-anchor="middle">Sodium<title>Sodium</title></text>
+<rect x="18.0" y="125.4" width="53.9" height="27.0" rx="13.5" fill="#fce5cd" stroke="#222" stroke-width="1"><title>L-Serine</title></rect>
+<text x="44.9" y="142.6" font-size="10.8" text-anchor="middle">L-Serine<title>L-Serine</title></text>
+<rect x="440.4" y="428.5" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>Methionine Synthase</title></rect>
+<rect x="590.1" y="465.0" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>Methionine Adenosyltransferase</title></rect>
+<rect x="300.5" y="553.8" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>Glycine N-Methyltransferase</title></rect>
+<rect x="496.6" y="446.8" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>Adenosylhomocysteinase</title></rect>
+<rect x="662.6" y="592.8" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>Adenosine Kinase</title></rect>
+<rect x="477.1" y="242.4" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>Cystathionine Beta-Synthase</title></rect>
+<rect x="724.2" y="251.9" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>Cystathionine G-Lyase</title></rect>
+<rect x="378.8" y="645.8" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>5, 10-Methylenetetrahydrofolatereductase (NADPH)</title></rect>
+<rect x="321.3" y="355.6" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>Glycine Hydroxymethyltransferase, Reversible</title></rect>
+<rect x="136.2" y="168.6" width="11.2" height="11.2" fill="#fff" stroke="#222" stroke-width="1"><title>L-Serine via Sodium Symport</title></rect>
+</svg>

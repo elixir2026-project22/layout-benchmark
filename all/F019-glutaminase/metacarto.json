@@ -1,0 +1,292 @@
+{
+ "nodes": [
+  {
+   "id": "s_n13@t0_4",
+   "of": "s_n13",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "GAC",
+   "x": 158.7952373241884,
+   "y": -324.33627081538503,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n2@t0_5",
+   "of": "s_n2",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "GAC",
+   "x": 158.7952373241884,
+   "y": -124.33627081538502,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n15@t0_22",
+   "of": "s_n15",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "ATP",
+   "x": 41.74212762632334,
+   "y": -158.61110227692978,
+   "width": 36.0,
+   "height": 14.399999999999999
+  },
+  {
+   "id": "s_n17@t0_23",
+   "of": "s_n17",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "ADP",
+   "x": 41.74212762632334,
+   "y": -290.0614393538402,
+   "width": 36.0,
+   "height": 14.399999999999999
+  },
+  {
+   "id": "s_n11@t0_3",
+   "of": "s_n11",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "glutamate",
+   "x": 158.7952373241884,
+   "y": 60.27911379999961,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n9@t0_8",
+   "of": "s_n9",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "glutamine",
+   "x": 158.7952373241884,
+   "y": 260.2791137999996,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n12@t0_18",
+   "of": "s_n12",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "NH3",
+   "x": 41.74212762632334,
+   "y": 94.55394526154456,
+   "width": 36.0,
+   "height": 14.399999999999999
+  },
+  {
+   "id": "s_n0@t0_1",
+   "of": "s_n0",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "s_n0",
+   "x": -148.8970703681193,
+   "y": 198.7406522615381,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n4@t0_6",
+   "of": "s_n4",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "PKC_epsilon_",
+   "x": -148.8970703681193,
+   "y": 398.74065226153806,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n1@t0_2",
+   "of": "s_n1",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "s_n1",
+   "x": -210.43553190658085,
+   "y": -216.64396312307733,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n8@t0_7",
+   "of": "s_n8",
+   "kind": "species",
+   "sbgn": "unspecified entity",
+   "label": "PKC_epsilon_",
+   "x": -210.43553190658085,
+   "y": -16.64396312307732,
+   "width": 60.0,
+   "height": 24.0
+  },
+  {
+   "id": "re_n16",
+   "of": "re_n16",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n16",
+   "x": 158.7952373241884,
+   "y": -224.33627081538503,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n14",
+   "of": "re_n14",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n14",
+   "x": 158.7952373241884,
+   "y": 160.2791137999996,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n7",
+   "of": "re_n7",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n7",
+   "x": -148.8970703681193,
+   "y": 298.74065226153806,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n5",
+   "of": "re_n5",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n5",
+   "x": -210.43553190658085,
+   "y": -116.64396312307733,
+   "width": 10.0,
+   "height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "s_n2@t0_5",
+   "target": "re_n16",
+   "arc": "consumption",
+   "route": [
+    [
+     158.7952373241884,
+     -196.64396312307733
+    ]
+   ]
+  },
+  {
+   "source": "s_n15@t0_22",
+   "target": "re_n16",
+   "arc": "consumption",
+   "route": [
+    [
+     158.7952373241884,
+     -196.64396312307733
+    ]
+   ]
+  },
+  {
+   "source": "s_n9@t0_8",
+   "target": "re_n14",
+   "arc": "consumption",
+   "route": [
+    [
+     158.7952373241884,
+     187.97142149230731
+    ]
+   ]
+  },
+  {
+   "source": "s_n0@t0_1",
+   "target": "re_n7",
+   "arc": "consumption",
+   "route": [
+    [
+     -148.8970703681193,
+     271.0483445692304
+    ]
+   ]
+  },
+  {
+   "source": "s_n1@t0_2",
+   "target": "re_n5",
+   "arc": "consumption",
+   "route": [
+    [
+     -210.43553190658085,
+     -144.33627081538503
+    ]
+   ]
+  },
+  {
+   "source": "re_n16",
+   "target": "s_n13@t0_4",
+   "arc": "production",
+   "route": [
+    [
+     158.7952373241884,
+     -252.0285785076927
+    ]
+   ]
+  },
+  {
+   "source": "re_n16",
+   "target": "s_n17@t0_23",
+   "arc": "production",
+   "route": [
+    [
+     158.7952373241884,
+     -252.0285785076927
+    ]
+   ]
+  },
+  {
+   "source": "re_n14",
+   "target": "s_n11@t0_3",
+   "arc": "production",
+   "route": [
+    [
+     158.7952373241884,
+     132.58680610769193
+    ]
+   ]
+  },
+  {
+   "source": "re_n14",
+   "target": "s_n12@t0_18",
+   "arc": "production",
+   "route": [
+    [
+     158.7952373241884,
+     132.58680610769193
+    ]
+   ]
+  },
+  {
+   "source": "re_n7",
+   "target": "s_n4@t0_6",
+   "arc": "production",
+   "route": [
+    [
+     -148.8970703681193,
+     326.4329599538458
+    ]
+   ]
+  },
+  {
+   "source": "re_n5",
+   "target": "s_n8@t0_7",
+   "arc": "production",
+   "route": [
+    [
+     -210.43553190658085,
+     -88.95165543076963
+    ]
+   ]
+  }
+ ]
+}

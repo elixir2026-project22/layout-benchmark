@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1086" viewBox="0 0 900 1086" font-family="Helvetica, Arial, sans-serif">
+<title>phenylalanine-and-tyrosine-metabolism: networkx-spectral</title>
+<defs><marker id="production" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#222"/></marker><marker id="stimulation" viewBox="0 0 11 10" refX="10" refY="5" markerWidth="8.8" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,1 L10,5 L1,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="catalysis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8.0" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><circle cx="5" cy="5" r="4" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="inhibition" viewBox="0 0 4 10" refX="1" refY="5" markerWidth="3.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="2"/></marker><marker id="necessary-stimulation" viewBox="0 0 14 10" refX="13" refY="5" markerWidth="11.2" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,0 L1,10" stroke="#222" stroke-width="1.6"/><path d="M4,1 L13,5 L4,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker><marker id="modulation" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9.6" markerHeight="8.0" markerUnits="userSpaceOnUse" orient="auto"><path d="M1,5 L6,1 L11,5 L6,9 z" fill="#fff" stroke="#222" stroke-width="1.2"/></marker></defs>
+<rect width="100%" height="100%" fill="#fff"/>
+<rect x="8" y="6" width="14" height="11" rx="2" fill="#cfe2f3" stroke="#666" stroke-width="0.6"/><text x="28" y="15.5" font-size="11" fill="#333">cytosol</text>
+<rect x="8" y="22" width="14" height="11" rx="2" fill="#fce5cd" stroke="#666" stroke-width="0.6"/><text x="28" y="31.5" font-size="11" fill="#333">extracellular space</text>
+<polyline points="331.9,591.4 511.9,625.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="323.9,593.1 276.0,644.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="323.2,587.7 191.6,479.1" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="693.4,365.9 513.8,624.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="526.5,655.2 513.6,626.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="473.4,834.5 425.1,976.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="350.0,840.0 275.4,647.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="432.6,1074.2 424.8,979.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="228.7,568.5 191.0,479.3" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="108.4,372.7 66.2,297.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="104.5,372.9 89.0,365.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="98.9,369.8 89.0,365.5" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="105.2,374.9 123.2,435.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="37.2,239.1 30.5,223.0" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="10.3,180.3 29.5,220.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="73.7,350.5 86.7,363.8" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="99.9,398.9 122.8,435.7" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="889.3,53.8 852.0,114.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="889.3,53.8 852.0,114.4" fill="none" stroke="#222" stroke-width="0.9"><title>consumption</title></polyline>
+<polyline points="513.6,626.8 526.5,655.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="512.8,626.8 474.9,829.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="424.1,976.8 352.5,845.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="424.8,979.0 432.6,1074.2" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="274.0,644.7 197.3,551.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="274.2,644.7 231.5,574.0" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="189.6,477.1 112.1,378.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="189.6,477.1 106.6,374.9" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="65.0,294.8 39.7,244.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="29.5,220.7 10.3,180.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="29.5,220.7 10.3,180.3" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="30.6,223.0 103.0,369.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="86.7,363.8 73.7,350.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="88.2,366.1 97.3,393.4" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="124.2,438.0 193.4,546.1" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="122.4,436.6 114.8,434.6" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="852.0,114.4 889.3,53.8" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<polyline points="850.6,116.7 697.0,360.5" fill="none" stroke="#222" stroke-width="0.9" marker-end="url(#production)"><title>production</title></polyline>
+<rect x="321.0" y="587.7" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Oxygen</title></rect>
+<rect x="689.8" y="360.5" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-Phenylalanine</title></rect>
+<rect x="522.3" y="655.2" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>4A-Hydroxytetrahydrobiopterin</title></rect>
+<rect x="522.3" y="655.2" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>5,6,7,8-Tetrahydrobiopterin</title></rect>
+<rect x="468.9" y="829.0" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-Tyrosine</title></rect>
+<rect x="345.6" y="840.0" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>3-(4-Hydroxyphenyl)Pyruvate</title></rect>
+<rect x="427.4" y="1074.2" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>2-Oxoglutarate</title></rect>
+<rect x="427.4" y="1074.2" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>L-Glutamate</title></rect>
+<rect x="189.7" y="546.1" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Carbon Dioxide</title></rect>
+<rect x="224.4" y="568.5" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Homogentisate</title></rect>
+<rect x="104.5" y="372.7" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>4-Maleylacetoacetate</title></rect>
+<rect x="98.9" y="369.4" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Proton</title></rect>
+<rect x="32.9" y="239.1" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>4-Fumarylacetoacetate</title></rect>
+<rect x="3.6" y="174.8" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Acetoacetate</title></rect>
+<rect x="3.6" y="174.8" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Fumarate</title></rect>
+<rect x="3.6" y="174.8" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Water</title></rect>
+<rect x="65.7" y="345.1" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Nicotinamide Adenine Dinucleotide</title></rect>
+<rect x="65.7" y="345.1" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Nicotinamide Adenine Dinucleotide - Reduced</title></rect>
+<rect x="92.8" y="393.4" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Succinyl-Acetoacetate</title></rect>
+<rect x="104.0" y="430.6" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Succinylacetone</title></rect>
+<rect x="885.5" y="48.3" width="10.9" height="5.4" rx="2.7" fill="#cfe2f3" stroke="#222" stroke-width="1"><title>Sodium</title></rect>
+<rect x="885.5" y="48.3" width="10.9" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>Sodium</title></rect>
+<rect x="885.5" y="48.3" width="10.9" height="5.4" rx="2.7" fill="#fce5cd" stroke="#222" stroke-width="1"><title>L-Phenylalanine</title></rect>
+<rect x="511.9" y="624.5" width="2.3" height="2.3" fill="#fff" stroke="#222" stroke-width="1"><title>L-Phenylalanine, Tetrahydrobiopterin:Oxygen Oxidoreductase (4-Hydroxylating)</title></rect>
+<rect x="423.5" y="976.8" width="2.3" height="2.3" fill="#fff" stroke="#222" stroke-width="1"><title>Tyrosine Transaminase</title></rect>
+<rect x="273.8" y="644.7" width="2.3" height="2.3" fill="#fff" stroke="#222" stroke-width="1"><title>4-Hydroxyphenylpyruvate:Oxygen Oxidoreductase</title></rect>
+<rect x="189.4" y="477.1" width="2.3" height="2.3" fill="#fff" stroke="#222" stroke-width="1"><title>Homogentisate:Oxygen 1, 2-Oxidoreductase (Decyclizing)</title></rect>
+<rect x="64.4" y="294.8" width="2.3" height="2.3" fill="#fff" stroke="#222" stroke-width="1"><title>Maleylacetoacetate Isomerase</title></rect>
+<rect x="28.9" y="220.7" width="2.3" height="2.3" fill="#fff" stroke="#222" stroke-width="1"><title>Fumarylacetoacetase</title></rect>
+<rect x="86.7" y="363.8" width="2.3" height="2.3" fill="#fff" stroke="#222" stroke-width="1"><title>Alternative Route for Formation of Succinylacetone, from Maleylacetoacetate</title></rect>
+<rect x="122.4" y="435.7" width="2.3" height="2.3" fill="#fff" stroke="#222" stroke-width="1"><title>Alternative Route for Formation of Succinylacetone, from Succinyl-Acetoacetate</title></rect>
+<rect x="850.1" y="114.4" width="2.3" height="2.3" fill="#fff" stroke="#222" stroke-width="1"><title>Transport of L-Phenylalanine  via Sodium Symport</title></rect>
+</svg>

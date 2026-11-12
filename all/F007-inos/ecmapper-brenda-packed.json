@@ -1,0 +1,150 @@
+{
+ "nodes": [
+  {
+   "id": "s_n0_n10@1",
+   "of": "s_n0_n10",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "argininosuccinate",
+   "x": 395.55,
+   "y": -269.0,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n6@2",
+   "of": "s_n0_n6",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "arginine",
+   "x": 112.50999999999999,
+   "y": -129.0,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n2@3",
+   "of": "s_n0_n2",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "fumarate",
+   "x": 326.1571023172919,
+   "y": -43.09657294933085,
+   "width": 28.799999999999997,
+   "height": 14.399999999999999
+  },
+  {
+   "id": "s_n0_n4@13",
+   "of": "s_n0_n4",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "citrulline",
+   "x": 112.50999999999999,
+   "y": -197.0,
+   "width": 48.0,
+   "height": 24.0
+  },
+  {
+   "id": "s_n0_n3@19",
+   "of": "s_n0_n3",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "aspartate",
+   "x": 119.85818930857474,
+   "y": -187.4365407175215,
+   "width": 28.799999999999997,
+   "height": 14.399999999999999
+  },
+  {
+   "id": "re_n0_n25",
+   "of": "re_n0_n25",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n0_n25",
+   "x": 370.3185240172316,
+   "y": -156.11192115830553,
+   "width": 10.0,
+   "height": 10.0
+  },
+  {
+   "id": "re_n0_n30",
+   "of": "re_n0_n30",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n0_n30",
+   "x": 144.3,
+   "y": -269.0,
+   "width": 10.0,
+   "height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "s_n0_n10@1",
+   "target": "re_n0_n25",
+   "arc": "consumption",
+   "route": [
+    [
+     391.35910591312745,
+     -174.85981126619114
+    ]
+   ]
+  },
+  {
+   "source": "s_n0_n4@13",
+   "target": "re_n0_n30",
+   "arc": "consumption",
+   "route": [
+    [
+     127.54218495040288,
+     -258.083240647358
+    ]
+   ]
+  },
+  {
+   "source": "s_n0_n3@19",
+   "target": "re_n0_n30",
+   "arc": "consumption",
+   "route": [
+    [
+     127.54218495040288,
+     -258.083240647358
+    ]
+   ]
+  },
+  {
+   "source": "re_n0_n25",
+   "target": "s_n0_n6@2",
+   "arc": "production",
+   "route": [
+    [
+     323.16548841356905,
+     -114.09692679528752
+    ]
+   ]
+  },
+  {
+   "source": "re_n0_n25",
+   "target": "s_n0_n2@3",
+   "arc": "production",
+   "route": [
+    [
+     323.16548841356905,
+     -114.09692679528752
+    ]
+   ]
+  },
+  {
+   "source": "re_n0_n30",
+   "target": "s_n0_n10@1",
+   "arc": "production",
+   "route": [
+    [
+     197.21784132425375,
+     -303.47295112688687
+    ]
+   ]
+  }
+ ],
+ "compartments": {}
+}
