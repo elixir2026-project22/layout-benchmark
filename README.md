@@ -16,9 +16,9 @@ metrics derived from the project's layout rules.
 All inputs are listed, with where they come from, in [`benchmark.yaml`](benchmark.yaml) (see Usage):
 
 - The SBML models in the project's [`data_shared`](https://github.com/elixir2026-project22/data_shared) repository
-  (private to the project): BRENDA pathways, E. coli core and iCH360, Reactome, Human2, *Mycoplasma*, and the
-  Stress Knowledge Map (PSS pathways, whole PSS, CKN); and
-  [iML1515](http://bigg.ucsd.edu/models/iML1515) from BiGG.
+  (private to the project): BRENDA pathways, E. coli core and iCH360, Reactome, *Mycoplasma*, and two Stress
+  Knowledge Map pathways (JA, SA); and [iML1515](http://bigg.ucsd.edu/models/iML1515) from BiGG. Human2, the whole
+  PSS and CKN are left out: too large for most layouts (hours each, mostly timeouts).
 - **Reference layouts** (drawn by hand), for comparing the automatic ones against:
   - the [metabolismregulation gallery](https://metabolismregulation.github.io/gallery/) maps (SBML, plus SBGN-ML
     with the layout; CC BY 4.0);
