@@ -454,3 +454,70 @@ def test_timeout_kills_the_tools_a_layout_started(tiny_sbml, tmp_path, monkeypat
         time.sleep(0.1)
     else:
         raise AssertionError("the tool's process is still running")
+
+
+def test_brenda_map_reference(tmp_path):
+    """The model's pathway on BRENDA's map: the subsystem sharing its reaction ids, metabolites matched by name
+    (spelling aside) or as the one left over, directions from the model, clones, the map's sizes, y up."""
+    import json
+
+    from layout_benchmark.manifest import load
+    from layout_benchmark.reference import reference_drawing
+
+    path = make_sbml(
+        tmp_path / "m.xml", [("BR1", ["D-glucose", "ATP"], ["Glc6P"], []), ("BR2", ["Glc6P"], ["F6P"], [])]
+    )
+
+    def met(node, name, x, y):
+        return {"node_id": node, "brenda_name": name, "display_name": name, "x": x, "y": y, "width": 40, "height": 30}
+
+    def link(node, name):
+        return {"node_id": node, "brenda_name": name, "display_name": name}
+
+    def reaction(node, sub, ids, x, y, main, consumed=()):
+        return {
+            "node_id": node,
+            "subsystem": sub,
+            "ec_numbers": [],
+            "brenda_reaction_ids": ids,
+            "layout": {"x": x, "y": y, "width": 60, "height": 30},
+            "main_metabolites": main,
+            "cofactors": {"consumed": list(consumed), "produced": [], "undirected": []},
+        }
+
+    brenda = {
+        "reactions": [
+            reaction(
+                "e1",
+                "glycolysis",
+                ["BR1"],
+                100,
+                100,
+                [link("m1", "glucose"), link("m2", "glucose 6-phosphate")],
+                [link("c1", "ATP")],
+            ),
+            reaction("e2", "glycolysis", ["BR2"], 100, 300, [link("m2", "glucose 6-phosphate"), link("m3", "F6P")]),
+            reaction("e9", "other", ["BR9"], 0, 0, []),
+        ],
+        "metabolite_nodes": [
+            met("m1", "glucose", 100, 0),
+            met("m2", "glucose 6-phosphate", 100, 200),
+            met("m3", "F6P", 100, 400),
+            met("c1", "ATP", 150, 80),
+        ],
+    }
+    (tmp_path / "BRENDA_map_reactions.json").write_text(json.dumps(brenda))
+    (tmp_path / "benchmark.yaml").write_text(
+        "sets:\n  - name: B\n    models: m.xml\n    reference: BRENDA_map_reactions.json\n"
+        "    reference_kind: brenda-map\n"
+    )
+    _, specs = load(tmp_path / "benchmark.yaml")
+    assert specs[0].reference_kind == "brenda-map"
+    p = read_sbml(path)
+    d = reference_drawing(p, specs[0].reference, "brenda-map")
+    assert d.placed() == set(p.graph)  # D-glucose by name, Glc6P as the one left over at BR1
+    assert d.pos["BR2"] == (100, -300)  # y up
+    g6p = [n for n, a in d.graph.nodes(data="of") if a == "Glc6P"]
+    assert g6p == ["Glc6P@m2"]  # one map node shared by both reactions
+    assert d.graph.has_edge("BR1", "Glc6P@m2") and d.graph.has_edge("Glc6P@m2", "BR2")  # directions from the model
+    assert d.graph.nodes["BR1"]["own_width"] == 60

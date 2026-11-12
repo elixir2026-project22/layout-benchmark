@@ -182,7 +182,8 @@ def reference_drawing(pathway: Pathway, path: str | Path, kind: str):
 
     - ``sbgn``: an SBGN-ML map (nodes matched by ``match_glyphs``, and its compartment glyphs);
     - ``escher``: an Escher map (clones and routes as drawn);
-    - ``sbml-layout``: the model's own SBML Layout, read by SBMLNetwork (aliases are clones; None without it).
+    - ``sbml-layout``: the model's own SBML Layout, read by SBMLNetwork (aliases are clones; None without it);
+    - ``brenda-map``: the model's pathway on BRENDA's pathway map (``brenda_map_drawing``).
     """
     from .drawing import Drawing
 
@@ -200,4 +201,138 @@ def reference_drawing(pathway: Pathway, path: str | Path, kind: str):
         from . import sbmlnet
 
         return sbmlnet.read_layout(pathway, Path(path)) if sbmlnet.available() else None
+    if kind == "brenda-map":
+        return brenda_map_drawing(pathway, path)
     raise ValueError(f"unknown reference kind {kind!r}")
+
+
+def _reaction_ecs(source) -> dict[str, set[str]]:
+    """EC numbers of each reaction of an SBML file, from its identifiers.org annotations."""
+    import re
+
+    out: dict[str, set[str]] = {}
+    if source is None:
+        return out
+    for el in ET.parse(source).getroot().iter():
+        if _local(el.tag) == "reaction" and el.get("id"):
+            text = ET.tostring(el, encoding="unicode")
+            out[el.get("id")] = set(re.findall(r"identifiers\.org/ec-code/([0-9.\-a-zA-Z]+)", text))
+    return out
+
+
+def _name_key(name: str) -> str:
+    """A name for matching only: lower case, without stereo prefixes (D-, L-, alpha-, beta-, (R)-, (S)-), "di" for
+    "bis", and without spaces and punctuation ("fructose-1,6-bisphosphate" is "D-fructose 1,6-bisphosphate")."""
+    import re
+
+    n = name.lower().replace("bisphosphate", "diphosphate")
+    n = re.sub(r"(^|[\s(,-])(d|l|dl|alpha|beta|\(r\)|\(s\))-", r"\1", n)
+    return re.sub(r"[^a-z0-9]", "", n)
+
+
+def brenda_map_drawing(pathway: Pathway, path: str | Path):
+    """A pathway of BRENDA's pathway map as the reference of a model made from it, read from ecmapper's export of
+    the map (``BRENDA_map_reactions.json``: every enzyme and metabolite node with its centre and size, and which
+    metabolites each enzyme node is linked to). The pathway is the map's subsystem that shares the most BRENDA
+    reaction ids with the model (its reactions are named by them: BR…, BS…). Map reactions are matched to model
+    reactions by those ids, then by EC number among the rest; metabolite nodes by name (BRENDA's or the shown
+    one, compared by ``_name_key``), and where one model participant and one map metabolite of a reaction are left
+    over, by that. A metabolite drawn at several places is a clone. The map doesn't say which main metabolite is consumed
+    and which produced (its links have arrows at both ends): edges take their direction from the model. Node
+    sizes: the map's rectangles (``own_width``, ``own_height``). None if no subsystem shares a reaction."""
+    import json
+    from collections import defaultdict
+
+    import networkx as nx
+
+    from .drawing import Drawing
+    from .graph import CONSUMPTION, PRODUCTION, REACTION, SPECIES
+
+    data = json.loads(Path(path).read_text())
+    g0 = pathway.graph
+    by_label = defaultdict(list)
+    for r in pathway.reactions:
+        by_label[g0.nodes[r]["label"]].append(r)
+    by_subsystem = defaultdict(list)
+    for r in data["reactions"]:
+        by_subsystem[r["subsystem"]].append(r)
+
+    def shared(entries):
+        return sum(any(i in by_label for i in e["brenda_reaction_ids"]) for e in entries)
+
+    subsystem = max(by_subsystem, key=lambda s: shared(by_subsystem[s]))
+    if not shared(by_subsystem[subsystem]):
+        return None
+    entries = by_subsystem[subsystem]
+
+    # map reaction node -> model reaction: by BRENDA id, then by EC among the unmatched (one candidate only)
+    matched: dict[str, str] = {}
+    for e in entries:
+        candidates = [r for i in e["brenda_reaction_ids"] for r in by_label.get(i, [])]
+        if candidates:
+            matched[e["node_id"]] = candidates[0]
+    ecs = _reaction_ecs(pathway.source)
+    rest = [r for r in pathway.reactions if r not in set(matched.values())]
+    for e in entries:
+        if e["node_id"] in matched:
+            continue
+        candidates = [r for r in rest if ecs.get(r, set()) & set(e["ec_numbers"])]
+        if len(candidates) == 1:
+            matched[e["node_id"]] = candidates[0]
+            rest.remove(candidates[0])
+
+    species_by_name = defaultdict(list)
+    for s in pathway.species:
+        species_by_name[_name_key(g0.nodes[s]["label"])].append(s)
+
+    g = nx.DiGraph()
+    pos = {}
+
+    def node(did, of, kind, x, y, w, h):
+        if did not in g:
+            d = g0.nodes[of]
+            g.add_node(
+                did,
+                of=of,
+                kind=kind,
+                label=d["label"],
+                sbgn=d.get("sbgn"),
+                width=d["width"],
+                height=d["height"],
+                own_shape="box",
+                own_width=w,
+                own_height=h,
+            )
+            pos[did] = (x, -y)  # the map's y is down
+        return did
+
+    metabolites = {m["node_id"]: m for m in data["metabolite_nodes"]}
+    for e in entries:
+        rid = matched.get(e["node_id"])
+        if rid is None:
+            continue
+        lay = e["layout"]
+        did = rid if rid not in g else f"{rid}@{e['node_id']}"  # a reaction drawn twice: a clone
+        rnode = node(did, rid, REACTION, lay["x"], lay["y"], lay["width"], lay["height"])
+        partners = e["main_metabolites"] + [
+            c for k in ("consumed", "produced", "undirected") for c in e["cofactors"][k]
+        ]
+        participants = {s for s in nx.all_neighbors(g0, rid) if g0.nodes[s]["kind"] == SPECIES}
+        pairs, left = [], []
+        for m in partners:
+            if m["node_id"] not in metabolites:
+                continue
+            keys = {_name_key(m.get("brenda_name") or ""), _name_key(m.get("display_name") or "")}
+            species = [s for k in keys for s in species_by_name.get(k, []) if s in participants]
+            (pairs.append((m, species[0])) if species else left.append(m))
+        unpaired = participants - {s for _, s in pairs}
+        if len(left) == 1 and len(unpaired) == 1:  # the one left on each side: the same metabolite, named apart
+            pairs.append((left[0], unpaired.pop()))
+        for m, s in pairs:
+            met = metabolites[m["node_id"]]
+            snode = node(f"{s}@{m['node_id']}", s, SPECIES, met["x"], met["y"], met["width"], met["height"])
+            if g0.has_edge(s, rid):
+                g.add_edge(snode, rnode, arc=g0.edges[s, rid].get("arc", CONSUMPTION))
+            else:
+                g.add_edge(rnode, snode, arc=PRODUCTION)
+    return Drawing(graph=g, pos=pos) if pos else None

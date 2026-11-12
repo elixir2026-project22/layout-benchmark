@@ -25,7 +25,12 @@ All inputs are listed, with where they come from, in [`benchmark.yaml`](benchmar
   - the IMD maps in `data_shared` (pathways of inborn metabolic disorders, Escher maps drawn on Recon3D): they come
     without SBML, so the model is made from each map (its reactions with all their metabolites and stoichiometry;
     compartments from the metabolite ids), and the map is its reference;
-  - the Reactome pathway's own diagram (its SBML Layout).
+  - the Reactome pathway's own diagram (its SBML Layout);
+  - for the BRENDA pathways, the pathway on BRENDA's pathway map (CC BY 4.0), read from
+    [ecmapper](https://github.com/elixir2026-project22/ecmapper)'s export of the map (`BRENDA_map_reactions.json`:
+    every enzyme and metabolite node with its position and size). The model's reactions are matched by their
+    BRENDA reaction ids, then EC numbers; metabolites by name. The map doesn't say which main metabolite is consumed
+    and which produced, so edges take their direction from the model.
 
 The model is read as one graph: species and reactions as nodes, one edge per reactant, product and modifier, and
 compartments as parents. Each species gets its SBGN class from its SBO term (or from the model's SBGN file), and
@@ -137,7 +142,8 @@ uv run layout-benchmark run path/to/model.xml -o results/run1  # or any SBML fil
 `benchmark.yaml` is the benchmark manifest: the sets of models, in the report's order, and per model where it
 comes from (a URL, a GitHub glob such as `https://github.com/<owner>/<repo>/blob/main/brenda_*.xml`, or a local
 file), its reference layout (an SBGN-ML map or an Escher map, as a URL or a pattern next to the model such as
-`"{stem}.sbgn"`; or `layout`, the model's own SBML Layout), companion files, a page to link, credit, licence and
+`"{stem}.sbgn"`; or `layout`, the model's own SBML Layout; `reference_kind: brenda-map` for BRENDA's map),
+companion files, a page to link, credit, licence and
 description; sets of Escher maps without SBML (`convert: escher`) become models with the map as reference. The
 format is described in `src/layout_benchmark/manifest.py`.
 
@@ -165,5 +171,6 @@ The layouts run locally; the published report is only the result, on the `gh-pag
 ## Licence
 
 MIT (code). The input data keep their own licences; the metabolismregulation gallery maps (reference layouts)
-are CC BY 4.0 (<https://metabolismregulation.github.io/about/>), credited in the report. gdMetriX, used for the
+are CC BY 4.0 (<https://metabolismregulation.github.io/about/>), credited in the report, as is BRENDA's pathway
+map (CC BY 4.0, <https://www.brenda-enzymes.org/copy.php>). gdMetriX, used for the
 general metrics, is GPL-3.0: it is imported, not included; a bundle that includes it must follow the GPL.

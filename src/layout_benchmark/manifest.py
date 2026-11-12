@@ -5,6 +5,9 @@ A YAML file::
     sets:
       - name: BRENDA pathways                   # models are cached in <data>/brenda-pathways/
         models: https://github.com/org/repo/blob/main/brenda_*.xml
+        reference: https://github.com/org/ecmapper/blob/main/BRENDAmap/BRENDA_map_reactions.json
+        reference_kind: brenda-map              # optional: the kind, where the extension doesn't say it (one
+                                                #   file for every model of the set: BRENDA's map, cached once)
       - name: Escher maps
         models: "https://github.com/org/repo/blob/main/maps/**/*.json"
         convert: escher                         # each map becomes a model, and the map its reference layout
@@ -43,6 +46,8 @@ from pathlib import Path, PurePosixPath
 import yaml
 
 LOCK = "manifest.lock.json"
+# reference kinds whose file holds the references of many models (cached once per set)
+SHARED_REFERENCES = ("brenda-map",)
 GITHUB = re.compile(r"https://github\.com/([^/]+/[^/]+)/blob/([^/]+)/(.+)")
 
 
@@ -230,6 +235,7 @@ def load(
 def _spec(entry, item, source, name, data, base, lock, online) -> ModelSpec:
     convert = entry.get("convert")
     reference_pattern = item.get("reference") or entry.get("reference")
+    given_kind = item.get("reference_kind") or entry.get("reference_kind")
     links = {}
     common = {"set": entry["name"], "credit": entry.get("credit"), "licence": entry.get("licence")}
     page = item.get("page") or entry.get("page")
@@ -241,7 +247,7 @@ def _spec(entry, item, source, name, data, base, lock, online) -> ModelSpec:
         elif reference_pattern:
             candidate = model.parent / reference_pattern.format(stem=model.stem)
             if candidate.exists():
-                reference, kind = candidate, reference_kind(candidate)
+                reference, kind = candidate, given_kind or reference_kind(candidate)
         if page:
             links["page"] = page
         return ModelSpec(path=model, name=name, reference=reference, reference_kind=kind, links=links, **common)
@@ -260,8 +266,11 @@ def _spec(entry, item, source, name, data, base, lock, online) -> ModelSpec:
             reference, kind = model, "sbml-layout"
         elif reference_pattern:
             ref_source = reference_pattern if "://" in reference_pattern else _sibling(source, reference_pattern, src)
-            kind = reference_kind(ref_source)
-            reference = folder / f"{name}{'.escher.json' if kind == 'escher' else '.sbgn'}"
+            kind = given_kind or reference_kind(ref_source)
+            if kind in SHARED_REFERENCES:  # one file for the whole set
+                reference = folder / _source_path(ref_source).name
+            else:
+                reference = folder / f"{name}{'.escher.json' if kind == 'escher' else '.sbgn'}"
             reference_url, links["reference"] = pinned(ref_source, lock, online)
     files = {}
     for companion in item.get("files", []):
