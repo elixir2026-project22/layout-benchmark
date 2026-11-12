@@ -19,8 +19,8 @@ with changes (layouts, options, output).
   in the expected order (also the report's order); `LAYOUTS`, `GROUP`, `LINKS`, `expected_rank` are derived from
   it. `js/layout.mjs` runs the cytoscape.js layouts headless in Node, `js/graph.mjs` graphology's (Sigma.js) and
   Reagraph's.
-- `external.py`: MetaCarto, sbml2map, ecmapper (`ecmapper-brenda`, `-packed`) and sbml_pathway_layout
-  (`rules-claude`); all write Escher maps, read back as drawings (clones of metabolites and reactions, routes kept).
+- `external.py`: MetaCarto, sbml2map, ecmapper (`ecmapper-brenda`, `-packed`), sbml_pathway_layout
+  (`rules-claude`) and small-pathway-layout; all write Escher maps, read back as drawings (clones of metabolites and reactions, routes kept).
   `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's auto layout and its reader for SBML Layout; the helper runs
   in SBMLNetwork's own environment.
 - `versions.py`: each layout's tool and package versions (`LayoutSpec.tool` and `.packages`), recorded by `run`
@@ -52,7 +52,7 @@ with changes (layouts, options, output).
 - `uv sync --extra tests`; `(cd src/layout_benchmark/js && npm ci)`; `uv run pytest` (unit tests need no external
   tools; the tools' layouts are skipped in the per-layout test).
 - External tools live in `.tools/` (untracked), each in its own uv environment: MetaCarto (v2.0.0), sbml2map,
-  ecmapper, sbml_pathway_layout, SBMLNetwork (0.5.12, needs IPython and Skia). Setup commands are in the README.
+  ecmapper, sbml_pathway_layout, small-pathway-layout, SBMLNetwork (0.5.12, needs IPython and Skia). Setup commands are in the README.
   Without a tool, its layout reports an error.
 - Graphviz from the system (`pygraphviz`). Distribution builds may lack GTS: the force-directed programs use
   `overlap=scale`, and sfdp prints "not built with triangulation library" but still returns a layout.
@@ -204,8 +204,13 @@ time), check the report, and publish only on the user's go-ahead.
 - ecmapper draws only what it matches to the BRENDA map; subsystems it sets aside go to a separate map (not read);
   `--split` (several maps without common coordinates) isn't used. sbml_pathway_layout writes cofactors inside
   reaction boxes (fewer nodes placed), is slow on large models in one drawing, and ignores the seed. It refuses
-  drawings that break its rules; we pass `--write-failing` (its PR #3, branch `write-rule-breaking-drawings`, checked
-  out in `.tools/` until merged) so they are shown.
+  drawings that break its rules; we pass `--write-failing` (its PR #3) so they are shown.
+- small-pathway-layout (Anja Tietz) runs with its defaults: more than 150 reactions refused (`--max-reactions`);
+  modifiers, protons, exchange reactions and pseudo-reactions (biomass: small drains, not read) not drawn; species
+  merged by name or annotation (`--no-name-match` would keep the name part off). Deterministic (seed ignored). Its
+  Escher map keeps the SBML ids (since its c3f77d8; before, most metabolites didn't match the model). Not used: its
+  `--previous` (extend an existing map, issue #18) and `--notation sbgn`. Don't take models from its `examples/`
+  (an IMD map not cleared for publishing, PSS data).
 - The tools' Python runs with `PYTHONHASHSEED` set to the seed (`external._tool_env`): MetaCarto's map depends on the
   order of Python's sets (e_coli_core: a different map in every process without it, the same map with it; another
   seed, another map). graphology's random start takes `rng` explicitly (`js/graph.mjs`): its default is the

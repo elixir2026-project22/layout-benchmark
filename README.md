@@ -47,6 +47,7 @@ each modifier its SBGN arc (catalysis, inhibition, stimulation, …).
 | Family | Algorithms |
 |---|---|
 | [sbml_pathway_layout](https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude) (`rules-claude`) | the project's layout rules: cycles as rings, pathways as layered backbones, cofactors written inside the reaction box (whole model in one drawing) |
+| [small-pathway-layout](https://github.com/elixir2026-project22/small-pathway-layout) | pathway-sized maps (up to 150 reactions): a main line (a known pathway such as glycolysis, else the longest chain) with branches off it, curated cycles (TCA, urea, methionine, Calvin, glyoxylate) as rings, main metabolites and cofactors from the source's annotations, cofactors as clones |
 | [ecmapper](https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md) (`ecmapper-brenda`, `-packed`) | draft maps from the BRENDA pathway map, matched by EC number: the subsystems arranged with few crossing links, or packed without them |
 | [MetaCarto](https://github.com/forxhunter/MetaCarto) | constructive layout of metabolic maps (whole-model canvas) |
 | [sbml2map](https://github.com/elixir2026-project22/sbml2map) | constraint-based, on a grid (an exact optimisation with a time limit; heuristic placement on large models) |
@@ -71,9 +72,11 @@ are kept. Known limits:
   modifiers (enzymes, regulators). sbml2map also leaves out inorganic species (water, protons, O2, CO2, phosphate,
   ammonium) and the reactions with nothing else, fails on variable stoichiometry (the PSS models), and its
   optimisation stops at a time limit, so its result can depend on the machine's speed.
+- small-pathway-layout runs with its defaults: it refuses models of more than 150 reactions (an error row), and
+  doesn't draw modifiers, protons, exchange reactions or biomass and other pseudo-reactions (it draws those as small
+  drains, which aren't read). It merges species that share a name or annotation.
 - sbml_pathway_layout writes cofactors inside the reaction boxes instead of drawing them as nodes (our pictures
-  don't show that text), and merges species that share a name within a compartment
-  ([its issue #1](https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude/issues/1)).
+  don't show that text).
   It doesn't write a drawing that breaks its own rules; the benchmark runs it with `--write-failing`
   ([its PR #3](https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude/pull/3)), so such
   drawings are shown (the picture doesn't say which of its rules failed).
@@ -168,6 +171,10 @@ git clone https://github.com/elixir2026-project22/sbml2map.git .tools/sbml2map
 # sbml_pathway_layout (the project's layout rules)
 git clone https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude.git .tools/sbml_pathway_layout
 (cd .tools/sbml_pathway_layout && uv venv --python 3.12 && uv pip install networkx numpy matplotlib)
+
+# small-pathway-layout (Anja Tietz; pathway-sized maps)
+git clone https://github.com/elixir2026-project22/small-pathway-layout.git .tools/small-pathway-layout
+(cd .tools/small-pathway-layout && uv sync)
 
 # ecmapper (GPL-3.0): draft maps from the BRENDA map
 git clone https://github.com/elixir2026-project22/ecmapper.git .tools/ecmapper

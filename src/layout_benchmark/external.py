@@ -194,6 +194,14 @@ def sbml2map(pathway: Pathway, seed: int) -> Drawing:
     return _run_tool("sbml2map", args, "escher_map.json", pathway, seed)
 
 
+def small_pathway_layout(pathway: Pathway, seed: int) -> Drawing:
+    """Anja Tietz's small-pathway-layout (``sbml_autolayout``) with its defaults: main metabolites and cofactors from
+    the source's annotations, curated cycles and main paths; models of more than 150 reactions refused; modifiers,
+    exchange reactions and protons not drawn. Read from its Escher map. Deterministic: ``seed`` is ignored."""
+    args = ["-m", "sbml_autolayout", "{model}", "-o", "{out}/map"]
+    return _run_tool("small-pathway-layout", args, "map.escher.json", pathway, seed)
+
+
 def _python(name: str) -> Path:
     python = TOOLS_DIR / name / ".venv" / "bin" / "python"
     if not python.exists():
