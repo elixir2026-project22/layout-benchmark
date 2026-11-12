@@ -19,7 +19,7 @@ import igraph as ig
 import networkx as nx
 
 from .drawing import Drawing, Positions
-from .external import ecmapper, ecmapper_packed, metacarto, rules_layout, sbml2map
+from .external import ecmapper, ecmapper_packed, metacarto, rules_layout, sbml2map, small_pathway_layout
 from .graph import REACTION, Pathway, reaction_compartment
 from .sbmlnet import autolayout
 
@@ -287,6 +287,14 @@ REGISTRY: list[LayoutSpec] = [
         "https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude",
         "escher",
         "sbml_pathway_layout",
+    ),
+    LayoutSpec(
+        "small-pathway-layout",
+        small_pathway_layout,
+        "pathway-specific",
+        "https://github.com/elixir2026-project22/small-pathway-layout",
+        "escher",
+        "small-pathway-layout",
     ),
     LayoutSpec("ecmapper-brenda", ecmapper, "pathway-specific", _ECMAPPER, "escher", "ecmapper"),
     LayoutSpec("ecmapper-brenda-packed", ecmapper_packed, "pathway-specific", _ECMAPPER, "escher", "ecmapper"),
