@@ -169,7 +169,7 @@ time), check the report, and publish only on the user's go-ahead.
   - **the project's layout rules** (`rules.py`, user 2026-11-12): raw values only (no thresholds, scores or
     overall), written from the definitions of the scorer's `core.js` and `svg_layout_metrics.py` (no code copied:
     neither has a licence). Where they differ: the shared definition; else the one measuring the layout itself (not
-    the file format, not what else a tool draws, not a computing limit); else core.js's. So: no crossing cap; lines
+    the file format, not what else a tool draws, not a computing limit); else core.js's. So: lines
     through species only (not reactions); cycles without cofactors (scorer's names) and Escher secondary nodes;
     aspect/density on the drawn nodes' extent (no compartment boxes); bends = turns over 25 degrees. Each `how`
     says which. "Line through a node" uses the exact shape (`THROUGH_SHRINK` 0; the tools shrink by 2 px). Labels:
@@ -201,7 +201,9 @@ time), check the report, and publish only on the user's go-ahead.
   optimisation stops at a time limit (`--time-limit`, 60 s), so results can depend on the machine's speed.
 - ecmapper draws only what it matches to the BRENDA map; subsystems it sets aside go to a separate map (not read);
   `--split` (several maps without common coordinates) isn't used. sbml_pathway_layout writes cofactors inside
-  reaction boxes (fewer nodes placed), is slow on large models in one drawing, and ignores the seed.
+  reaction boxes (fewer nodes placed), is slow on large models in one drawing, and ignores the seed. It refuses
+  drawings that break its rules; we pass `--write-failing` (its PR #3, branch `write-rule-breaking-drawings`, checked
+  out in `.tools/` until merged) so they are shown.
 - The tools' Python runs with `PYTHONHASHSEED` set to the seed (`external._tool_env`): MetaCarto's map depends on the
   order of Python's sets (e_coli_core: a different map in every process without it, the same map with it; another
   seed, another map). graphology's random start takes `rng` explicitly (`js/graph.mjs`): its default is the

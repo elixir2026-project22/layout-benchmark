@@ -324,6 +324,8 @@ def publish(out, site, name):
     public_rows = [{k: v for k, v in r.items() if k not in ("source", "reference_file")} for r in rows]  # no paths
     if (out / "sets.json").exists():
         shutil.copy(out / "sets.json", dest / "sets.json")
+    if (out / "reproducibility.csv").exists():  # the reproducibility check, shown in the report
+        shutil.copy(out / "reproducibility.csv", dest / "reproducibility.csv")
     with (dest / "results.csv").open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(public_rows[0]))
         w.writeheader()
@@ -387,7 +389,8 @@ def fetch(manifest, data, refresh):
 def reproducibility(models, layouts, out, seed, timeout, only, data):
     """Lay out each of MODELS (a manifest or SBML files, as for `run`) twice with the same seed and compare the
     two drawings: exact, congruent (the same drawing moved, turned or mirrored) or differs. Writes one row per
-    model and layout to OUT; it does not touch a results folder."""
+    model and layout to OUT; it does not touch a results folder. Written as `<results>/reproducibility.csv`, the
+    report of that results folder shows it (next `report` or `render`)."""
     import csv
 
     from .layouts import LAYOUTS

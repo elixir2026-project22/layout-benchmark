@@ -32,6 +32,60 @@ def _cell_classes(columns: list[Metric]) -> list[str]:
     return out
 
 
+# the reproducibility check's table (`layout-benchmark reproducibility ... -o OUT/reproducibility.csv`), if there
+REPRODUCIBILITY = "reproducibility.csv"
+REPRODUCIBLE = Metric(
+    "reproducible",
+    "reproducible",
+    "reproducible",
+    None,
+    "the same drawing twice from one seed (hard rule)",
+    "project rules",
+    "the layout run twice on the model with the same seed, each run in its own process, and the drawn nodes "
+    "compared in the tool's own coordinates (`layout-benchmark reproducibility`): exact (the same coordinates), "
+    "congruent (the same drawing moved, scaled, turned or mirrored; mirrored: a cycle the other way round) or "
+    "differs; shown where the check has been run. Summary: the models reproduced (exact or congruent, not "
+    "mirrored) / the models compared",
+)
+
+
+def read_reproducibility(out: Path) -> dict[tuple[str, str], dict]:
+    """The reproducibility check's rows in ``out`` by (model, layout); empty if it hasn't been run there."""
+    path = out / REPRODUCIBILITY
+    if not path.exists():
+        return {}
+    import csv
+
+    return {(r["model"], r["layout"]): r for r in csv.DictReader(path.open())}
+
+
+def _reproduced(row: dict) -> bool | None:
+    """Whether a check reproduced the drawing (exact, or congruent without mirroring); None: nothing compared."""
+    if row["verdict"] in ("exact", "congruent"):
+        return row["verdict"] == "exact" or row.get("mirrored") not in ("True", "true", "1")
+    return False if row["verdict"] == "differs" else None
+
+
+def _verdict_cell(row: dict | None, cls: str) -> str:
+    """A model's reproducibility verdict for one layout, coloured: reproduced, not, or nothing to say."""
+    if row is None:
+        return f'<td data-v="" class="{cls}">–</td>'
+    text = row["verdict"].replace("_", " ")
+    if row["verdict"] == "congruent" and row.get("mirrored") in ("True", "true", "1"):
+        text = "mirrored"
+    ok = _reproduced(row)
+    mark = " yes" if ok else (" no" if ok is False else "")
+    shift = _number(row.get("max_shift"))
+    title = f"max shift {shift:.3g} of the diagonal" if shift else (row.get("error") or "")
+    return f'<td data-v="{escape(text)}" class="{cls}{mark}" title="{escape(title)}">{escape(text)}</td>'
+
+
+def _with_reproducible(columns: list[Metric]) -> list[Metric]:
+    """The columns with REPRODUCIBLE first in the pathway-maps band (its first hard rule)."""
+    at = next((i for i, m in enumerate(columns) if _band(m) == "pw"), len(columns))
+    return [*columns[:at], REPRODUCIBLE, *columns[at:]]
+
+
 def _legend() -> str:
     """What the column colours mean."""
     items = [
@@ -115,6 +169,8 @@ table.sortable td:first-child, table.sortable th:first-child { text-align: left;
                                                               position: sticky; left: 0; z-index: 1; }
 table.sortable td.best { font-weight: 700; color: var(--best); background: var(--best-bg); }
 table.sortable tr.ref td { color: var(--ref); }
+table.sortable td.yes { color: var(--best); font-weight: 600; }
+table.sortable td.no { color: #c92a2a; font-weight: 600; }
 table.sortable .first { border-left: 2px solid #fff; }
 th.band.gd { background: var(--gd); } th.c-gd { background: var(--gd-tint); } td.c-gd { background: var(--gd-cell); }
 th.band.pw { background: var(--pw); } th.c-pw { background: var(--pw-tint); } td.c-pw { background: var(--pw-cell); }
@@ -212,13 +268,17 @@ def _header(first: str, columns: list[Metric]) -> str:
     return f"<thead><tr>{band_row}</tr><tr>{group_row}</tr><tr>{''.join(cells)}</tr></thead>"
 
 
-def _scores_table(model: str, mr: list[dict]) -> str:
-    """A model's scores: a row per layout (the reference first), a column per metric; best values bold."""
+def _scores_table(model: str, mr: list[dict], repro: dict | None = None) -> str:
+    """A model's scores: a row per layout (the reference first), a column per metric; best values bold. ``repro``:
+    the reproducibility check's rows (``read_reproducibility``); its verdicts as a column where it has this model."""
+    repro = {layout: row for (m, layout), row in (repro or {}).items() if m == model}
     columns = [m for m in METRICS if any(r.get(m.column) not in (None, "") for r in mr)]
+    if repro:
+        columns = _with_reproducible(columns)
     if not columns:
         return ""
     columns.append(Metric("seconds", "seconds", "run", "lower", "time to lay out"))
-    best = {m.column: _best(mr, m.column, m.better) for m in columns}
+    best = {m.column: _best(mr, m.column, m.better) for m in columns if m is not REPRODUCIBLE}
     classes = dict(zip((m.column for m in columns), _cell_classes(columns)))
     body = []
     for r in sorted(mr, key=lambda r: (r["layout"] != REFERENCE, expected_rank(r["layout"]))):
@@ -233,6 +293,9 @@ def _scores_table(model: str, mr: list[dict]) -> str:
             )
         ]
         for column in (m.column for m in columns):
+            if column == REPRODUCIBLE.column:
+                cells.append(_verdict_cell(repro.get(layout), classes[column]))
+                continue
             x = None if r.get("error") and column != "seconds" else _number(r.get(column))
             mark = " best" if x is not None and x == best[column] and layout != REFERENCE else ""
             cells.append(
@@ -270,7 +333,7 @@ def ranks(rows: list[dict]) -> dict[tuple[str, str], dict[str, float]]:
 def _metrics_table() -> str:
     """Every metric: what it measures, where it comes from, how it is calculated, and which way is better."""
     body = []
-    for m in METRICS:
+    for m in _with_reproducible(METRICS):
         better = {"lower": "lower", "higher": "higher"}.get(m.better, "– (not ranked)")
         body.append(
             f"<tr class=c-{_band(m)}><td><b>{escape(m.label)}</b> <span class=t>({escape(m.group)}; <code>{escape(m.column)}</code>)"
@@ -294,14 +357,17 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
     """Write ``out/summary.html``: per layout, its median rank per metric over the models (all, or one set's), how
     many models it laid out, its failures and median time. No combined score."""
     ranked = ranks(rows)
+    repro = read_reproducibility(out)
     columns = [m for m in METRICS if m.better]
+    if repro:
+        columns = _with_reproducible(columns)
     layouts = sorted({r["layout"] for r in rows if r["layout"] != REFERENCE}, key=expected_rank)
     tables = []
     for i, (set_name, models) in enumerate([("All sets", [m for ms in sets.values() for m in ms]), *sets.items()]):
         chosen = set(models)
         classes = dict(zip((m.column for m in columns), _cell_classes(columns)))
         best_rank = {}  # per column, the lowest median rank among the layouts
-        for column in (m.column for m in columns):
+        for column in (m.column for m in columns if m is not REPRODUCIBLE):
             medians = []
             for layout in layouts:
                 values = [ranked[(m, column)][layout] for m in models if layout in ranked.get((m, column), {})]
@@ -331,6 +397,15 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
                 ),
             ]
             for column in (m.column for m in columns):
+                if column == REPRODUCIBLE.column:
+                    seen = [
+                        ok for m in models if (row := repro.get((m, layout))) and (ok := _reproduced(row)) is not None
+                    ]
+                    shown = f"{sum(seen)} / {len(seen)}" if seen else "–"
+                    share = sum(seen) / len(seen) if seen else ""
+                    mark = " yes" if seen and all(seen) else (" no" if seen else "")
+                    cells.append(f'<td data-v="{share}" class="{classes[column]}{mark}">{shown}</td>')
+                    continue
                 values = [ranked[(m, column)][layout] for m in models if layout in ranked.get((m, column), {})]
                 median = statistics.median(values) if values else None
                 shown = f"{median:.3g} <span class=t>({len(values)})</span>" if median is not None else "–"
@@ -457,6 +532,7 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
         ),
     ]
     models = list(dict.fromkeys(r["model"] for r in rows))
+    repro = read_reproducibility(out)
     has_ref = {m: any(r["layout"] == REFERENCE for r in rows if r["model"] == m) for m in models}
     first_row = {}
     for r in rows:
@@ -503,7 +579,7 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
         if set_name in descriptions:
             parts.append(f"<p class=meta>{escape(descriptions[set_name])}</p>")
         for model in ms:
-            _model_section(parts, model, rows, out, local)
+            _model_section(parts, model, rows, out, local, repro)
     parts.append("</main>")
     parts.append(SORT_SCRIPT)
     write_summary(out, rows, by_set)
@@ -512,7 +588,7 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
     return path
 
 
-def _model_section(parts: list, model: str, rows: list[dict], out: Path, local: bool):
+def _model_section(parts: list, model: str, rows: list[dict], out: Path, local: bool, repro: dict):
     """One model: header with its sizes and source links, the reference (or a placeholder), the layouts."""
     mr = [r for r in rows if r["model"] == model]
     links = model_links(mr[0], local)
@@ -560,8 +636,8 @@ def _model_section(parts: list, model: str, rows: list[dict], out: Path, local: 
             f"<figure id='{escape(_anchor(model, r['layout']))}'>{body}<figcaption>{caption}</figcaption></figure>"
         )
     parts.append("</div></div>")
-    parts.append(_scores_table(model, mr))
+    parts.append(_scores_table(model, mr, repro))
     parts.append("</section>")
 
 
-__all__ = ["model_links", "ranks", "write_report", "write_summary"]
+__all__ = ["model_links", "ranks", "read_reproducibility", "write_report", "write_summary"]

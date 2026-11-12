@@ -74,6 +74,9 @@ are kept. Known limits:
 - sbml_pathway_layout writes cofactors inside the reaction boxes instead of drawing them as nodes (our pictures
   don't show that text), and merges species that share a name within a compartment
   ([its issue #1](https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude/issues/1)).
+  It doesn't write a drawing that breaks its own rules; the benchmark runs it with `--write-failing`
+  ([its PR #3](https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude/pull/3)), so such
+  drawings are shown (the picture doesn't say which of its rules failed).
 - ecmapper draws only the reactions it can match to the BRENDA map (by EC number, or added next to matched ones),
   and puts subsystems drawn elsewhere already on a separate map (`set_aside`), which isn't read; its `--split` mode
   (several maps, no common coordinates) isn't used.
@@ -113,7 +116,7 @@ calculated.
 | Pathway maps, ours: draw the whole model | this package: pathway maps | share of species and of reactions drawn (`species_drawn`, `reactions_drawn`; higher); drawn nodes per model node (`drawn_per_node`: clones) |
 | Pathway maps, ours: respect compartments | this package: pathway maps | where the tool draws compartment boxes (the compound cytoscape.js layouts, SBMLNetwork, references): species outside their compartment's box, boxes that overlap without one holding the other (`species_outside_compartment`, `compartments_overlapping`; lower) |
 | Close to the reference | this package: reference (standard measures) | on the model nodes both draw, after alignment: remaining distance (`procrustes`; lower), rank correlation of distances (`distance_correlation`; higher), shared 5 nearest neighbours (`knn_preservation`; higher) |
-| Reproducibility | this package: `layout-benchmark reproducibility` (its own table, not a column of `results.csv`) | the same model and seed laid out twice, each run in its own process, and the drawn nodes compared in the tool's own coordinates: `verdict` exact (the same coordinates), congruent (the same drawing moved, scaled, turned or mirrored: Procrustes disparity below 1e-6; `mirrored` says whether a cycle comes back the other way round) or differs; how far nodes moved as a share of the drawing's diagonal (`max_shift`, `median_shift`; lower). Planned: different seeds |
+| Reproducibility (a hard rule of project 22) | this benchmark: `layout-benchmark reproducibility` (its own table, not a column of `results.csv`; written as `OUT/reproducibility.csv`, the report of OUT shows it: a verdict per model and layout, and per layout in the summary the models reproduced / compared, a mirrored drawing not counted as reproduced) | the same model and seed laid out twice, each run in its own process, and the drawn nodes compared in the tool's own coordinates: `verdict` exact (the same coordinates), congruent (the same drawing moved, scaled, turned or mirrored: Procrustes disparity below 1e-6; `mirrored` says whether a cycle comes back the other way round) or differs; how far nodes moved as a share of the drawing's diagonal (`max_shift`, `median_shift`; lower). Planned: different seeds |
 | Build on a previous layout | | planned: how far nodes move when a few reactions are removed |
 | Scale | | runtime and timeouts are in `results.csv`; not scored yet |
 
