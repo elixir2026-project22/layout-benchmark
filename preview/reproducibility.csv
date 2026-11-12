@@ -1,0 +1,11 @@
+model,nodes,layout,seed,verdict,max_shift,median_shift,procrustes,mirrored,nodes_compared,nodes_in_one_run,seconds_first,seconds_second,error
+F001-glycolysis,26,graphviz-dot,0,exact,0.0,0.0,7.844136339336588e-31,,26,0,0.034,0.03,
+F001-glycolysis,26,networkx-spring,0,exact,0.0,0.0,1.2510287966196857e-31,,26,0,0.019,0.02,
+F001-glycolysis,26,ecmapper-brenda,0,error,,,,,,,5.362,,RuntimeError: ValueError: min() iterable argument is empty
+F001-glycolysis,26,metacarto,0,exact,0.0,0.0,2.266904180137036e-31,,23,0,1.748,1.8,
+F001-glycolysis,26,rules-claude,0,exact,0.0,0.0,8.294137676125155e-32,,19,0,1.669,1.626,
+e_coli_core,167,graphviz-dot,0,exact,0.0,0.0,4.8103532804575617e-32,,167,0,2.579,2.623,
+e_coli_core,167,networkx-spring,0,exact,0.0,0.0,2.6628887916764677e-32,,167,0,0.077,0.079,
+e_coli_core,167,ecmapper-brenda,0,exact,0.0,0.0,2.836987730910831e-32,,249,0,9.708,10.43,
+e_coli_core,167,metacarto,0,exact,0.0,0.0,1.5056520655736818e-31,,302,0,9.347,9.633,
+e_coli_core,167,rules-claude,0,error,,,,,,,120.0,,timeout after 120 s
