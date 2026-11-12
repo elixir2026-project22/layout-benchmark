@@ -223,6 +223,19 @@ def test_append_replaces_only_given_layouts(tmp_path, tiny_sbml):
     assert next(r for r in rows if r["layout"] == "graphviz-dot")["seconds"] == first["graphviz-dot"]["seconds"]
 
 
+def test_a_second_command_on_the_same_folder_stops(tmp_path):
+    import click
+    import pytest
+
+    from layout_benchmark.__main__ import locked
+
+    in_use = pytest.raises(click.ClickException, match="in use by another layout-benchmark command")
+    with locked(tmp_path), in_use, locked(tmp_path):
+        pass
+    with locked(tmp_path):  # free again
+        pass
+
+
 def test_reaction_compartment(tmp_path):
     """For the compound layouts: a reaction within one compartment gets it, a transport gets none, an SBML
     reaction compartment wins."""

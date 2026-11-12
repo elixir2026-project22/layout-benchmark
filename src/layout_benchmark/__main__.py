@@ -1,8 +1,47 @@
+import fcntl
+import functools
+import os
+from contextlib import contextmanager
 from pathlib import Path
 
 import click
 
 from .layouts import REGISTRY
+
+
+@contextmanager
+def locked(out: Path):
+    """Hold OUT/.lock for a command that reads and rewrites OUT (results.csv is read once and rewritten whole, so
+    two commands at once would overwrite each other's rows). A second command on the same folder stops at once."""
+    out.mkdir(parents=True, exist_ok=True)
+    f = (out / ".lock").open("a+")
+    try:
+        fcntl.flock(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        f.seek(0)
+        holder = f.read().strip() or "?"
+        f.close()
+        raise click.ClickException(f"{out} is in use by another layout-benchmark command (pid {holder})") from None
+    try:
+        f.seek(0)
+        f.truncate()
+        f.write(str(os.getpid()))
+        f.flush()
+        yield
+    finally:
+        fcntl.flock(f, fcntl.LOCK_UN)
+        f.close()
+
+
+def _locks_out(command):
+    """Run a command holding its ``out`` folder's lock (``locked``)."""
+
+    @functools.wraps(command)
+    def wrapper(*args, **kwargs):
+        with locked(kwargs["out"]):
+            return command(*args, **kwargs)
+
+    return wrapper
 
 
 @click.group()
@@ -41,6 +80,7 @@ def list_layouts():
     type=click.Path(file_okay=False, path_type=Path),
     help="The manifest's cache of downloaded models (see `fetch`).",
 )
+@_locks_out
 def run(models, layouts, out, seed, timeout, metrics, append, only, data):
     """Lay out SBML MODELS: a benchmark manifest (.yaml: sets, models, references, credits; fetched first with
     `fetch`), or SBML files (a <model>.sbgn or <model>.escher.json next to a model is its reference layout)."""
@@ -79,6 +119,7 @@ def run(models, layouts, out, seed, timeout, metrics, append, only, data):
     type=click.Path(file_okay=False, path_type=Path),
     help="The manifest's cache of downloaded models (see `fetch`).",
 )
+@_locks_out
 def render(out, manifest, data):
     """Draw the pictures in OUT again from the saved positions (OUT/<model>/<layout>.json), with the current
     renderer and scale, and write OUT/index.html (without running the layouts)."""
@@ -128,6 +169,7 @@ def render(out, manifest, data):
     type=click.Path(file_okay=False, path_type=Path),
     help="The manifest's cache of downloaded models (see `fetch`).",
 )
+@_locks_out
 def report(out, manifest, data):
     """Write OUT/index.html again from OUT/results.csv (without running the layouts)."""
     import csv
@@ -144,6 +186,7 @@ def report(out, manifest, data):
 @click.argument("out", type=click.Path(exists=True, file_okay=False, path_type=Path))
 @click.argument("site", type=click.Path(file_okay=False, path_type=Path))
 @click.option("--name", default=None, help="Folder name of the run in the site (default: OUT's name).")
+@_locks_out
 def publish(out, site, name):
     """Copy the run in OUT into SITE (a folder for GitHub Pages) as SITE/<name>/: the pictures, positions and
     results, with a report without local-file links; SITE/index.html lists the runs."""
@@ -247,7 +290,10 @@ def _apply_manifest(out: Path, rows: list[dict], manifest: Path, data: Path) -> 
             r["links"] = json.dumps(spec.links) if spec.links else ""
     (out / "sets.json").write_text(json.dumps([s.__dict__ for s in sets], indent=1))
     fields = list(dict.fromkeys(k for r in rows for k in r))
-    with (out / "results.csv").open("w", newline="") as f:
+    path = out / "results.csv"
+    if path.exists() and list(csv.DictReader(path.open())) == rows:
+        return rows  # nothing changed: the file isn't rewritten
+    with path.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader()
         w.writerows(rows)

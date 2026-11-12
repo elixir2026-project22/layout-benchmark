@@ -100,14 +100,16 @@ def run(
     rows = []
     unnamed = model_names([s.path for s in specs if not s.name])
     names = {s.path: s.name or unnamed[s.path] for s in specs}
-    kept = []  # with append: the rows of the other models already in out/results.csv
+    layouts = [n for n in layouts if n != REFERENCE]  # "reference" in --layouts: redo the references
+    kept = []  # with append: the rows of the other models (and other layouts) already in out/results.csv
     if append and (out / "results.csv").exists():
         kept = [
             r
             for r in csv.DictReader((out / "results.csv").open())
-            if r["model"] not in names.values()
-            or (requested is not None and r["layout"] not in requested and r["layout"] != REFERENCE)
+            if r["model"] not in names.values() or (requested is not None and r["layout"] not in requested)
         ]
+    # a run of some layouts keeps the references it has (with their scores); a full run redoes them
+    kept_references = {r["model"] for r in kept if r["layout"] == REFERENCE}
     for spec in specs:
         model = spec.path
         pathway = read_sbml(model, name=names[model])
@@ -134,7 +136,7 @@ def run(
             "links": json.dumps(spec.links) if spec.links else "",
         }
         runs = []
-        if reference:
+        if reference and pathway.name not in kept_references:
             runs = [(REFERENCE, reference_drawing, 0.0, None)]
         for name in layouts:
             drawing, seconds, error = run_layout(name, pathway, seed, timeout)
