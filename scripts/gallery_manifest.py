@@ -19,6 +19,9 @@ import urllib.request
 from pathlib import PurePosixPath
 
 REPO = "metabolismregulation/metabolismregulation.github.io"
+# The gallery's last commit with atlas-downloads/: the folder was removed on 2026-11-11 (eecc7be, "Old Atlas folders
+# removed"), so HEAD no longer has the maps. Pinned to the commit before it.
+REF = "bbe4f694ba2a1a8d1630c1628be5d8d8f5ec526e"
 SITE = "https://metabolismregulation.github.io"
 
 
@@ -62,12 +65,12 @@ def project_pages(texts: list[str]) -> dict[str, str]:
 
 
 def main() -> None:
-    tree = json.loads(get(f"https://api.github.com/repos/{REPO}/git/trees/HEAD?recursive=1"))["tree"]
+    tree = json.loads(get(f"https://api.github.com/repos/{REPO}/git/trees/{REF}?recursive=1"))["tree"]
     paths = [t["path"] for t in tree]
     maps = gallery_maps([p for p in paths if p.startswith("atlas-downloads/")])
     projects = [p for p in paths if p.startswith("_projects/") and p.endswith(".md")]
-    pages = project_pages([get(f"https://raw.githubusercontent.com/{REPO}/HEAD/{p}").decode() for p in projects])
-    blob = f"https://github.com/{REPO}/blob/HEAD"
+    pages = project_pages([get(f"https://raw.githubusercontent.com/{REPO}/{REF}/{p}").decode() for p in projects])
+    blob = f"https://github.com/{REPO}/blob/{REF}"
     for stem, entry in sorted(maps.items()):
         page = pages.get(stem[:4])
         if page is None:
