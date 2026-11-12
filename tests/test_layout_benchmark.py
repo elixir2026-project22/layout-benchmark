@@ -39,6 +39,25 @@ def test_every_layout_places_every_node(tiny_sbml, name):
     assert all(math.isfinite(c) for xy in d.pos.values() for c in xy)
 
 
+# graphviz-fdp is not reproducible from its seed, and sfdp only as a process's first layout (issue #4)
+SEEDED = [s.name for s in REGISTRY if s.tool is None and s.name not in ("graphviz-fdp", "graphviz-sfdp")]
+
+
+@pytest.mark.parametrize("name", SEEDED)
+def test_the_same_seed_gives_the_same_layout(tiny_sbml, name):
+    p = read_sbml(tiny_sbml)
+    assert layout(name, p, seed=3).pos == layout(name, p, seed=3).pos
+
+
+def test_tools_run_with_the_hash_seed_fixed(monkeypatch):
+    from layout_benchmark.external import _tool_env
+
+    monkeypatch.setenv("SOME_VARIABLE", "kept")
+    env = _tool_env(7)
+    assert env["PYTHONHASHSEED"] == "7" and env["SOME_VARIABLE"] == "kept"
+    assert _tool_env(2**32 + 5)["PYTHONHASHSEED"] == "5"  # Python accepts 0 to 2**32 - 1
+
+
 def test_layout_is_reproducible_and_scaled_only_for_drawing(tiny_sbml):
     p = read_sbml(tiny_sbml)
     a = layout("networkx-spring", p, seed=3)

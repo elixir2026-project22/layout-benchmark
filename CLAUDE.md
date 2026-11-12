@@ -187,6 +187,10 @@ time), check the report, and publish only on the user's go-ahead.
 - ecmapper draws only what it matches to the BRENDA map; subsystems it sets aside go to a separate map (not read);
   `--split` (several maps without common coordinates) isn't used. sbml_pathway_layout writes cofactors inside
   reaction boxes (fewer nodes placed), is slow on large models in one drawing, and ignores the seed.
+- The tools' Python runs with `PYTHONHASHSEED` set to the seed (`external._tool_env`): MetaCarto's map depends on the
+  order of Python's sets (e_coli_core: a different map in every process without it, the same map with it; another
+  seed, another map). graphology's random start takes `rng` explicitly (`js/graph.mjs`): its default is the
+  `Math.random` found at import, before the seeded one replaces it.
 - sbml2map fails on variable stoichiometry (the PSS models). MetaCarto needs flux bounds for pFBA and falls back
   to `--no-fba`.
 - The compound layouts (`*-compartments`, iVis-at-Bilkent) expect every node in a compartment; reactions (which

@@ -78,6 +78,8 @@ are kept. Known limits:
   and puts subsystems drawn elsewhere already on a separate map (`set_aside`), which isn't read; its `--split` mode
   (several maps, no common coordinates) isn't used.
 - Graphviz fdp isn't reproducible from its seed (#4).
+- MetaCarto has no seed of its own, but its map depends on the order of Python's sets, which changes from process to
+  process: the tools' Python runs with `PYTHONHASHSEED` set to the run's seed, so that a seed gives one map.
 
 ## Metrics
 

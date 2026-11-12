@@ -37,7 +37,9 @@ function forceAtlas2Graph() {
   const g = new Graph({ type: "directed" });
   for (const n of input.nodes) g.addNode(n.id, { size: Math.max(n.width, n.height) / 2 });
   for (const e of input.edges) if (!g.hasEdge(e.source, e.target)) g.addEdge(e.source, e.target);
-  random.assign(g, { scale: 100, center: 0 }); // a seeded random start, as Sigma's examples do
+  // a seeded random start, as Sigma's examples do. rng is passed: graphology-layout's default is the
+  // Math.random it found when imported, before seedRandom replaced it, so the seed would not reach it
+  random.assign(g, { scale: 100, center: 0, rng: () => Math.random() });
   forceAtlas2.assign(g, { iterations: FA2_ITERATIONS, settings: forceAtlas2.inferSettings(g) });
   return g;
 }
