@@ -118,10 +118,16 @@ sets:
     models:
       - https://github.com/elixir2026-project22/data_shared/blob/main/NIB/Small_pathways/ja/sbml/model-with-model-fixes.xml
       - https://github.com/elixir2026-project22/data_shared/blob/main/NIB/Small_pathways/sa/sbml/model-with-model-fixes.xml
-      - https://github.com/elixir2026-project22/data_shared/blob/main/NIB/Big_pathways/pss/sbml/model-with-model-fixes.xml
 
   - name: BRENDA pathways
+    description: >-
+      Pathways of BRENDA's pathway map; the reference is the pathway on that map (BRENDA, CC BY 4.0), read from
+      ecmapper's export of it.
     models: https://github.com/elixir2026-project22/data_shared/blob/main/brenda_*.xml
+    reference: https://github.com/elixir2026-project22/ecmapper/blob/main/BRENDAmap/BRENDA_map_reactions.json
+    reference_kind: brenda-map
+    credit: "Reference map: BRENDA pathway map, CC BY 4.0"
+    licence: https://www.brenda-enzymes.org/copy.php
 
   - name: Reactome
     description: A Reactome pathway; its SBML has Reactome's diagram as an SBML Layout, the reference layout.

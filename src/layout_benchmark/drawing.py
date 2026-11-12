@@ -5,7 +5,9 @@ more: clones (a metabolite such as ATP drawn several times, each near the reacti
 (with bends). A Drawing keeps that, so the picture shows the tool's layout as the tool meant it:
 
 - ``graph``: the drawn nodes and edges. Every drawn node has ``of``, the pathway node it draws (clones share it),
-  plus ``kind``, ``label``, ``width``, ``height``; edges have ``arc`` (SBGN arc class).
+  plus ``kind``, ``label``, ``width``, ``height`` (our fixed SBGN sizes, for pictures), and where the tool
+  has them, its own node size (``own_shape``: "box" or "circle", ``own_width``, ``own_height``, in its units);
+  edges have ``arc`` (SBGN arc class).
 - ``pos``: drawn node centres (y up).
 - ``routes``: per edge (u, v), the points between its ends (none: a straight line).
 - ``compartments``: the compartment boxes the tool (or reference) drew, by compartment id:
@@ -29,6 +31,8 @@ from .graph import REACTION, Pathway
 # drawing scale: the median distance from a node to its nearest drawn neighbour, in species widths
 SPACING = 1.5
 Point = tuple[float, float]
+# a node's size as the tool itself draws it, in its own units, where it has one (for the overlap metric)
+OWN_SIZE = ("own_shape", "own_width", "own_height")
 Positions = dict[str, Point]
 
 
@@ -119,6 +123,7 @@ class Drawing:
                     "y": self.pos[n][1],
                     "width": d.get("width"),
                     "height": d.get("height"),
+                    **{k: d[k] for k in OWN_SIZE if d.get(k) is not None},
                 }
                 for n, d in self.graph.nodes(data=True)
             ],

@@ -152,12 +152,15 @@ def _cytoscape(algorithm: str, compound: bool = False, reactions: bool = True) -
 @dataclass(frozen=True)
 class LayoutSpec:
     """A layout: its name, the function (``(pathway, seed) -> positions or Drawing``), its group, where it is
-    documented, and the tool it needs under ``.tools/`` (None: installed with the package)."""
+    documented, how its node sizes are known when a saved drawing lacks them (``sizes``: "given" = the sizes we
+    give the tool, which lays out around them; "escher" = Escher's circles; None = no node sizes), and the tool it
+    needs under ``.tools/`` (None: installed with the package)."""
 
     name: str
     run: Callable[[Pathway, int], Positions | Drawing]
     group: str
     link: str
+    sizes: str | None = None
     tool: str | None = None
 
 
@@ -170,11 +173,11 @@ _COSE_BILKENT = "https://github.com/cytoscape/cytoscape.js-cose-bilkent"
 
 
 def _gv(prog: str, group: str) -> LayoutSpec:
-    return LayoutSpec(f"graphviz-{prog}", _graphviz(prog), group, f"https://graphviz.org/docs/layouts/{prog}/")
+    return LayoutSpec(f"graphviz-{prog}", _graphviz(prog), group, f"https://graphviz.org/docs/layouts/{prog}/", "given")
 
 
 def _cy(name: str, group: str, link: str, algorithm: str | None = None, **kwargs) -> LayoutSpec:
-    return LayoutSpec(f"cytoscape-{name}", _cytoscape(algorithm or name, **kwargs), group, link)
+    return LayoutSpec(f"cytoscape-{name}", _cytoscape(algorithm or name, **kwargs), group, link, "given")
 
 
 def _ig(method: str, function: str, group: str, **kwargs) -> LayoutSpec:
@@ -195,19 +198,26 @@ REGISTRY: list[LayoutSpec] = [
         rules_layout,
         "pathway-specific",
         "https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude",
+        "escher",
         "sbml_pathway_layout",
     ),
-    LayoutSpec("ecmapper-brenda", ecmapper, "pathway-specific", _ECMAPPER, "ecmapper"),
-    LayoutSpec("ecmapper-brenda-packed", ecmapper_packed, "pathway-specific", _ECMAPPER, "ecmapper"),
-    LayoutSpec("metacarto", metacarto, "pathway-specific", "https://github.com/forxhunter/MetaCarto", "MetaCarto"),
+    LayoutSpec("ecmapper-brenda", ecmapper, "pathway-specific", _ECMAPPER, "escher", "ecmapper"),
+    LayoutSpec("ecmapper-brenda-packed", ecmapper_packed, "pathway-specific", _ECMAPPER, "escher", "ecmapper"),
+    LayoutSpec(
+        "metacarto", metacarto, "pathway-specific", "https://github.com/forxhunter/MetaCarto", "escher", "MetaCarto"
+    ),
     LayoutSpec(
         "sbml2map",
         sbml2map,
         "pathway-specific",
         "https://github.com/elixir2026-project22/sbml2map",
+        "escher",
         "sbml2map",
     ),
-    LayoutSpec("sbmlnetwork", autolayout, "SBML-specific", "https://github.com/sys-bio/SBMLNetwork", "sbmlnetwork"),
+    # SBMLNetwork's drawings carry their own glyph sizes
+    LayoutSpec(
+        "sbmlnetwork", autolayout, "SBML-specific", "https://github.com/sys-bio/SBMLNetwork", None, "sbmlnetwork"
+    ),
     _cy("fcose-compartments", "compartments as groups", _FCOSE, "fcose", compound=True),
     _cy("cose-bilkent-compartments", "compartments as groups", _COSE_BILKENT, "cose-bilkent", compound=True),
     _cy("fcose", "compound-capable force-directed", _FCOSE),

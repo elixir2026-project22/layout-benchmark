@@ -25,3 +25,4 @@ def test_every_layout_spec_is_complete():
 
     for spec in REGISTRY:
         assert spec.group and spec.link.startswith("https://"), spec.name
+        assert spec.sizes in ("given", "escher", None), spec.name

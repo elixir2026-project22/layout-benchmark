@@ -16,16 +16,21 @@ metrics derived from the project's layout rules.
 All inputs are listed, with where they come from, in [`benchmark.yaml`](benchmark.yaml) (see Usage):
 
 - The SBML models in the project's [`data_shared`](https://github.com/elixir2026-project22/data_shared) repository
-  (private to the project): BRENDA pathways, E. coli core and iCH360, Reactome, Human2, *Mycoplasma*, and the
-  Stress Knowledge Map (PSS pathways, whole PSS, CKN); and
-  [iML1515](http://bigg.ucsd.edu/models/iML1515) from BiGG.
+  (private to the project): BRENDA pathways, E. coli core and iCH360, Reactome, *Mycoplasma*, and two Stress
+  Knowledge Map pathways (JA, SA); and [iML1515](http://bigg.ucsd.edu/models/iML1515) from BiGG. Human2, the whole
+  PSS and CKN are left out: too large for most layouts (hours each, mostly timeouts).
 - **Reference layouts** (drawn by hand), for comparing the automatic ones against:
   - the [metabolismregulation gallery](https://metabolismregulation.github.io/gallery/) maps (SBML, plus SBGN-ML
     with the layout; CC BY 4.0);
   - the IMD maps in `data_shared` (pathways of inborn metabolic disorders, Escher maps drawn on Recon3D): they come
     without SBML, so the model is made from each map (its reactions with all their metabolites and stoichiometry;
     compartments from the metabolite ids), and the map is its reference;
-  - the Reactome pathway's own diagram (its SBML Layout).
+  - the Reactome pathway's own diagram (its SBML Layout);
+  - for the BRENDA pathways, the pathway on BRENDA's pathway map (CC BY 4.0), read from
+    [ecmapper](https://github.com/elixir2026-project22/ecmapper)'s export of the map (`BRENDA_map_reactions.json`:
+    every enzyme and metabolite node with its position and size). The model's reactions are matched by their
+    BRENDA reaction ids, then EC numbers; metabolites by name. The map doesn't say which main metabolite is consumed
+    and which produced, so edges take their direction from the model.
 
 The model is read as one graph: species and reactions as nodes, one edge per reactant, product and modifier, and
 compartments as parents. Each species gets its SBGN class from its SBO term (or from the model's SBGN file), and
@@ -60,22 +65,36 @@ matched ones), and puts subsystems drawn elsewhere already on a separate map (`s
 
 ## Metrics
 
-All layouts are scored by the same code (`--metrics`; not yet in the report). The general graph-drawing metrics come
-from [gdMetriX](https://github.com/livus/gdMetriX), the pathway-specific ones are this package's. The rules come
-from the project's discussion.
+All layouts are scored by the same code: `layout-benchmark score OUT` computes the metrics from the saved
+drawings and adds them to `OUT/results.csv` (`run --metrics` does the same during a run), and writes the report
+with them. Each drawing is scored in its own process with a timeout (`--timeout`, 600 s), several at once with
+`--jobs N`; a drawing whose metrics fail or time out has no metrics and the reason in the `metrics_error`
+column. The general graph-drawing metrics come from [gdMetriX](https://github.com/livus/gdMetriX); the
+pathway-map metrics (from the project's discussion of what a pathway map needs) and the comparison with the
+reference are this package's. The report says which is which: the top row of each score table's header, and the
+summary page's table of the metrics (what each measures, its source, how it is calculated).
 
-| Rule | Metric |
-|---|---|
-| Avoid crossings | edge crossings (total and per edge) |
-| Avoid overlaps | node overlaps (count and area) |
-| Avoid long lines | edge length mean and variation; share of very long edges |
-| Place participants consistently | reactants on one side of the reaction, products on the other |
-| Respect compartments | species outside their compartment; overlapping compartments |
-| Aspect ratio, compactness | width / height; area per node |
-| Reproducibility | the same seed twice, and different seeds |
-| Build on a previous layout | how far nodes move when a few reactions are removed |
-| Scale | runtime; the largest model finished in time |
-| Close to the reference | after alignment: remaining distance, distance rank correlation, shared nearest neighbours |
+Every metric is taken on **the drawing as shown**, in the tool's own coordinates: a clone (a metabolite drawn
+more than once) is a node with its own edges, nodes a tool leaves out are absent, and routed edges count as the
+polylines drawn (a piece several edges share counts once). No metric depends on our common drawing scale: the
+general ones don't change under a uniform scale, and overlaps use each tool's own node sizes.
+
+| What it checks | Source | Metric (column; better) |
+|---|---|---|
+| Avoid crossings | gdMetriX | edge crossings (`crossings`; lower), against an estimated maximum (`crossing_density`; higher), angles at crossings (`crossing_angular_resolution`; higher) |
+| Even lines and angles | gdMetriX (edge lengths: its definition, our code on the drawn polylines) | deviation from the mean drawn edge length (`edge_length_deviation`; lower); smallest angle at a node against the ideal (`angular_resolution`, a deviation; lower); horizontal and vertical pieces (`edge_orthogonality`; higher) |
+| Shape | gdMetriX | shorter / longer side (`aspect_ratio`), nodes spread over the four quadrants (`homogeneity`), one main flow direction (`coherence_to_average_flow`), visual symmetry (`visual_symmetry`, up to 300 nodes); no direction, not ranked |
+| Draw the whole model | this package: pathway maps | share of species and of reactions drawn (`species_drawn`, `reactions_drawn`; higher); drawn nodes per model node (`drawn_per_node`: clones) |
+| Avoid overlaps | this package: pathway maps | node pairs that overlap and the overlap area (`overlapping_pairs`, `overlap_area_share`; lower), with the tool's own node sizes: the sizes Graphviz and cytoscape.js are given, Escher's circles (MetaCarto, sbml2map, ecmapper, sbml_pathway_layout), SBMLNetwork's and the references' glyphs; empty for igraph and networkx (no node sizes) |
+| Place participants consistently | this package: pathway maps | reactants and products on opposite sides of their reaction, by the direction each edge leaves it (`participant_consistency`; higher). A reaction drawn as a corner (in at the bottom, out at the side, as sbml2map's grid routes do) scores 0 |
+| Respect compartments | this package: pathway maps | where the tool draws compartment boxes (the compound cytoscape.js layouts, SBMLNetwork, references): species outside their compartment's box, boxes that overlap without one holding the other (`species_outside_compartment`, `compartments_overlapping`; lower) |
+| Close to the reference | this package: reference (standard measures) | on the model nodes both draw, after alignment: remaining distance (`procrustes`; lower), rank correlation of distances (`distance_correlation`; higher), shared 5 nearest neighbours (`knn_preservation`; higher) |
+| Reproducibility | | planned: the same seed twice, and different seeds |
+| Build on a previous layout | | planned: how far nodes move when a few reactions are removed |
+| Scale | | runtime and timeouts are in `results.csv`; not scored yet |
+
+Left out for now: stress (a sum over node pairs, not comparable between models) and area per node (it would
+depend on our drawing scale).
 
 ## Output
 
@@ -86,7 +105,10 @@ For each model and layout:
   arc class and route);
 - a row in `results.csv` (time, error, nodes not placed).
 
-An HTML report shows, per model, the reference layout and then every layout side by side.
+An HTML report shows, per model, the reference layout and then every layout side by side, with a table of their
+scores under it (sortable; the best value per metric in bold). Its summary page (`summary.html`) gives, per layout
+and metric, the median rank over the models (all, or one set), with the number of models ranked, the models laid
+out and the median time; there is no combined score yet.
 
 ## Setup
 
@@ -134,10 +156,17 @@ uv run layout-benchmark run benchmark.yaml -o results/all --append --only F001-g
 uv run layout-benchmark run path/to/model.xml -o results/run1  # or any SBML files
 ```
 
+`--append` keeps the other models' rows in `results.csv`; with `--layouts`, only those layouts' rows are replaced
+and the references (with their scores) are kept (add `reference` to the layouts to redo them). Run `score` on the
+new rows afterwards (`score OUT --layouts <name>`). One command at a time per output folder: a second `run`,
+`score`, `render`, `report` or `publish` on the same folder stops at once (`OUT/.lock`), as each rewrites
+`results.csv` whole.
+
 `benchmark.yaml` is the benchmark manifest: the sets of models, in the report's order, and per model where it
 comes from (a URL, a GitHub glob such as `https://github.com/<owner>/<repo>/blob/main/brenda_*.xml`, or a local
 file), its reference layout (an SBGN-ML map or an Escher map, as a URL or a pattern next to the model such as
-`"{stem}.sbgn"`; or `layout`, the model's own SBML Layout), companion files, a page to link, credit, licence and
+`"{stem}.sbgn"`; or `layout`, the model's own SBML Layout; `reference_kind: brenda-map` for BRENDA's map),
+companion files, a page to link, credit, licence and
 description; sets of Escher maps without SBML (`convert: escher`) become models with the map as reference. The
 format is described in `src/layout_benchmark/manifest.py`.
 
@@ -156,6 +185,7 @@ error, nodes not placed). An SBGN-ML reference also gives the model's SBGN class
 ```bash
 uv run layout-benchmark report results/run1                      # redo the page from results.csv
 uv run layout-benchmark render results/run1 [--manifest benchmark.yaml]  # redraw the pictures from the saved positions
+uv run layout-benchmark score results/run1 [--manifest benchmark.yaml] [--jobs 6]   # the metrics, from the saved drawings
 uv run layout-benchmark publish results/run1 site --name run1    # a copy for GitHub Pages (no local paths)
 ```
 
@@ -165,5 +195,6 @@ The layouts run locally; the published report is only the result, on the `gh-pag
 ## Licence
 
 MIT (code). The input data keep their own licences; the metabolismregulation gallery maps (reference layouts)
-are CC BY 4.0 (<https://metabolismregulation.github.io/about/>), credited in the report. gdMetriX, used for the
+are CC BY 4.0 (<https://metabolismregulation.github.io/about/>), credited in the report, as is BRENDA's pathway
+map (CC BY 4.0, <https://www.brenda-enzymes.org/copy.php>). gdMetriX, used for the
 general metrics, is GPL-3.0: it is imported, not included; a bundle that includes it must follow the GPL.
