@@ -101,3 +101,19 @@ def test_cli_reproducibility_rejects_an_unknown_layout(tmp_path, tiny_sbml):
     result = CliRunner().invoke(main, ["reproducibility", str(tiny_sbml), "-l", "nope", "-o", str(tmp_path / "r.csv")])
     assert result.exit_code != 0
     assert "unknown layouts: nope" in result.output
+
+
+def test_check_against_a_saved_run_runs_each_layout_once_more(tmp_path, tiny_sbml):
+    from layout_benchmark.runner import run
+
+    out = tmp_path / "run"
+    run([tiny_sbml], ["graphviz-neato", "networkx-spring"], out, seed=2, timeout=60)
+    rows = list(check([tiny_sbml], ["graphviz-neato", "networkx-spring", "igraph-kk"], seed=2, against=out))
+    by = {r["layout"]: r for r in rows}
+    assert by["graphviz-neato"]["verdict"] == "exact" and by["networkx-spring"]["verdict"] == "exact"
+    assert by["graphviz-neato"]["seconds_first"] is None and by["graphviz-neato"]["seconds_second"] is not None
+    # no saved drawing (not in that run): an error, not run again
+    assert by["igraph-kk"]["verdict"] == "error" and by["igraph-kk"]["seconds_second"] is None
+    # another seed than the saved run's: a different drawing
+    (other,) = check([tiny_sbml], ["networkx-spring"], seed=5, against=out)
+    assert other["verdict"] == "differs"

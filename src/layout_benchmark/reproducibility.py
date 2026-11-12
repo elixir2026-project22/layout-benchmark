@@ -16,6 +16,7 @@ are nodes), nothing rescaled.
 
 from __future__ import annotations
 
+import json
 import math
 from collections.abc import Iterator
 from pathlib import Path
@@ -23,9 +24,9 @@ from pathlib import Path
 import numpy as np
 from scipy.spatial import procrustes
 
-from .drawing import Positions
-from .graph import read_sbml
-from .runner import run_layout
+from .drawing import Drawing, Positions
+from .manifest import ModelSpec
+from .runner import model_pathway, run_layout, spec_for
 
 CONGRUENT_BELOW = 1e-6  # Procrustes disparity (0 to 1) under which two runs are the same drawing, moved or turned
 
@@ -108,17 +109,46 @@ def compare_runs(first: Positions, second: Positions) -> dict[str, object]:
     return result
 
 
-def check(models: list[Path], layouts: list[str], seed: int = 0, timeout: float = 300.0) -> Iterator[dict]:
+def _saved_run(against: Path, model: str, layout: str) -> Positions | None:
+    """The drawn node positions a benchmark run saved (``<against>/<model>/<layout>.json``, the tool's own
+    coordinates), or None where it saved none (the run failed or timed out)."""
+    path = against / model / f"{layout}.json"
+    if not path.exists():
+        return None
+    return Drawing.from_json(json.loads(path.read_text())).pos
+
+
+def check(
+    models: list[Path | ModelSpec],
+    layouts: list[str],
+    seed: int = 0,
+    timeout: float = 300.0,
+    names: dict[Path, str] | None = None,
+    against: Path | None = None,
+) -> Iterator[dict]:
     """One row (``COLUMNS``) per model and layout: the layout run twice with ``seed``, each run in its own process
     (``run_layout``), and the two drawings compared. A layout that fails or times out has ``verdict`` "error" and
-    the reason in ``error``: no result about its reproducibility."""
-    for path in models:
-        pathway = read_sbml(path)
+    the reason in ``error``: no result about its reproducibility. ``names``: the models' names (as in a benchmark
+    run; default: the file names). ``against``: a benchmark run's folder whose saved drawings (made with the same
+    seed) serve as the first runs, so each layout runs only once more; where that run saved no drawing, the row is
+    an error without running again. Each model is read as ``run`` reads it (``model_pathway``: a gallery model
+    with its reference's classes and labels), so the drawings compared are the benchmark's."""
+    for item in models:
+        spec = item if isinstance(item, ModelSpec) else spec_for(item)
+        model = (names or {}).get(spec.path, spec.name or spec.path.stem)
+        pathway = model_pathway(spec, model)
         for name in layouts:
             row = dict.fromkeys(COLUMNS)
-            row.update(model=path.stem, nodes=pathway.graph.number_of_nodes(), layout=name, seed=seed)
+            row.update(model=model, nodes=pathway.graph.number_of_nodes(), layout=name, seed=seed)
             runs = []
-            for when in ("seconds_first", "seconds_second"):
+            if against is not None:
+                first = _saved_run(against, model, name)
+                if first is None:
+                    row.update(verdict="error", error=f"no drawing saved in {against.name} (the run failed)")
+                    yield row
+                    continue
+                runs.append(first)
+            for when in ("seconds_first", "seconds_second")[len(runs) :]:
                 drawing, seconds, error = run_layout(name, pathway, seed=seed, timeout=timeout)
                 row[when] = round(seconds, 3)
                 if error or drawing is None:

@@ -39,7 +39,9 @@ with changes (layouts, options, output).
   calculated), `SOURCES`: where metrics come from (shown in the report's headers and summary). `rules.py`: the
   project's layout rules (`rule_*` columns), called from `all_metrics`.
 - `reproducibility.py`: the same model and seed laid out twice and compared (`compare_runs`: exact, congruent, differs;
-  `check`: one row per model and layout); the `reproducibility` command writes its own table. Two runs, not one
+  `check`: one row per model and layout); the `reproducibility` command writes its own table. `--against OUT`: a
+  run's saved drawings are the first runs (one more run each). Models are read as `run` reads them
+  (`runner.model_pathway`: gallery models with their SBGN classes and labels, which set node sizes). Two runs, not one
   drawing, so it is not in `metrics.METRICS`.
 - `datasets.py`: `fetch` (downloads a manifest's files, GitHub with a token for private repositories) and
   `escher_to_sbml` (models from Escher maps that come without one: the IMD maps).
