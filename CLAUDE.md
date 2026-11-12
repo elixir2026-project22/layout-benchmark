@@ -39,7 +39,8 @@ with changes (layouts, options, output).
   calculated), `SOURCES`: where metrics come from (shown in the report's headers and summary). `rules.py`: the
   project's layout rules (`rule_*` columns), called from `all_metrics`.
 - `reproducibility.py`: the same model and seed laid out twice and compared (`compare_runs`: exact, congruent, differs;
-  `check`: one row per model and layout); the `reproducibility` command writes its own table. `--against OUT`: a
+  `check`: one row per model and layout; `across_seeds`: each layout once per seed, compared with the first seed's
+  drawing, `SEED_COLUMNS`); the `reproducibility` command writes its own table (`--seeds` for the second). `--against OUT`: a
   run's saved drawings are the first runs (one more run each). Models are read as `run` reads them
   (`runner.model_pathway`: gallery models with their SBGN classes and labels, which set node sizes). Two runs, not one
   drawing, so it is not in `metrics.METRICS`.
