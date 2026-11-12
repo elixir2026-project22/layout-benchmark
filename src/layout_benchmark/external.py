@@ -93,8 +93,11 @@ def escher_drawing(pathway: Pathway, escher_map: list | dict) -> Drawing:
         if rid is None or pathway.graph.nodes[rid]["kind"] != REACTION:
             continue
         seg = nx.Graph()
+        towards = {}  # metabolite node -> whether its segment runs from it (True) or into it (False)
         for s in reaction["segments"].values():
             seg.add_edge(s["from_node_id"], s["to_node_id"])
+            towards.setdefault(s["from_node_id"], True)
+            towards.setdefault(s["to_node_id"], False)
         mid = next((n for n in seg if nodes.get(n, {}).get("node_type") == "midmarker"), None)
         if mid is None:
             continue
@@ -114,14 +117,18 @@ def escher_drawing(pathway: Pathway, escher_map: list | dict) -> Drawing:
             own_height=marker,
         )
         pos[did] = xy(nodes[mid])
-        coefficient = {m["bigg_id"]: m["coefficient"] for m in reaction.get("metabolites", [])}
+        signs: dict[str, set[bool]] = {}  # metabolite -> {is product}; both for one on both sides
+        for m in reaction.get("metabolites", []):
+            signs.setdefault(m["bigg_id"], set()).add(m["coefficient"] > 0)
         for nid in seg:
             if nid not in drawn:
                 continue
             path = nx.shortest_path(seg, nid, mid)
             inner = [xy(nodes[n]) for n in path[1:-1] if n in nodes]
-            bigg = nodes[nid]["bigg_id"]
-            if coefficient.get(bigg, 0) > 0:  # product: reaction -> metabolite
+            side = signs.get(nodes[nid]["bigg_id"], {False})
+            # on both sides (A -> A, e.g. a modified protein under one id): its segment's direction says which
+            product = (not towards.get(nid, True)) if len(side) > 1 else side == {True}
+            if product:  # reaction -> metabolite
                 g.add_edge(did, drawn[nid], arc=PRODUCTION)
                 routes[(did, drawn[nid])] = inner[::-1]
             else:

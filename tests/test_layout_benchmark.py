@@ -358,6 +358,29 @@ def _escher_map():
     return [{"map_name": "test"}, {"nodes": nodes, "reactions": {"0": reaction}, "text_labels": {}}]
 
 
+def test_escher_species_on_both_sides_take_their_side_from_the_segments(tmp_path):
+    """A -> A (one id on both sides, as when a tool merges species by name): each copy's side comes from its
+    segment's direction (metabolite -> midmarker: consumed; midmarker -> metabolite: produced)."""
+    from layout_benchmark.external import escher_drawing
+    from layout_benchmark.graph import CONSUMPTION, PRODUCTION
+
+    p = read_sbml(make_sbml(tmp_path / "m.xml", [("r1", ["A"], ["B"], [])]))
+    nodes = {
+        "1": {"node_type": "metabolite", "bigg_id": "A", "x": 0, "y": 200, "node_is_primary": True},
+        "2": {"node_type": "midmarker", "x": 0, "y": 100},
+        "3": {"node_type": "metabolite", "bigg_id": "A", "x": 0, "y": 0, "node_is_primary": True},
+    }
+    segments = {"a": {"from_node_id": "1", "to_node_id": "2"}, "b": {"from_node_id": "2", "to_node_id": "3"}}
+    reaction = {
+        "bigg_id": "r1",
+        "metabolites": [{"bigg_id": "A", "coefficient": -1}, {"bigg_id": "A", "coefficient": 1}],
+        "segments": segments,
+    }
+    d = escher_drawing(p, [{}, {"nodes": nodes, "reactions": {"0": reaction}}])
+    assert d.graph.edges["A@1", "r1"]["arc"] == CONSUMPTION
+    assert d.graph.edges["r1", "A@3"]["arc"] == PRODUCTION
+
+
 def test_escher_to_sbml(tmp_path):
     """An Escher map without a model: SBML from its reactions (stoichiometry, compartments from the ids), and the
     map as the reference, matched to the SBML ids, clones and routes kept."""
