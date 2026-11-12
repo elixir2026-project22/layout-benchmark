@@ -14,9 +14,13 @@ with changes (layouts, options, output).
 
 - `graph.py`: an SBML model as a graph (`Pathway`): species and reactions as nodes, one edge per participant;
   SBGN class per species (from SBO terms), SBGN arc per edge, fixed node sizes per class.
-- `layouts.py`: the layout registry (`LAYOUTS`), Graphviz, igraph, networkx and cytoscape.js adapters, the expected
-  order (`EXPECTED`, also the report's order) and documentation links (`LINKS`). `js/layout.mjs` runs the
+- `layouts.py`: Graphviz, igraph, networkx and cytoscape.js adapters and the registry: `REGISTRY`, one `LayoutSpec`
+  per layout (name, function, group, documentation link, `tool` under `.tools/`), in the expected order (also the
+  report's order); `LAYOUTS`, `GROUP`, `LINKS`, `expected_rank` are derived from it. `js/layout.mjs` runs the
   cytoscape.js layouts headless in Node.
+  **Adding a layout**: a function `(pathway, seed) -> positions or Drawing` (in `layouts.py`; an external tool in
+  `external.py`, Escher output through `_run_tool`), one `LayoutSpec` in `REGISTRY`, a README row (and setup
+  commands for an external tool). Then `run benchmark.yaml -o results/all --append --layouts <name>`.
 - `external.py`: MetaCarto, sbml2map, ecmapper (`ecmapper-brenda`, `-packed`) and sbml_pathway_layout
   (`rules-claude`); all write Escher maps, read back as drawings (clones of metabolites and reactions, routes kept).
   `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's auto layout and its reader for SBML Layout; the helper runs

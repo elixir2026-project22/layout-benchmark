@@ -47,7 +47,8 @@ each modifier its SBGN arc (catalysis, inhibition, stimulation, …).
 | planned | UNICON, Metabopolis |
 
 `layout-benchmark layouts` lists them in the order the report uses, from the expected most promising for pathway
-maps to the least, with their group. Every run gets a fixed seed and a timeout. The pathway-specific tools write
+maps to the least, with their group, documentation and (for the external tools) whether the tool is set up.
+Every run gets a fixed seed and a timeout. The pathway-specific tools write
 Escher maps, read back with their clones (a metabolite or reaction drawn more than once) and edge routes.
 MetaCarto, sbml2map and ecmapper read the model as a metabolic network and leave out species that are only
 modifiers (enzymes, regulators); sbml2map also leaves out inorganic species (water, protons, O2, CO2, phosphate,

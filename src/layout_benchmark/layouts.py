@@ -11,13 +11,16 @@ import json
 import random
 import subprocess
 from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
 
 import igraph as ig
 import networkx as nx
 
 from .drawing import Drawing, Positions
+from .external import ecmapper, ecmapper_packed, metacarto, rules_layout, sbml2map
 from .graph import REACTION, Pathway, reaction_compartment
+from .sbmlnet import autolayout
 
 # --- Graphviz ------------------------------------------------------------------------------------------------
 
@@ -143,46 +146,107 @@ def _cytoscape(algorithm: str, compound: bool = False, reactions: bool = True) -
     return run
 
 
-LAYOUTS: dict[str, Callable[[Pathway, int], Positions]] = {
-    **{f"graphviz-{p}": _graphviz(p) for p in ("dot", "neato", "fdp", "sfdp", "twopi", "circo")},
-    "igraph-fr": _igraph("fr"),
-    "igraph-kk": _igraph("kk"),
-    "igraph-drl": _igraph("drl"),
-    "igraph-graphopt": _igraph("graphopt"),
-    "igraph-lgl": _igraph("lgl"),
-    "igraph-mds": _igraph("mds"),
-    "igraph-sugiyama": _igraph("sugiyama"),
-    "networkx-spring": _networkx("spring"),
-    "networkx-kamada_kawai": _networkx("kamada_kawai"),
-    "networkx-spectral": _networkx("spectral"),
-    "cytoscape-fcose": _cytoscape("fcose"),
-    "cytoscape-fcose-compartments": _cytoscape("fcose", compound=True),
-    "cytoscape-cose-bilkent": _cytoscape("cose-bilkent"),
-    "cytoscape-cose-bilkent-compartments": _cytoscape("cose-bilkent", compound=True),
-    "cytoscape-cose": _cytoscape("cose"),
-    "cytoscape-cola": _cytoscape("cola"),
-    "cytoscape-dagre": _cytoscape("dagre"),
-    "cytoscape-klay": _cytoscape("klay"),
-    "cytoscape-elk-layered": _cytoscape("elk-layered"),
-    "cytoscape-elk-stress": _cytoscape("elk-stress"),
-    "cytoscape-elk-force": _cytoscape("elk-force"),
-    "cytoscape-elk-mrtree": _cytoscape("elk-mrtree"),
-}
+# --- The registry ---------------------------------------------------------------------------------------------
 
 
-def _register_external():
-    from .external import ecmapper, ecmapper_packed, metacarto, rules_layout, sbml2map
-    from .sbmlnet import autolayout
+@dataclass(frozen=True)
+class LayoutSpec:
+    """A layout: its name, the function (``(pathway, seed) -> positions or Drawing``), its group, where it is
+    documented, and the tool it needs under ``.tools/`` (None: installed with the package)."""
 
-    LAYOUTS["rules-claude"] = rules_layout
-    LAYOUTS["ecmapper-brenda"] = ecmapper
-    LAYOUTS["ecmapper-brenda-packed"] = ecmapper_packed
-    LAYOUTS["metacarto"] = metacarto
-    LAYOUTS["sbml2map"] = sbml2map
-    LAYOUTS["sbmlnetwork"] = autolayout
+    name: str
+    run: Callable[[Pathway, int], Positions | Drawing]
+    group: str
+    link: str
+    tool: str | None = None
 
 
-_register_external()
+_IGRAPH = "https://python.igraph.org/en/stable/api/igraph.Graph.html#"
+_NETWORKX = "https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout."
+_ELK = "https://eclipse.dev/elk/reference/algorithms/org-eclipse-elk-"
+_ECMAPPER = "https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md"
+_FCOSE = "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose"
+_COSE_BILKENT = "https://github.com/cytoscape/cytoscape.js-cose-bilkent"
+
+
+def _gv(prog: str, group: str) -> LayoutSpec:
+    return LayoutSpec(f"graphviz-{prog}", _graphviz(prog), group, f"https://graphviz.org/docs/layouts/{prog}/")
+
+
+def _cy(name: str, group: str, link: str, algorithm: str | None = None, **kwargs) -> LayoutSpec:
+    return LayoutSpec(f"cytoscape-{name}", _cytoscape(algorithm or name, **kwargs), group, link)
+
+
+def _ig(method: str, function: str, group: str, **kwargs) -> LayoutSpec:
+    return LayoutSpec(f"igraph-{method}", _igraph(method, **kwargs), group, _IGRAPH + function)
+
+
+def _nx(name: str, group: str) -> LayoutSpec:
+    return LayoutSpec(f"networkx-{name}", _networkx(name), group, f"{_NETWORKX}{name}_layout.html")
+
+
+# In the order of how promising they are expected to be for pathway maps (before any scoring; also the report's
+# order), with their group: tools made for pathway maps; force-directed with compartments as groups; layered
+# (flows read in one direction); stress-based; generic force-directed; for large graphs; radial, circular and
+# tree; baselines.
+REGISTRY: list[LayoutSpec] = [
+    LayoutSpec(
+        "rules-claude",
+        rules_layout,
+        "pathway-specific",
+        "https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude",
+        "sbml_pathway_layout",
+    ),
+    LayoutSpec("ecmapper-brenda", ecmapper, "pathway-specific", _ECMAPPER, "ecmapper"),
+    LayoutSpec("ecmapper-brenda-packed", ecmapper_packed, "pathway-specific", _ECMAPPER, "ecmapper"),
+    LayoutSpec("metacarto", metacarto, "pathway-specific", "https://github.com/forxhunter/MetaCarto", "MetaCarto"),
+    LayoutSpec(
+        "sbml2map",
+        sbml2map,
+        "pathway-specific",
+        "https://github.com/elixir2026-project22/sbml2map",
+        "sbml2map",
+    ),
+    LayoutSpec("sbmlnetwork", autolayout, "SBML-specific", "https://github.com/sys-bio/SBMLNetwork", "sbmlnetwork"),
+    _cy("fcose-compartments", "compartments as groups", _FCOSE, "fcose", compound=True),
+    _cy("cose-bilkent-compartments", "compartments as groups", _COSE_BILKENT, "cose-bilkent", compound=True),
+    _cy("fcose", "compound-capable force-directed", _FCOSE),
+    _cy("cose-bilkent", "compound-capable force-directed", _COSE_BILKENT),
+    _cy("elk-layered", "layered", _ELK + "layered.html"),
+    _gv("dot", "layered"),
+    _cy("dagre", "layered", "https://github.com/cytoscape/cytoscape.js-dagre"),
+    _cy("klay", "layered", "https://github.com/cytoscape/cytoscape.js-klay"),
+    _ig("sugiyama", "layout_sugiyama", "layered"),
+    _gv("neato", "stress"),
+    _cy("elk-stress", "stress", _ELK + "stress.html"),
+    _cy("cola", "stress, with constraints", "https://github.com/cytoscape/cytoscape.js-cola"),
+    _nx("kamada_kawai", "stress"),
+    _ig("kk", "layout_kamada_kawai", "stress"),
+    _gv("sfdp", "force-directed"),
+    _gv("fdp", "force-directed"),
+    _ig("fr", "layout_fruchterman_reingold", "force-directed"),
+    _nx("spring", "force-directed"),
+    _cy("cose", "force-directed", "https://js.cytoscape.org/#layouts/cose"),
+    _cy("elk-force", "force-directed", _ELK + "force.html"),
+    _ig("graphopt", "layout_graphopt", "force-directed"),
+    _ig("drl", "layout_drl", "for large graphs"),
+    _ig("lgl", "layout_lgl", "for large graphs"),
+    _gv("twopi", "radial"),
+    _gv("circo", "circular"),
+    _cy("elk-mrtree", "tree", _ELK + "mrtree.html"),
+    _ig("mds", "layout_mds", "baseline"),
+    _nx("spectral", "baseline"),
+]
+SPECS = {s.name: s for s in REGISTRY}
+assert len(SPECS) == len(REGISTRY), "duplicate layout names"
+LAYOUTS: dict[str, Callable[[Pathway, int], Positions | Drawing]] = {s.name: s.run for s in REGISTRY}
+GROUP = {s.name: s.group for s in REGISTRY}
+LINKS = {s.name: s.link for s in REGISTRY}
+
+
+def expected_rank(name: str) -> int:
+    """Position in the registry (unknown layouts last)."""
+    return next((i for i, s in enumerate(REGISTRY) if s.name == name), len(REGISTRY))
 
 
 def layout(name: str, pathway: Pathway, seed: int = 0) -> Drawing:
@@ -195,93 +259,3 @@ def layout(name: str, pathway: Pathway, seed: int = 0) -> Drawing:
     if not drawing.pos:
         raise RuntimeError(f"{name}: no positions")
     return drawing
-
-
-# The layouts in the order of how promising they are expected to be for pathway maps (before any scoring), with
-# their group: tools made for pathway maps; force-directed with compartments as groups; layered (flows read in one
-# direction); stress-based; generic force-directed; for large graphs; radial, circular and tree; baselines.
-EXPECTED = [
-    ("rules-claude", "pathway-specific"),
-    ("ecmapper-brenda", "pathway-specific"),
-    ("ecmapper-brenda-packed", "pathway-specific"),
-    ("metacarto", "pathway-specific"),
-    ("sbml2map", "pathway-specific"),
-    ("sbmlnetwork", "SBML-specific"),
-    ("cytoscape-fcose-compartments", "compartments as groups"),
-    ("cytoscape-cose-bilkent-compartments", "compartments as groups"),
-    ("cytoscape-fcose", "compound-capable force-directed"),
-    ("cytoscape-cose-bilkent", "compound-capable force-directed"),
-    ("cytoscape-elk-layered", "layered"),
-    ("graphviz-dot", "layered"),
-    ("cytoscape-dagre", "layered"),
-    ("cytoscape-klay", "layered"),
-    ("igraph-sugiyama", "layered"),
-    ("graphviz-neato", "stress"),
-    ("cytoscape-elk-stress", "stress"),
-    ("cytoscape-cola", "stress, with constraints"),
-    ("networkx-kamada_kawai", "stress"),
-    ("igraph-kk", "stress"),
-    ("graphviz-sfdp", "force-directed"),
-    ("graphviz-fdp", "force-directed"),
-    ("igraph-fr", "force-directed"),
-    ("networkx-spring", "force-directed"),
-    ("cytoscape-cose", "force-directed"),
-    ("cytoscape-elk-force", "force-directed"),
-    ("igraph-graphopt", "force-directed"),
-    ("igraph-drl", "for large graphs"),
-    ("igraph-lgl", "for large graphs"),
-    ("graphviz-twopi", "radial"),
-    ("graphviz-circo", "circular"),
-    ("cytoscape-elk-mrtree", "tree"),
-    ("igraph-mds", "baseline"),
-    ("networkx-spectral", "baseline"),
-]
-GROUP = dict(EXPECTED)
-assert set(GROUP) == set(LAYOUTS), set(GROUP) ^ set(LAYOUTS)
-
-
-def expected_rank(name: str) -> int:
-    """Position in EXPECTED (unknown layouts last)."""
-    order = [n for n, _ in EXPECTED]
-    return order.index(name) if name in order else len(order)
-
-
-_IGRAPH = "https://python.igraph.org/en/stable/api/igraph.Graph.html#"
-_NETWORKX = "https://networkx.org/documentation/stable/reference/generated/networkx.drawing.layout."
-_ELK = "https://eclipse.dev/elk/reference/algorithms/org-eclipse-elk-"
-# where each layout algorithm is documented (shown in the report)
-LINKS = {
-    "rules-claude": "https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude",
-    "ecmapper-brenda": "https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md",
-    "ecmapper-brenda-packed": "https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md",
-    "metacarto": "https://github.com/forxhunter/MetaCarto",
-    "sbml2map": "https://github.com/elixir2026-project22/sbml2map",
-    "sbmlnetwork": "https://github.com/sys-bio/SBMLNetwork",
-    "cytoscape-fcose": "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose",
-    "cytoscape-fcose-compartments": "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose",
-    "cytoscape-cose-bilkent": "https://github.com/cytoscape/cytoscape.js-cose-bilkent",
-    "cytoscape-cose-bilkent-compartments": "https://github.com/cytoscape/cytoscape.js-cose-bilkent",
-    "cytoscape-cose": "https://js.cytoscape.org/#layouts/cose",
-    "cytoscape-cola": "https://github.com/cytoscape/cytoscape.js-cola",
-    "cytoscape-dagre": "https://github.com/cytoscape/cytoscape.js-dagre",
-    "cytoscape-klay": "https://github.com/cytoscape/cytoscape.js-klay",
-    "cytoscape-elk-layered": _ELK + "layered.html",
-    "cytoscape-elk-stress": _ELK + "stress.html",
-    "cytoscape-elk-force": _ELK + "force.html",
-    "cytoscape-elk-mrtree": _ELK + "mrtree.html",
-    **{
-        f"graphviz-{p}": f"https://graphviz.org/docs/layouts/{p}/"
-        for p in ("dot", "neato", "fdp", "sfdp", "twopi", "circo")
-    },
-    "igraph-fr": _IGRAPH + "layout_fruchterman_reingold",
-    "igraph-kk": _IGRAPH + "layout_kamada_kawai",
-    "igraph-drl": _IGRAPH + "layout_drl",
-    "igraph-graphopt": _IGRAPH + "layout_graphopt",
-    "igraph-lgl": _IGRAPH + "layout_lgl",
-    "igraph-mds": _IGRAPH + "layout_mds",
-    "igraph-sugiyama": _IGRAPH + "layout_sugiyama",
-    "networkx-spring": _NETWORKX + "spring_layout.html",
-    "networkx-kamada_kawai": _NETWORKX + "kamada_kawai_layout.html",
-    "networkx-spectral": _NETWORKX + "spectral_layout.html",
-}
-assert set(LINKS) == set(LAYOUTS), set(LINKS) ^ set(LAYOUTS)
