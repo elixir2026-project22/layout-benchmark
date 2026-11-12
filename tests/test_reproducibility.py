@@ -117,3 +117,66 @@ def test_check_against_a_saved_run_runs_each_layout_once_more(tmp_path, tiny_sbm
     # another seed than the saved run's: a different drawing
     (other,) = check([tiny_sbml], ["networkx-spring"], seed=5, against=out)
     assert other["verdict"] == "differs"
+
+
+# across seeds: each layout once per seed, each drawing compared with the first seed's
+
+
+def test_across_seeds_a_layout_that_ignores_the_seed_is_exact(tiny_sbml):
+    from layout_benchmark.reproducibility import SEED_COLUMNS, across_seeds
+
+    rows = list(across_seeds([tiny_sbml], ["graphviz-dot"], seeds=[0, 1, 2], timeout=60))
+    assert [(r["seed"], r["base_seed"]) for r in rows] == [(1, 0), (2, 0)]
+    for r in rows:
+        assert list(r) == SEED_COLUMNS
+        assert r["verdict"] == "exact", r
+        assert r["model"] == "tiny" and r["layout"] == "graphviz-dot" and r["nodes"] == 7
+        assert r["seconds"] is not None and r["seconds_base"] is not None
+
+
+def test_across_seeds_a_seeded_layout_draws_another_drawing(tiny_sbml):
+    from layout_benchmark.reproducibility import across_seeds
+
+    (row,) = across_seeds([tiny_sbml], ["networkx-spring"], seeds=[2, 5], timeout=60)
+    assert (row["seed"], row["base_seed"]) == (5, 2)
+    assert row["verdict"] == "differs"
+    assert row["procrustes"] > 1e-6
+
+
+def test_across_seeds_a_failing_layout_is_an_error_per_seed(tiny_sbml):
+    from layout_benchmark.reproducibility import across_seeds
+
+    rows = list(across_seeds([tiny_sbml], ["no-such-layout"], seeds=[0, 1, 2], timeout=60))
+    assert [r["seed"] for r in rows] == [1, 2]
+    assert all(r["verdict"] == "error" and r["error"] for r in rows)
+
+
+def test_across_seeds_needs_two_distinct_seeds(tiny_sbml):
+    from layout_benchmark.reproducibility import across_seeds
+
+    with pytest.raises(ValueError):
+        list(across_seeds([tiny_sbml], ["graphviz-dot"], seeds=[3, 3]))
+
+
+def test_cli_reproducibility_across_seeds(tmp_path, tiny_sbml):
+    from layout_benchmark.reproducibility import SEED_COLUMNS
+
+    out = tmp_path / "seeds.csv"
+    result = CliRunner().invoke(
+        main, ["reproducibility", str(tiny_sbml), "-l", "graphviz-dot", "--seeds", "0,1,2", "-o", str(out)]
+    )
+    assert result.exit_code == 0, result.output
+    with out.open() as f:
+        reader = csv.DictReader(f)
+        assert reader.fieldnames == SEED_COLUMNS
+        rows = list(reader)
+    assert [(r["seed"], r["base_seed"], r["verdict"]) for r in rows] == [("1", "0", "exact"), ("2", "0", "exact")]
+    assert "graphviz-dot\texact 2" in result.output
+
+
+def test_cli_reproducibility_seeds_rejects_against_and_a_single_seed(tmp_path, tiny_sbml):
+    args = ["reproducibility", str(tiny_sbml), "-l", "graphviz-dot", "-o", str(tmp_path / "s.csv")]
+    one = CliRunner().invoke(main, [*args, "--seeds", "4"])
+    assert one.exit_code != 0 and "at least two" in one.output
+    both = CliRunner().invoke(main, [*args, "--seeds", "0,1", "--against", str(tmp_path)])
+    assert both.exit_code != 0 and "--against" in both.output

@@ -10,8 +10,8 @@ a pathway map needs, and its similarity to the reference. Report: <https://elixi
 (per model the pictures and a table of scores; a summary page with each layout's median rank per metric).
 
 > Status: 38 layouts on 48 models in 6 sets, all scored. No combined score yet: the weights of the metrics are
-> still to be decided. Planned: reproducibility with different seeds (the same seed twice: `layout-benchmark reproducibility`),
-> SBML Layout + Render output per layout, cofactor clones and a split by pathway.
+> still to be decided. Reproducibility: the same seed twice (`layout-benchmark reproducibility`) and across seeds
+> (`--seeds`). Planned: SBML Layout + Render output per layout, cofactor clones and a split by pathway.
 
 ## Input
 
@@ -116,7 +116,7 @@ calculated.
 | Pathway maps, ours: draw the whole model | this package: pathway maps | share of species and of reactions drawn (`species_drawn`, `reactions_drawn`; higher); drawn nodes per model node (`drawn_per_node`: clones) |
 | Pathway maps, ours: respect compartments | this package: pathway maps | where the tool draws compartment boxes (the compound cytoscape.js layouts, SBMLNetwork, references): species outside their compartment's box, boxes that overlap without one holding the other (`species_outside_compartment`, `compartments_overlapping`; lower) |
 | Close to the reference | this package: reference (standard measures) | on the model nodes both draw, after alignment: remaining distance (`procrustes`; lower), rank correlation of distances (`distance_correlation`; higher), shared 5 nearest neighbours (`knn_preservation`; higher) |
-| Reproducibility (a hard rule of project 22) | this benchmark: `layout-benchmark reproducibility` (its own table, not a column of `results.csv`; written as `OUT/reproducibility.csv`, the report of OUT shows it: a verdict per model and layout, and per layout in the summary the models reproduced / compared, a mirrored drawing not counted as reproduced) | the same model and seed laid out twice, each run in its own process (with `--against OUT`, the first run is the drawing a benchmark run saved), and the drawn nodes compared in the tool's own coordinates: `verdict` exact (the same coordinates), congruent (the same drawing moved, scaled, turned or mirrored: Procrustes disparity below 1e-6; `mirrored` says whether a cycle comes back the other way round) or differs; how far nodes moved as a share of the drawing's diagonal (`max_shift`, `median_shift`; lower). Planned: different seeds |
+| Reproducibility (a hard rule of project 22) | this benchmark: `layout-benchmark reproducibility` (its own table, not a column of `results.csv`; written as `OUT/reproducibility.csv`, the report of OUT shows it: a verdict per model and layout, and per layout in the summary the models reproduced / compared, a mirrored drawing not counted as reproduced) | the same model and seed laid out twice, each run in its own process (with `--against OUT`, the first run is the drawing a benchmark run saved), and the drawn nodes compared in the tool's own coordinates: `verdict` exact (the same coordinates), congruent (the same drawing moved, scaled, turned or mirrored: Procrustes disparity below 1e-6; `mirrored` says whether a cycle comes back the other way round) or differs; how far nodes moved as a share of the drawing's diagonal (`max_shift`, `median_shift`; lower). With `--seeds 0,1,2,...`: each layout once per seed, each drawing compared in the same way with the first seed's (`base_seed`), one row per model, layout and later seed, in a table of its own that the report does not read: how much a drawing depends on its seed (a layout that ignores the seed comes out exact) |
 | Build on a previous layout | | planned: how far nodes move when a few reactions are removed |
 | Scale | | runtime and timeouts are in `results.csv`; not scored yet |
 
@@ -205,6 +205,8 @@ uv run layout-benchmark run path/to/model.xml -o results/run1         # any SBML
 uv run layout-benchmark reproducibility benchmark.yaml -o reproducibility.csv   # each layout twice with one seed: the same drawing?
 # after a full run: its saved drawings are the first runs, so each layout runs only once more (same seed as the run)
 uv run layout-benchmark reproducibility benchmark.yaml --against results/all -o results/all/reproducibility.csv
+# across seeds: each layout once per seed, compared with the first seed's drawing (its own table)
+uv run layout-benchmark reproducibility benchmark.yaml --seeds 0,1,2,3,4 -o seeds.csv
 ```
 
 `--append` keeps the other models' rows in `results.csv`; with `--layouts`, only those layouts' rows are replaced
