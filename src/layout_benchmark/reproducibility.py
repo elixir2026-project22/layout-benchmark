@@ -158,3 +158,71 @@ def check(
             else:
                 row.update(compare_runs(*runs))
             yield row
+
+
+SEED_COLUMNS = [
+    "model",
+    "nodes",
+    "layout",
+    "seed",
+    "base_seed",
+    "verdict",
+    "max_shift",
+    "median_shift",
+    "procrustes",
+    "mirrored",
+    "nodes_compared",
+    "nodes_in_one_run",
+    "seconds_base",
+    "seconds",
+    "error",
+]
+
+
+def across_seeds(
+    models: list[Path | ModelSpec],
+    layouts: list[str],
+    seeds: list[int],
+    timeout: float = 300.0,
+    names: dict[Path, str] | None = None,
+) -> Iterator[dict]:
+    """How much a layout's drawing depends on its seed: each layout run once per seed, each in its own process
+    (``run_layout``), and each drawing compared (``compare_runs``) with the drawing of the first seed
+    (``base_seed``). One row (``SEED_COLUMNS``) per model, layout and seed after the first.
+
+    A layout that ignores its seed comes out exact; a seeded force-directed layout is expected to differ, and
+    ``procrustes``, ``max_shift`` and ``median_shift`` say by how much. Mirrored drawings (``congruent``,
+    ``mirrored``) are the case the same-seed check cannot show between seeds: the same drawing, the other way
+    round. Where the first seed's run fails, every row of that layout is an error; where a later seed fails,
+    only its row."""
+    if len(set(seeds)) < 2 or len(set(seeds)) != len(seeds):
+        raise ValueError(f"at least two distinct seeds needed, got {seeds}")
+    base, *others = seeds
+    for item in models:
+        spec = item if isinstance(item, ModelSpec) else spec_for(item)
+        model = (names or {}).get(spec.path, spec.name or spec.path.stem)
+        pathway = model_pathway(spec, model)
+        for name in layouts:
+            first, seconds_base, base_error = run_layout(name, pathway, seed=base, timeout=timeout)
+            for seed in others:
+                row = dict.fromkeys(SEED_COLUMNS)
+                row.update(
+                    model=model,
+                    nodes=pathway.graph.number_of_nodes(),
+                    layout=name,
+                    seed=seed,
+                    base_seed=base,
+                    seconds_base=round(seconds_base, 3),
+                )
+                if base_error or first is None:
+                    row.update(verdict="error", error=f"seed {base}: {base_error or 'no drawing'}")
+                    yield row
+                    continue
+                drawing, seconds, error = run_layout(name, pathway, seed=seed, timeout=timeout)
+                row["seconds"] = round(seconds, 3)
+                if error or drawing is None:
+                    row.update(verdict="error", error=error or "no drawing")
+                else:
+                    compared = compare_runs(first.pos, drawing.pos)
+                    row.update({k: v for k, v in compared.items() if k in SEED_COLUMNS})
+                yield row

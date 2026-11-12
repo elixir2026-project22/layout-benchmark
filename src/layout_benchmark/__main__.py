@@ -393,16 +393,36 @@ def fetch(manifest, data, refresh):
     help="A benchmark run's folder (made with the same seed): its saved drawings are the first runs, so each layout "
     "runs only once more.",
 )
-def reproducibility(models, layouts, out, seed, timeout, only, data, against):
+@click.option(
+    "--seeds",
+    default=None,
+    help="Comma-separated seeds (at least two): instead of the same seed twice, each layout once per seed, each "
+    "drawing compared with the first seed's. Writes its own table (columns `SEED_COLUMNS`), not one the report reads.",
+)
+def reproducibility(models, layouts, out, seed, timeout, only, data, against, seeds):
     """Lay out each of MODELS (a manifest or SBML files, as for `run`) twice with the same seed and compare the
     two drawings: exact, congruent (the same drawing moved, turned or mirrored) or differs. Writes one row per
     model and layout to OUT; it does not touch a results folder. Written as `<results>/reproducibility.csv`, the
-    report of that results folder shows it (next `report` or `render`)."""
+    report of that results folder shows it (next `report` or `render`). With `--seeds`: how much each layout's
+    drawing depends on its seed, one row per model, layout and seed after the first."""
     import csv
 
     from .layouts import LAYOUTS
     from .manifest import load, model_names
-    from .reproducibility import COLUMNS, check
+    from .reproducibility import COLUMNS, SEED_COLUMNS, across_seeds, check
+
+    seed_list = None
+    if seeds is not None:
+        try:
+            seed_list = [int(x) for x in seeds.split(",") if x.strip()]
+        except ValueError as e:
+            raise click.UsageError(f"--seeds: integers separated by commas ({e})") from e
+        if len(set(seed_list)) < 2 or len(set(seed_list)) != len(seed_list):
+            raise click.UsageError("--seeds: at least two distinct seeds")
+        if against is not None:
+            raise click.UsageError(
+                "--seeds and --against can't be combined: --against compares with a saved run of one seed"
+            )
 
     layout_names = [x.strip() for x in layouts.split(",")] if layouts else list(LAYOUTS)
     if unknown := [n for n in layout_names if n not in LAYOUTS]:
@@ -426,9 +446,14 @@ def reproducibility(models, layouts, out, seed, timeout, only, data, against):
     counts: dict[str, dict[str, int]] = {}
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=COLUMNS)
+        writer = csv.DictWriter(f, fieldnames=SEED_COLUMNS if seed_list else COLUMNS)
         writer.writeheader()
-        for row in check(items, layout_names, seed, timeout, names=names, against=against):
+        rows = (
+            across_seeds(items, layout_names, seed_list, timeout, names=names)
+            if seed_list
+            else check(items, layout_names, seed, timeout, names=names, against=against)
+        )
+        for row in rows:
             writer.writerow(row)
             f.flush()  # a stopped run keeps the rows that finished
             per_layout = counts.setdefault(row["layout"], {})
