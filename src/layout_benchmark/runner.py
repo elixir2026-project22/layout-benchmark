@@ -18,6 +18,7 @@ from .reference import apply_gallery_classes
 from .reference import reference_drawing as reference_drawing_of
 from .render import to_svg
 from .report import write_report
+from .versions import tool_version
 
 REFERENCE = "reference"
 
@@ -199,6 +200,7 @@ def run(
             runs.append((name, drawing, seconds, error))
         for name, drawing, seconds, error in runs:
             row = {**base, "layout": name, "seconds": round(seconds, 3), "error": error or ""}
+            row["tool_version"] = tool_version(name)  # empty for the reference
             if drawing is not None:
                 notes = []
                 missing = len(set(pathway.graph) - drawing.placed())

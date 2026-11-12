@@ -23,6 +23,9 @@ with changes (layouts, options, output).
   (`rules-claude`); all write Escher maps, read back as drawings (clones of metabolites and reactions, routes kept).
   `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's auto layout and its reader for SBML Layout; the helper runs
   in SBMLNetwork's own environment.
+- `versions.py`: each layout's tool and package versions (`LayoutSpec.tool` and `.packages`), recorded by `run`
+  in `tool_version`; `versions OUT` fills rows made before (only while the tools are still at those versions). A
+  `.tools/` folder that is no clone of its own (SBMLNetwork) gets its pip version, never the benchmark's commit.
 - `drawing.py`: `Drawing`, what a tool draws (clones, routes, compartment boxes), its JSON, and the common scale.
 - `reference.py`: reference layouts (`reference_drawing`: SBGN maps, matching SBML ids to glyphs, compartment
   glyphs; Escher maps; SBML Layout).
@@ -83,10 +86,11 @@ time), check the report, and publish only on the user's go-ahead.
    function in `external.py`; a tool writing Escher maps goes through `_run_tool(folder, args, out_glob, pathway)`
    (`sbml2map()` is the shortest example), anything else is read into a `Drawing` (as `sbmlnet.py` does).
    Keep the tool's output as is: no rescaling or rerouting (see Decisions).
-2. One `LayoutSpec(name, run, group, link, sizes, tool)` in `REGISTRY`, at its place in the expected order:
+2. One `LayoutSpec(name, run, group, link, sizes, tool, packages)` in `REGISTRY`, at its place in the expected order:
    `sizes` "given" (we give it node sizes and it lays out around them), "escher" (Escher circles), or None (its
    `Drawing` carries its sizes, or it has none); `tool`: the `.tools/` folder, or None (then the per-layout test
-   runs it; it needs no other change).
+   runs it; it needs no other change); `packages`: the libraries whose versions are recorded with each run
+   (`"py:<name>"`, `"npm:<name>"`; a `.tools/` tool's own version comes from `tool`).
 3. README: a row in the Layouts table, setup commands under Setup for an external tool, its limits (what it leaves
    out) under Layouts; CLAUDE.md: the tool under Code and Known tool limits.
 4. `uv run pytest`; then `run benchmark.yaml -o results/all --append --layouts <name>` (the other layouts' rows and
@@ -126,6 +130,9 @@ time), check the report, and publish only on the user's go-ahead.
 
 ## Decisions (from the project lead)
 
+- **No layout is removed for failing or misbehaving** (errors, timeouts, refusals, runs that aren't reproducible,
+  as graphviz-fdp's): the benchmark tests every layout, including ones we wouldn't recommend; failures are results,
+  shown in the report. Recommendations come from the results, not from dropping layouts (user, 2026-11-12).
 - **Keep layouts as close to the tools' output as possible.** The JSON keeps each tool's own coordinates; pictures
   use one uniform scale (nearest neighbours 1.5 species widths apart: the median width of the drawn species, clones
   at their drawn size, reactions left out), which changes no shape. Scaling to each tool's own node sizes was tried

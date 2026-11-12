@@ -191,7 +191,8 @@ class LayoutSpec:
     """A layout: its name, the function (``(pathway, seed) -> positions or Drawing``), its group, where it is
     documented, how its node sizes are known when a saved drawing lacks them (``sizes``: "given" = the sizes we
     give the tool, which lays out around them; "escher" = Escher's circles; None = no node sizes), and the tool it
-    needs under ``.tools/`` (None: installed with the package)."""
+    needs under ``.tools/`` (None: installed with the package), and the packages whose versions are recorded
+    with each run (``"py:<name>"``, ``"npm:<name>"``, ``"graphviz:"``; see ``versions``)."""
 
     name: str
     run: Callable[[Pathway, int], Positions | Drawing]
@@ -199,6 +200,7 @@ class LayoutSpec:
     link: str
     sizes: str | None = None
     tool: str | None = None
+    packages: tuple[str, ...] = ()
 
 
 _IGRAPH = "https://python.igraph.org/en/stable/api/igraph.Graph.html#"
@@ -212,19 +214,31 @@ _REAGRAPH = "https://reagraph.dev/docs/getting-started/Layouts"
 
 
 def _gv(prog: str, group: str) -> LayoutSpec:
-    return LayoutSpec(f"graphviz-{prog}", _graphviz(prog), group, f"https://graphviz.org/docs/layouts/{prog}/", "given")
+    link = f"https://graphviz.org/docs/layouts/{prog}/"
+    return LayoutSpec(
+        f"graphviz-{prog}", _graphviz(prog), group, link, "given", packages=("py:pygraphviz", "graphviz:")
+    )
 
 
 def _cy(name: str, group: str, link: str, algorithm: str | None = None, **kwargs) -> LayoutSpec:
-    return LayoutSpec(f"cytoscape-{name}", _cytoscape(algorithm or name, **kwargs), group, link, "given")
+    algorithm = algorithm or name
+    if algorithm == "cose":  # built into cytoscape.js
+        extension = ()
+    elif algorithm.startswith("elk"):
+        extension = ("npm:cytoscape-elk", "npm:elkjs")
+    else:
+        extension = (f"npm:cytoscape-{algorithm}",)
+    packages = ("npm:cytoscape", *extension)
+    return LayoutSpec(f"cytoscape-{name}", _cytoscape(algorithm, **kwargs), group, link, "given", packages=packages)
 
 
 def _ig(method: str, function: str, group: str, **kwargs) -> LayoutSpec:
-    return LayoutSpec(f"igraph-{method}", _igraph(method, **kwargs), group, _IGRAPH + function)
+    return LayoutSpec(f"igraph-{method}", _igraph(method, **kwargs), group, _IGRAPH + function, packages=("py:igraph",))
 
 
 def _nx(name: str, group: str) -> LayoutSpec:
-    return LayoutSpec(f"networkx-{name}", _networkx(name), group, f"{_NETWORKX}{name}_layout.html")
+    link = f"{_NETWORKX}{name}_layout.html"
+    return LayoutSpec(f"networkx-{name}", _networkx(name), group, link, packages=("py:networkx",))
 
 
 # In the order of how promising they are expected to be for pathway maps (before any scoring; also the report's
@@ -260,7 +274,11 @@ REGISTRY: list[LayoutSpec] = [
     _cy("fcose-compartments", "compartments as groups", _FCOSE, "fcose", compound=True),
     _cy("cose-bilkent-compartments", "compartments as groups", _COSE_BILKENT, "cose-bilkent", compound=True),
     LayoutSpec(
-        "reagraph-force-compartments", _graphology("reagraph-force-compartments"), "compartments as groups", _REAGRAPH
+        "reagraph-force-compartments",
+        _graphology("reagraph-force-compartments"),
+        "compartments as groups",
+        _REAGRAPH,
+        packages=("npm:reagraph",),
     ),
     _cy("fcose", "compound-capable force-directed", _FCOSE),
     _cy("cose-bilkent", "compound-capable force-directed", _COSE_BILKENT),
@@ -280,9 +298,23 @@ REGISTRY: list[LayoutSpec] = [
     _nx("spring", "force-directed"),
     _cy("cose", "force-directed", "https://js.cytoscape.org/#layouts/cose"),
     _cy("elk-force", "force-directed", _ELK + "force.html"),
-    LayoutSpec("graphology-forceatlas2", _graphology("forceatlas2"), "force-directed", _FA2),
-    LayoutSpec("graphology-forceatlas2-noverlap", _graphology("forceatlas2-noverlap"), "force-directed", _FA2),
-    LayoutSpec("reagraph-force", _graphology("reagraph-force"), "force-directed", _REAGRAPH),
+    LayoutSpec(
+        "graphology-forceatlas2",
+        _graphology("forceatlas2"),
+        "force-directed",
+        _FA2,
+        packages=("npm:graphology", "npm:graphology-layout-forceatlas2"),
+    ),
+    LayoutSpec(
+        "graphology-forceatlas2-noverlap",
+        _graphology("forceatlas2-noverlap"),
+        "force-directed",
+        _FA2,
+        packages=("npm:graphology", "npm:graphology-layout-forceatlas2", "npm:graphology-layout-noverlap"),
+    ),
+    LayoutSpec(
+        "reagraph-force", _graphology("reagraph-force"), "force-directed", _REAGRAPH, packages=("npm:reagraph",)
+    ),
     _ig("graphopt", "layout_graphopt", "force-directed"),
     _ig("drl", "layout_drl", "for large graphs"),
     _ig("lgl", "layout_lgl", "for large graphs"),

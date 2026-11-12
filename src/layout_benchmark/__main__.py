@@ -273,6 +273,33 @@ def report(out, manifest, data):
 
 @main.command()
 @click.argument("out", type=click.Path(exists=True, file_okay=False, path_type=Path))
+@click.option("--layouts", "-l", default=None, help="Comma-separated layout names (default: all).")
+@click.option("--force", is_flag=True, help="Overwrite versions already recorded.")
+@_locks_out
+def versions(out, layouts, force):
+    """Record the current version of each layout's tool and packages (column tool_version) on the rows of OUT that
+    have none: for runs made before versions were recorded, while the tools are still at the versions that made
+    them. `run` records them itself."""
+    import csv
+
+    from .report import write_report
+    from .runner import _write_results
+    from .versions import tool_version
+
+    rows = list(csv.DictReader((out / "results.csv").open()))
+    wanted = {x.strip() for x in layouts.split(",")} if layouts else None
+    n = 0
+    for row in rows:
+        if (wanted and row["layout"] not in wanted) or (row.get("tool_version") and not force):
+            continue
+        row["tool_version"] = tool_version(row["layout"])
+        n += bool(row["tool_version"])
+    _write_results(out, rows)
+    click.echo(f"{n} rows given a version; report: {write_report(out, rows)}")
+
+
+@main.command()
+@click.argument("out", type=click.Path(exists=True, file_okay=False, path_type=Path))
 @click.argument("site", type=click.Path(file_okay=False, path_type=Path))
 @click.option("--name", default=None, help="Folder name of the run in the site (default: OUT's name).")
 @_locks_out
