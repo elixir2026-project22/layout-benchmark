@@ -20,8 +20,8 @@ A YAML file::
         models:
           - name: F001-glycolysis               # an entry: name (in the report, and of the cached files), url,
             url: https://.../F001-glycolysis.xml  #   reference (a URL), files (companions, cached next to the
-            reference: https://.../F001-glycolysis.sbgn  #   model), page (a link)
-            page: https://.../glycolysis/
+            reference: https://.../F001-glycolysis.sbgn  #   model), page (a link), credit and licence
+            page: https://.../glycolysis/              #   (instead of the set's)
           - models/my-model.xml                 # a local file or glob, relative to the manifest (not cached)
 
 A model is a URL, a GitHub glob (``https://github.com/<owner>/<repo>/blob/<ref>/<glob>``), a local path or glob,
@@ -237,7 +237,11 @@ def _spec(entry, item, source, name, data, base, lock, online) -> ModelSpec:
     reference_pattern = item.get("reference") or entry.get("reference")
     given_kind = item.get("reference_kind") or entry.get("reference_kind")
     links = {}
-    common = {"set": entry["name"], "credit": entry.get("credit"), "licence": entry.get("licence")}
+    common = {  # a model's own credit and licence win over its set's
+        "set": entry["name"],
+        "credit": item.get("credit") or entry.get("credit"),
+        "licence": item.get("licence") or entry.get("licence"),
+    }
     page = item.get("page") or entry.get("page")
     if "://" not in source:  # a local file
         model = Path(source)
