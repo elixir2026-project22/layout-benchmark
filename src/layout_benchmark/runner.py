@@ -134,6 +134,16 @@ def spec_for(path: Path) -> ModelSpec:
     return ModelSpec(path=path, set=path.resolve().parent.name)
 
 
+def model_pathway(spec: ModelSpec, name: str):
+    """A model's pathway as the benchmark lays it out: its SBML, with the SBGN classes and labels of its reference
+    map where that is an SBGN map (the gallery SBML has no SBO terms, encoded names). The node sizes depend on the
+    classes and labels, and some layouts on the node sizes."""
+    pathway = read_sbml(spec.path, name=name)
+    if spec.reference and spec.reference_kind == "sbgn":
+        apply_gallery_classes(pathway, spec.reference)
+    return pathway
+
+
 def run(
     models: list[Path | ModelSpec],
     layouts: list[str] | None,
@@ -169,14 +179,11 @@ def run(
     kept_references = {r["model"] for r in kept if r["layout"] == REFERENCE}
     for spec in specs:
         model = spec.path
-        pathway = read_sbml(model, name=names[model])
+        pathway = model_pathway(spec, names[model])
         folder = out / pathway.name
         folder.mkdir(exist_ok=True)
         reference, reference_drawing = None, None
         if spec.reference:
-            if spec.reference_kind == "sbgn":
-                # its SBGN map has the classes and labels (the gallery SBML has no SBO terms, encoded names)
-                apply_gallery_classes(pathway, spec.reference)
             reference_drawing = reference_drawing_of(pathway, spec.reference, spec.reference_kind)
             reference = reference_drawing.node_positions() if reference_drawing else None
         base = {

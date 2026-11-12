@@ -116,7 +116,7 @@ calculated.
 | Pathway maps, ours: draw the whole model | this package: pathway maps | share of species and of reactions drawn (`species_drawn`, `reactions_drawn`; higher); drawn nodes per model node (`drawn_per_node`: clones) |
 | Pathway maps, ours: respect compartments | this package: pathway maps | where the tool draws compartment boxes (the compound cytoscape.js layouts, SBMLNetwork, references): species outside their compartment's box, boxes that overlap without one holding the other (`species_outside_compartment`, `compartments_overlapping`; lower) |
 | Close to the reference | this package: reference (standard measures) | on the model nodes both draw, after alignment: remaining distance (`procrustes`; lower), rank correlation of distances (`distance_correlation`; higher), shared 5 nearest neighbours (`knn_preservation`; higher) |
-| Reproducibility (a hard rule of project 22) | this benchmark: `layout-benchmark reproducibility` (its own table, not a column of `results.csv`; written as `OUT/reproducibility.csv`, the report of OUT shows it: a verdict per model and layout, and per layout in the summary the models reproduced / compared, a mirrored drawing not counted as reproduced) | the same model and seed laid out twice, each run in its own process, and the drawn nodes compared in the tool's own coordinates: `verdict` exact (the same coordinates), congruent (the same drawing moved, scaled, turned or mirrored: Procrustes disparity below 1e-6; `mirrored` says whether a cycle comes back the other way round) or differs; how far nodes moved as a share of the drawing's diagonal (`max_shift`, `median_shift`; lower). Planned: different seeds |
+| Reproducibility (a hard rule of project 22) | this benchmark: `layout-benchmark reproducibility` (its own table, not a column of `results.csv`; written as `OUT/reproducibility.csv`, the report of OUT shows it: a verdict per model and layout, and per layout in the summary the models reproduced / compared, a mirrored drawing not counted as reproduced) | the same model and seed laid out twice, each run in its own process (with `--against OUT`, the first run is the drawing a benchmark run saved), and the drawn nodes compared in the tool's own coordinates: `verdict` exact (the same coordinates), congruent (the same drawing moved, scaled, turned or mirrored: Procrustes disparity below 1e-6; `mirrored` says whether a cycle comes back the other way round) or differs; how far nodes moved as a share of the drawing's diagonal (`max_shift`, `median_shift`; lower). Planned: different seeds |
 | Build on a previous layout | | planned: how far nodes move when a few reactions are removed |
 | Scale | | runtime and timeouts are in `results.csv`; not scored yet |
 
@@ -203,6 +203,8 @@ uv run layout-benchmark report results/all                            # the repo
 uv run layout-benchmark versions results/all                          # record tool versions on rows without them
 uv run layout-benchmark run path/to/model.xml -o results/run1         # any SBML files
 uv run layout-benchmark reproducibility benchmark.yaml -o reproducibility.csv   # each layout twice with one seed: the same drawing?
+# after a full run: its saved drawings are the first runs, so each layout runs only once more (same seed as the run)
+uv run layout-benchmark reproducibility benchmark.yaml --against results/all -o results/all/reproducibility.csv
 ```
 
 `--append` keeps the other models' rows in `results.csv`; with `--layouts`, only those layouts' rows are replaced

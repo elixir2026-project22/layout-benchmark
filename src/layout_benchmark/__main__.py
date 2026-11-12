@@ -386,7 +386,14 @@ def fetch(manifest, data, refresh):
     type=click.Path(file_okay=False, path_type=Path),
     help="The manifest's cache of downloaded models (see `fetch`).",
 )
-def reproducibility(models, layouts, out, seed, timeout, only, data):
+@click.option(
+    "--against",
+    default=None,
+    type=click.Path(exists=True, file_okay=False, path_type=Path),
+    help="A benchmark run's folder (made with the same seed): its saved drawings are the first runs, so each layout "
+    "runs only once more.",
+)
+def reproducibility(models, layouts, out, seed, timeout, only, data, against):
     """Lay out each of MODELS (a manifest or SBML files, as for `run`) twice with the same seed and compare the
     two drawings: exact, congruent (the same drawing moved, turned or mirrored) or differs. Writes one row per
     model and layout to OUT; it does not touch a results folder. Written as `<results>/reproducibility.csv`, the
@@ -394,11 +401,11 @@ def reproducibility(models, layouts, out, seed, timeout, only, data):
     import csv
 
     from .layouts import LAYOUTS
-    from .manifest import load
+    from .manifest import load, model_names
     from .reproducibility import COLUMNS, check
 
-    names = [x.strip() for x in layouts.split(",")] if layouts else list(LAYOUTS)
-    if unknown := [n for n in names if n not in LAYOUTS]:
+    layout_names = [x.strip() for x in layouts.split(",")] if layouts else list(LAYOUTS)
+    if unknown := [n for n in layout_names if n not in LAYOUTS]:
         raise click.UsageError(f"unknown layouts: {', '.join(unknown)}")
     if len(models) == 1 and models[0].suffix in (".yaml", ".yml"):
         _, specs = load(models[0], data)
@@ -409,21 +416,24 @@ def reproducibility(models, layouts, out, seed, timeout, only, data):
                 raise click.UsageError(f"not in the manifest: {', '.join(sorted(missing))}")
         if absent := [str(s.path) for s in specs if not s.path.exists()]:
             raise click.UsageError(f"not fetched: {absent[0]} ({len(absent)} files); run `fetch {models[0]}`")
-        paths = [s.path for s in specs]
+        items = specs
+        unnamed = model_names([s.path for s in specs if not s.name])
+        names = {s.path: s.name or unnamed[s.path] for s in specs}  # as `run` names them
     else:
-        paths = list(models)
+        items = list(models)
+        names = model_names(items)
 
     counts: dict[str, dict[str, int]] = {}
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=COLUMNS)
         writer.writeheader()
-        for row in check(paths, names, seed, timeout):
+        for row in check(items, layout_names, seed, timeout, names=names, against=against):
             writer.writerow(row)
             f.flush()  # a stopped run keeps the rows that finished
             per_layout = counts.setdefault(row["layout"], {})
             per_layout[row["verdict"]] = per_layout.get(row["verdict"], 0) + 1
-    for name in names:
+    for name in layout_names:
         verdicts = ", ".join(f"{v} {n}" for v, n in sorted(counts.get(name, {}).items()))
         click.echo(f"{name}\t{verdicts}")
     click.echo(f"reproducibility: {out}")
