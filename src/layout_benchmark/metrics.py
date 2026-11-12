@@ -9,7 +9,7 @@ General graph-drawing metrics come from gdMetriX (https://github.com/livus/gdMet
 copied), given graphs built from the drawing (``segment_graph``: every straight piece of every drawn edge, shared
 pieces once; ``stub_graph``: each edge's first and last piece, for angles at nodes). The pathway-specific ones are
 here: coverage, overlaps with the tool's own node sizes, reaction participant consistency, compartments (where the
-tool draws compartment boxes) and similarity to a reference layout.
+tool draws compartment boxes) and similarity to a reference layout. The project's layout rules are in ``rules``.
 """
 
 from __future__ import annotations
@@ -31,6 +31,7 @@ from .drawing import Drawing, Positions
 from .external import ESCHER_RADIUS
 from .graph import CONSUMPTION, PRODUCTION, REACTION, SPECIES, Pathway
 from .layouts import SPECS
+from .rules import rule_metrics
 
 # above this many drawn nodes, visual symmetry (it rasterises the drawing) is skipped
 SYMMETRY_MAX_NODES = 300
@@ -62,18 +63,27 @@ SOURCES = {
     ),
     "gdMetriX definition": (
         "general graph drawing (gdMetriX)",
-        "gdMetriX's definition, our code",
-        "gdMetriX's definition, computed by this package (on the drawn polylines)",
+        "gdMetriX's definition, computed by this benchmark",
+        "gdMetriX's definition, computed by this benchmark (on the drawn polylines)",
     ),
     "pathway": (
-        "pathway maps (this package)",
-        "this package: pathway maps",
-        "this package's metric, for the rules of pathway maps",
+        "pathway maps (project 22's layout rules and this benchmark's checks)",
+        "this benchmark: pathway maps",
+        "this benchmark's own check of pathway maps (not one of project 22's rules)",
+    ),
+    "project rules": (
+        "pathway maps (project 22's layout rules and this benchmark's checks)",
+        "layout rule of BioHackathon 2026 project 22, computed by this benchmark",
+        (
+            "a layout rule of BioHackathon Europe 2026 project 22 (Open Pathway Maps), as defined by its two "
+            "implementations (the project's browser pathway layout scorer, core.js, and sbml_pathway_layout's "
+            "svg_layout_metrics.py), computed by this benchmark on the drawing; where the two differ, the choice is stated"
+        ),
     ),
     "reference": (
         "comparison with the reference",
-        "this package: reference",
-        "this package's comparison with the reference layout (standard shape-comparison measures)",
+        "this benchmark: comparison with the reference",
+        "this benchmark's comparison with the reference layout (standard shape-comparison measures)",
     ),
 }
 
@@ -181,6 +191,156 @@ METRICS = [
         "rotations; left out above 300 nodes (too slow)",
     ),
     Metric(
+        "rule_cycles",
+        "cycles",
+        "cycles",
+        None,
+        "metabolite cycles found (hard rule: cycles look like cycles)",
+        "project rules",
+        "the main metabolite cycles: simple cycles of 3-16 metabolites (at most 20000) through main steps (a "
+        "reaction's input to its output), cofactors (scorer's list, as core.js) and Escher's secondary metabolites "
+        "left out; repeatedly the longest drawn as a closed loop (if at least half as long as the longest left), else "
+        "the longest, then every cycle sharing a metabolite with it set aside (as both implementations)",
+    ),
+    Metric(
+        "rule_cycles_closed",
+        "as loops",
+        "cycles",
+        "higher",
+        "cycles look like cycles (hard rule)",
+        "project rules",
+        "the share of main cycles drawn as a closed loop in cycle order: the metabolites and each step's reaction "
+        "node in order wind once around their centre in one direction, without crossing themselves or folding "
+        "inwards (a circle, stadium or rounded rectangle all pass; as both implementations)",
+    ),
+    Metric(
+        "rule_cofactor_hubs",
+        "cofactor hubs",
+        "cofactors",
+        "lower",
+        "cofactors drawn as clones (hard rule)",
+        "project rules",
+        "cofactors (the scorer's list of names, matched on name or id) drawn once but linked to more than one "
+        "reaction (as both implementations); empty without cofactors",
+    ),
+    Metric(
+        "rule_crossings_per_line",
+        "crossings",
+        "crossing",
+        "lower",
+        "no crossings (hard rule)",
+        "project rules",
+        "proper crossings between the straight pieces of drawn lines, skipping two lines that share an end node, / the "
+        "drawn lines (as both implementations); no size limit (core.js counts none above 4000 pieces)",
+    ),
+    Metric(
+        "rule_lines_through_nodes",
+        "through nodes",
+        "through",
+        "lower",
+        "no line through a node (hard rule)",
+        "project rules",
+        "(line, species) pairs where a drawn line passes through the inside of a species node it doesn't connect, at "
+        "the tool's own node sizes and shapes; reaction nodes left out (as core.js; svg_layout_metrics.py counts "
+        "them); the exact shape (both implementations shrink it by 2 px first; ours: rules.THROUGH_SHRINK, a share of the node, 0); empty "
+        "without node sizes",
+    ),
+    Metric(
+        "rule_opposite_share",
+        "opposite",
+        "placement",
+        "higher",
+        "consistent participant placement (hard rule)",
+        "project rules",
+        "the share of drawn reactions with an input and an output whose inputs' centre and outputs' centre, seen "
+        "from the reaction node, are at least 120 degrees apart (as both implementations)",
+    ),
+    Metric(
+        "rule_modifiers_beside",
+        "modifiers beside",
+        "placement",
+        "higher",
+        "modifiers beside their reaction (hard rule)",
+        "project rules",
+        "the share of modifier nodes 60-120 degrees from their reaction's flow (outputs' centre minus inputs' "
+        "centre), seen from the reaction node (as both implementations)",
+    ),
+    Metric(
+        "participant_consistency",
+        "through",
+        "placement",
+        "higher",
+        "reactants and products on opposite sides of their reaction",
+        "pathway",
+        "over every drawn reaction, each (reactant, product) pair: whether the first pieces of their edges at the "
+        "reaction node point to opposite sides (more than 90 degrees apart); the share of such pairs. A reaction "
+        "drawn as a corner scores 0",
+    ),
+    Metric(
+        "rule_aspect",
+        "aspect",
+        "aspect",
+        None,
+        "width / height (hard rule: aspect ratio, target 0.5-2)",
+        "project rules",
+        "width / height of the drawn nodes' extent (their shapes at own sizes, else their centres); compartment "
+        "boxes left out (as svg_layout_metrics.py; core.js includes them)",
+    ),
+    Metric(
+        "rule_longest_over_median",
+        "longest",
+        "long lines",
+        "lower",
+        "avoid long lines (soft rule)",
+        "project rules",
+        "the longest drawn line (along its route) / the median drawn line (as both implementations). A line is a "
+        "participant's whole line to its reaction (core.js takes each Escher segment as a line)",
+    ),
+    Metric(
+        "rule_bends_per_line",
+        "bends",
+        "bends",
+        "lower",
+        "avoid bends (soft rule)",
+        "project rules",
+        "route points where a drawn line turns by more than 25 degrees, per drawn line (as svg_layout_metrics.py; "
+        "core.js counts every stored bend point, and none on Escher's curves). Escher's lines are read as straight "
+        "pieces between their markers, so a curve through a marker counts as a bend there",
+    ),
+    Metric(
+        "rule_density",
+        "density",
+        "density",
+        None,
+        "node area / extent (soft rule: density, target 5-30%)",
+        "project rules",
+        "the drawn nodes' area at the tool's own sizes and shapes / the area of their extent (compartment boxes "
+        "left out, as svg_layout_metrics.py); empty without node sizes",
+    ),
+    Metric(
+        "overlapping_pairs",
+        "pairs",
+        "overlaps",
+        "lower",
+        "nodes don't overlap (soft rule)",
+        "pathway",
+        "pairs of drawn nodes whose shapes intersect with a positive area (touching isn't overlapping), every node "
+        "at the tool's own size and shape (the box Graphviz and cytoscape.js are given, Escher's circles, "
+        "SBMLNetwork's and the reference's glyphs); empty where the tool has no node sizes (igraph, networkx). Also "
+        "the project's rule \"no overlapping nodes\" (core.js's test: any overlap counts; svg_layout_metrics.py allows "
+        "1 px and skips a node inside another)",
+    ),
+    Metric(
+        "overlap_area_share",
+        "area",
+        "overlaps",
+        "lower",
+        "how much nodes overlap",
+        "pathway",
+        "the summed intersection area of the overlapping pairs / the summed area of all drawn nodes, at the tool's "
+        "own sizes",
+    ),
+    Metric(
         "species_drawn",
         "species",
         "drawn",
@@ -207,38 +367,6 @@ METRICS = [
         "pathway",
         "drawn nodes (each clone counted) / the model nodes drawn; above 1 where species or reactions are drawn "
         "more than once",
-    ),
-    Metric(
-        "overlapping_pairs",
-        "pairs",
-        "overlaps",
-        "lower",
-        "nodes don't overlap",
-        "pathway",
-        "pairs of drawn nodes whose shapes intersect with a positive area (touching isn't overlapping), every node "
-        "at the tool's own size and shape (the box Graphviz and cytoscape.js are given, Escher's circles, "
-        "SBMLNetwork's and the reference's glyphs); empty where the tool has no node sizes (igraph, networkx)",
-    ),
-    Metric(
-        "overlap_area_share",
-        "area",
-        "overlaps",
-        "lower",
-        "how much nodes overlap",
-        "pathway",
-        "the summed intersection area of the overlapping pairs / the summed area of all drawn nodes, at the tool's "
-        "own sizes",
-    ),
-    Metric(
-        "participant_consistency",
-        "through",
-        "reactions",
-        "higher",
-        "reactants and products on opposite sides of their reaction",
-        "pathway",
-        "over every drawn reaction, each (reactant, product) pair: whether the first pieces of their edges at the "
-        "reaction node point to opposite sides (more than 90 degrees apart); the share of such pairs. A reaction "
-        "drawn as a corner scores 0",
     ),
     Metric(
         "species_outside_compartment",
@@ -529,9 +657,11 @@ def all_metrics(
     saved without them (``own_sizes``); ``reference``: the model's reference drawing, if any."""
     m = coverage(drawing, pathway)
     m.update(general_metrics(drawing))
-    m.update(overlaps(drawing, own_sizes(drawing, pathway, layout)))
+    sizes = own_sizes(drawing, pathway, layout)
+    m.update(overlaps(drawing, sizes))
     m["participant_consistency"] = participant_consistency(drawing)
     m.update(compartment_metrics(drawing, pathway))
+    m.update(rule_metrics(drawing, sizes))
     if reference is not None:
         m.update(reference_similarity(drawing.node_positions(), reference.node_positions()))
     return m

@@ -14,25 +14,77 @@ from .layouts import GROUP, LINKS, expected_rank
 from .metrics import METRICS, SOURCES, Metric
 
 REFERENCE = "reference"
+# a colour per source band (CSS classes gd, pw, rf; run: the runs' own columns)
+BAND_CLASS = {"gdMetriX": "gd", "gdMetriX definition": "gd", "pathway": "pw", "project rules": "pw", "reference": "rf"}
+
+
+def _band(m: Metric) -> str:
+    return BAND_CLASS.get(m.source, "run")
+
+
+def _cell_classes(columns: list[Metric]) -> list[str]:
+    """Per column: its band's class, plus ``first`` where a band starts (a white gap between bands)."""
+    out, previous = [], None
+    for m in columns:
+        k = _band(m)
+        out.append(f"c-{k}" + (" first" if k != previous else ""))
+        previous = k
+    return out
+
+
+def _legend() -> str:
+    """What the column colours mean."""
+    items = [
+        ("gd", "general graph drawing (gdMetriX)"),
+        ("pw", "pathway maps: project 22's layout rules and this benchmark's checks"),
+        ("rf", "comparison with the reference"),
+        ("run", "the runs"),
+    ]
+    return (
+        "<div class=legend>" + "".join(f"<span style='--k:var(--{k})'>{escape(t)}</span>" for k, t in items) + "</div>"
+    )
+
 
 CSS = """
-:root { --ref: #b5651d; --line: #d0d7de; --muted: #57606a; --bg: #f6f8fa; }
-body { font-family: system-ui, sans-serif; margin: 16px; color: #1f2328; background: #fff; }
-h1 { font-size: 20px; } h2 { font-size: 16px; margin: 0 0 4px; }
-section { border-top: 1px solid var(--line); padding: 14px 0 18px; scroll-margin-top: 64px; }
-nav { position: sticky; top: 0; z-index: 10; background: #fff; border-bottom: 1px solid var(--line);
-      padding: 8px 0; font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center; }
-nav details { position: relative; }
-nav summary { cursor: pointer; font-weight: 600; }
-nav details ul { position: absolute; background: #fff; border: 1px solid var(--line); border-radius: 6px;
-                 padding: 8px 14px; margin: 4px 0 0; list-style: none; max-height: 60vh; overflow-y: auto;
-                 white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+:root { --ref: #b5651d; --line: #dfe4e8; --muted: #5f6b76; --bg: #f4f6f8; --text: #1f2a33; --nav: #0e3b43;
+        --accent: #12808a; --best: #1b6b30; --best-bg: #d6f0dd;
+        /* one colour per source of metrics: band header, group header, cells */
+        --gd: #3b6fb6; --gd-tint: #e3ecf8; --gd-cell: #f6f9fd;
+        --pw: #12808a; --pw-tint: #dcefef; --pw-cell: #f4fafa;
+        --rf: #8256b0; --rf-tint: #ece4f6; --rf-cell: #faf7fd;
+        --run: #6b7785; --run-tint: #e9ecef; --run-cell: #fafbfc; }
+* { box-sizing: border-box; }
+body { font: 14px/1.5 system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; color: var(--text);
+       background: #fff; }
+a { color: var(--accent); }
+main { padding: 0 24px 40px; }
+.top { position: sticky; top: 0; z-index: 10; background: var(--nav); color: #fff; padding: 0 24px;
+       display: flex; flex-wrap: wrap; align-items: center; gap: 6px 22px; min-height: 52px;
+       box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+.top .brand { font-weight: 700; font-size: 17px; color: #fff; text-decoration: none; margin-right: 8px; }
+.top a { color: rgba(255,255,255,.88); text-decoration: none; font-size: 14px; }
+.top a:hover { color: #fff; text-decoration: underline; }
+nav { display: contents; }
+nav details { position: relative; font-size: 14px; }
+nav summary { cursor: pointer; color: rgba(255,255,255,.88); list-style: none; }
+nav summary::after { content: " \\25BE"; font-size: 11px; }
+nav summary:hover { color: #fff; }
+nav details ul { position: absolute; background: #fff; border: 1px solid var(--line); border-radius: 8px;
+                 padding: 8px 14px; margin: 8px 0 0; list-style: none; max-height: 60vh; overflow-y: auto;
+                 white-space: nowrap; box-shadow: 0 8px 24px rgba(16,24,40,.14); }
+nav details ul a { color: var(--accent); }
 nav details li { margin: 2px 0; }
-h2.set { font-size: 18px; margin: 28px 0 4px; padding-top: 8px; border-top: 3px solid #1f2328;
+.hero { background: var(--bg); border-bottom: 1px solid var(--line); padding: 22px 24px 16px; margin: 0 -24px 8px; }
+h1 { font-size: 26px; margin: 0 0 8px; }
+.hero .meta { max-width: 75em; font-size: 14px; }
+h2 { font-size: 18px; margin: 32px 0 6px; padding-top: 10px; border-top: 1px solid var(--line); scroll-margin-top: 64px; }
+section { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px 16px; margin: 14px 0;
+          scroll-margin-top: 70px; box-shadow: 0 1px 2px rgba(16,24,40,.04); }
+h2.set { font-size: 20px; margin: 34px 0 6px; padding-top: 10px; border-top: 3px solid var(--nav);
          scroll-margin-top: 64px; }
-.badge { font-size: 11px; font-weight: normal; color: var(--muted); border: 1px solid var(--line);
-         border-radius: 10px; padding: 1px 7px; margin-left: 6px; vertical-align: middle; }
-h3 { font-size: 15px; margin: 0 0 4px; }
+.badge { font-size: 12px; font-weight: 600; color: var(--muted); background: var(--bg); border-radius: 4px;
+         padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
+h3 { font-size: 16px; margin: 0 0 4px; }
 .meta { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
 .meta a { margin-right: 12px; }
 .row { display: flex; gap: 14px; align-items: flex-start; padding: 3px; }
@@ -40,31 +92,50 @@ h3 { font-size: 15px; margin: 0 0 4px; }
 .ref figcaption b { color: var(--ref); }
 .ref.none { box-shadow: none; border-style: dashed; color: var(--muted); font-size: 13px; display: flex; align-items: center; justify-content: center; height: 560px; }
 .strip { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; }
-figure { flex: 0 0 600px; box-sizing: border-box; margin: 0; border: 1px solid var(--line); border-radius: 6px; padding: 6px;
+figure { flex: 0 0 600px; margin: 0; border: 1px solid var(--line); border-radius: 8px; padding: 6px;
          background: var(--bg); scroll-snap-align: start; }
-figure img { width: 100%; height: 520px; object-fit: contain; background: #fff; display: block; }
+figure img { width: 100%; height: 520px; object-fit: contain; background: #fff; display: block; border-radius: 4px; }
 figcaption { font-size: 12px; margin-top: 4px; }
-figcaption .t { color: var(--muted); }
-details.scores { margin-top: 8px; font-size: 12px; }
-details.scores summary { cursor: pointer; color: var(--muted); }
-table.sortable { border-collapse: collapse; font-size: 12px; margin-top: 6px; }
-table.sortable th, table.sortable td { border: 1px solid var(--line); padding: 2px 6px; text-align: right; }
-table.sortable th { background: var(--bg); cursor: pointer; position: sticky; top: 0; }
-table.sortable th.group { cursor: default; text-align: center; }
-table.sortable th.band { background: #eaeef2; }
-table.metrics { border-collapse: collapse; font-size: 12px; margin-top: 6px; }
-table.metrics th, table.metrics td { border: 1px solid var(--line); padding: 3px 6px; text-align: left;
+figcaption .t, .t { color: var(--muted); }
+details.scores { margin-top: 10px; font-size: 12px; }
+details.scores summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+table.sortable { border-collapse: separate; border-spacing: 0; font-size: 12px; margin-top: 8px;
+                 font-variant-numeric: tabular-nums; border: 1px solid var(--line); border-radius: 8px; }
+table.sortable th, table.sortable td { border-bottom: 1px solid var(--line); padding: 4px 8px; text-align: right;
+                                       white-space: nowrap; }
+table.sortable th { background: var(--bg); cursor: pointer; font-weight: 600; color: var(--text); }
+table.sortable th[data-col]:hover { text-decoration: underline; }
+table.sortable th[data-dir=asc]::after { content: " \\25B2"; font-size: 9px; }
+table.sortable th[data-dir=desc]::after { content: " \\25BC"; font-size: 9px; }
+table.sortable th.group { cursor: default; text-align: center; font-weight: 600; }
+table.sortable th.band { color: #fff; font-size: 12px; letter-spacing: .02em; }
+table.sortable tbody tr:hover td { filter: brightness(.96); }
+table.sortable tbody tr:last-child td { border-bottom: 0; }
+table.sortable td:first-child, table.sortable th:first-child { text-align: left; background: #fff;
+                                                              position: sticky; left: 0; z-index: 1; }
+table.sortable td.best { font-weight: 700; color: var(--best); background: var(--best-bg); }
+table.sortable tr.ref td { color: var(--ref); }
+table.sortable .first { border-left: 2px solid #fff; }
+th.band.gd { background: var(--gd); } th.c-gd { background: var(--gd-tint); } td.c-gd { background: var(--gd-cell); }
+th.band.pw { background: var(--pw); } th.c-pw { background: var(--pw-tint); } td.c-pw { background: var(--pw-cell); }
+th.band.rf { background: var(--rf); } th.c-rf { background: var(--rf-tint); } td.c-rf { background: var(--rf-cell); }
+th.band.run { background: var(--run); } th.c-run { background: var(--run-tint); } td.c-run { background: var(--run-cell); }
+table.metrics { border-collapse: separate; border-spacing: 0; font-size: 12px; margin-top: 8px;
+                border: 1px solid var(--line); border-radius: 8px; }
+table.metrics th, table.metrics td { border-bottom: 1px solid var(--line); padding: 6px 8px; text-align: left;
                                      vertical-align: top; }
 table.metrics th { background: var(--bg); }
 table.metrics td:nth-child(4) { min-width: 320px; }
-table.metrics .t { color: var(--muted); }
-table.sortable td:first-child, table.sortable th:first-child { text-align: left; white-space: nowrap; }
-table.sortable td.best { font-weight: 700; }
-table.sortable td { white-space: nowrap; }
-table.sortable tr.ref td { color: var(--ref); }
+table.metrics tr.c-gd td:first-child { box-shadow: inset 4px 0 0 var(--gd); }
+table.metrics tr.c-pw td:first-child { box-shadow: inset 4px 0 0 var(--pw); }
+table.metrics tr.c-rf td:first-child { box-shadow: inset 4px 0 0 var(--rf); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--muted); margin: 6px 0; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+                       margin-right: 5px; vertical-align: -1px; background: var(--k); }
+select { font: inherit; padding: 3px 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
 .scroll { overflow-x: auto; }
 .error { height: 520px; display: flex; align-items: center; justify-content: center; text-align: center;
-         font-size: 12px; color: #a40e26; background: #fff; padding: 8px; box-sizing: border-box; }
+         font-size: 12px; color: #a40e26; background: #fff; padding: 8px; }
 """
 
 
@@ -122,17 +193,22 @@ def _spans(values: list[str]) -> list[list]:
 
 
 def _header(first: str, columns: list[Metric]) -> str:
-    """Three header rows: where the metrics come from (gdMetriX, this package's pathway metrics, the comparison
+    """Three header rows: where the metrics come from (gdMetriX, the pathway-map rules and checks, the comparison
     with the reference), their groups, then each column (sortable; its description, direction and source on hover)."""
-    bands = _spans([SOURCES[m.source][0] if m.source in SOURCES else "" for m in columns])
-    groups = _spans([m.group for m in columns])
-    band_row = "<th></th>" + "".join(f"<th class='group band' colspan={n}>{escape(b)}</th>" for b, n in bands)
-    group_row = "<th></th>" + "".join(f"<th class=group colspan={n}>{escape(g)}</th>" for g, n in groups)
+    bands = _spans([(SOURCES[m.source][0] if m.source in SOURCES else "the runs", _band(m)) for m in columns])
+    groups = _spans([(_band(m), m.group) for m in columns])
+    band_row = "<th></th>" + "".join(
+        f"<th class='group band {k} first' colspan={n}>{escape(b)}</th>" for (b, k), n in bands
+    )
+    group_row = "<th></th>" + "".join(f"<th class='group c-{k}' colspan={n}>{escape(g)}</th>" for (k, g), n in groups)
+    classes = _cell_classes(columns)
     cells = [f"<th data-col=0>{escape(first)}</th>"]
-    for i, m in enumerate(columns, start=1):
+    for i, (m, cls) in enumerate(zip(columns, classes), start=1):
         direction = {"lower": " (lower is better)", "higher": " (higher is better)"}.get(m.better, "")
         source = f". Source: {SOURCES[m.source][2]}" if m.source in SOURCES else ""
-        cells.append(f'<th data-col={i} title="{escape(m.description + direction + source)}">{escape(m.label)}</th>')
+        cells.append(
+            f'<th data-col={i} class="{cls}" title="{escape(m.description + direction + source)}">{escape(m.label)}</th>'
+        )
     return f"<thead><tr>{band_row}</tr><tr>{group_row}</tr><tr>{''.join(cells)}</tr></thead>"
 
 
@@ -143,6 +219,7 @@ def _scores_table(model: str, mr: list[dict]) -> str:
         return ""
     columns.append(Metric("seconds", "seconds", "run", "lower", "time to lay out"))
     best = {m.column: _best(mr, m.column, m.better) for m in columns}
+    classes = dict(zip((m.column for m in columns), _cell_classes(columns)))
     body = []
     for r in sorted(mr, key=lambda r: (r["layout"] != REFERENCE, expected_rank(r["layout"]))):
         layout = r["layout"]
@@ -157,12 +234,14 @@ def _scores_table(model: str, mr: list[dict]) -> str:
         ]
         for column in (m.column for m in columns):
             x = None if r.get("error") and column != "seconds" else _number(r.get(column))
-            mark = " class=best" if x is not None and x == best[column] and layout != REFERENCE else ""
-            cells.append(f'<td data-v="{"" if x is None else x}"{mark}>{_fmt(column, x)}</td>')
+            mark = " best" if x is not None and x == best[column] and layout != REFERENCE else ""
+            cells.append(
+                f'<td data-v="{"" if x is None else x}" class="{classes[column]}{mark}">{_fmt(column, x)}</td>'
+            )
         body.append(f"<tr{' class=ref' if layout == REFERENCE else ''}>{''.join(cells)}</tr>")
     return (
         "<details class=scores><summary>Scores (click a column to sort; best values bold; hover a header for what it "
-        "measures)</summary><div class=scroll><table class=sortable>"
+        "measures)</summary>" + _legend() + "<div class=scroll><table class=sortable>"
         f"{_header('layout', columns)}<tbody>{''.join(body)}</tbody></table></div></details>"
     )
 
@@ -194,7 +273,7 @@ def _metrics_table() -> str:
     for m in METRICS:
         better = {"lower": "lower", "higher": "higher"}.get(m.better, "– (not ranked)")
         body.append(
-            f"<tr><td><b>{escape(m.label)}</b> <span class=t>({escape(m.group)}; <code>{escape(m.column)}</code>)"
+            f"<tr class=c-{_band(m)}><td><b>{escape(m.label)}</b> <span class=t>({escape(m.group)}; <code>{escape(m.column)}</code>)"
             f'</span></td><td title="{escape(SOURCES[m.source][2])}">{escape(SOURCES[m.source][1])}</td><td>{escape(m.description)}</td>'
             f"<td>{escape(m.how)}</td><td>{better}</td></tr>"
         )
@@ -202,7 +281,10 @@ def _metrics_table() -> str:
         "<h2 id=metrics>The metrics</h2><p class=meta>Every metric is taken on the drawing as shown, in the tool's own "
         "coordinates: clones are nodes, nodes a tool leaves out are absent, routed edges are the polylines drawn. "
         "General graph-drawing metrics come from <a href='https://github.com/livus/gdMetriX' style='margin:0'>gdMetriX</a>; the "
-        "pathway-map metrics and the comparison with the reference are this package's.</p>"
+        "pathway-map metrics follow the layout rules of BioHackathon Europe 2026 project 22 (Open Pathway Maps), as its "
+        "<a href='https://github.com/elixir2026-project22/frontend-tool-pathway-scorer' style='margin:0'>pathway layout "
+        "scorer</a> and sbml_pathway_layout define them, computed by this benchmark (raw values, no thresholds), next to "
+        "a few checks of this benchmark's own; the comparison with the reference is this benchmark's.</p>"
         "<div class=scroll><table class=metrics><thead><tr><th>metric</th><th>source</th><th>what it measures</th>"
         f"<th>how it is calculated</th><th>better</th></tr></thead><tbody>{''.join(body)}</tbody></table></div>"
     )
@@ -217,6 +299,16 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
     tables = []
     for i, (set_name, models) in enumerate([("All sets", [m for ms in sets.values() for m in ms]), *sets.items()]):
         chosen = set(models)
+        classes = dict(zip((m.column for m in columns), _cell_classes(columns)))
+        best_rank = {}  # per column, the lowest median rank among the layouts
+        for column in (m.column for m in columns):
+            medians = []
+            for layout in layouts:
+                values = [ranked[(m, column)][layout] for m in models if layout in ranked.get((m, column), {})]
+                if values:
+                    medians.append(statistics.median(values))
+            if medians:
+                best_rank[column] = min(medians)
         body = []
         for layout in layouts:
             runs = [r for r in rows if r["layout"] == layout and r["model"] in chosen]
@@ -232,9 +324,9 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
                     f"{' <span class=t>(' + escape(GROUP[layout]) + ')</span>' if layout in GROUP else ''}"
                     f"{'<br><span class=t>' + escape(made_with) + '</span>' if made_with else ''}</td>"
                 ),
-                f'<td data-v="{len(ok)}">{len(ok)} / {len(runs)}</td>',
+                f'<td data-v="{len(ok)}" class="c-run first">{len(ok)} / {len(runs)}</td>',
                 (
-                    f'<td data-v="{statistics.median(seconds) if seconds else ""}">'
+                    f'<td data-v="{statistics.median(seconds) if seconds else ""}" class=c-run>'
                     f"{_fmt('seconds', statistics.median(seconds) if seconds else None)}</td>"
                 ),
             ]
@@ -242,7 +334,10 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
                 values = [ranked[(m, column)][layout] for m in models if layout in ranked.get((m, column), {})]
                 median = statistics.median(values) if values else None
                 shown = f"{median:.3g} <span class=t>({len(values)})</span>" if median is not None else "–"
-                cells.append(f'<td data-v="{"" if median is None else median}">{shown}</td>')
+                mark = " best" if median is not None and median == best_rank.get(column) else ""
+                cells.append(
+                    f'<td data-v="{"" if median is None else median}" class="{classes[column]}{mark}">{shown}</td>'
+                )
             body.append(f"<tr>{''.join(cells)}</tr>")
         extra = [
             Metric("laid_out", "laid out", "runs", None, "models laid out / attempted (failures: errors, timeouts)"),
@@ -258,8 +353,11 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
         "<!doctype html><html lang=en><meta charset=utf-8>",
         "<meta name=viewport content='width=device-width, initial-scale=1'>",
         f"<title>Layout benchmark: summary</title><style>{CSS}</style>",
-        "<h1>Layout benchmark: summary of scores</h1>",
-        "<p class=meta><a href='index.html'>Back to the layouts</a></p>",
+        (
+            "<header class=top><a class=brand href='index.html'>Layout benchmark</a><a href='index.html'>Layouts</a>"
+            "<a href='#'>Summary of scores</a><a href='#metrics'>The metrics</a></header>"
+        ),
+        "<main><div class=hero><h1>Summary of scores</h1>",
         (
             "<p class=meta>Per layout and metric: its <b>median rank</b> over the models (1 = the best of that model's "
             "layouts; ties share the mean rank), with the number of models ranked in brackets. A layout is ranked on a "
@@ -268,11 +366,14 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
             "drawing as shown, in the tool's own coordinates (see the README). There is no combined score yet: the "
             "weights of the metrics are still to be decided. Click a column to sort; hover a header for what it "
             "measures. The header's top row says where each metric comes from; "
-            "<a href='#metrics' style='margin:0'>the metrics</a> below says what each measures and how.</p>"
+            "<a href='#metrics' style='margin:0'>the metrics</a> below says what each measures and how. The best "
+            "median rank per column is highlighted.</p></div>"
         ),
         f"<p class=meta>Models: <select id=set>{options}</select></p>",
+        _legend(),
         *tables,
         _metrics_table(),
+        "</main>",
         (
             "<script>document.getElementById('set').addEventListener('change',e=>{"
             "document.querySelectorAll('[data-set]').forEach(d=>d.hidden=d.dataset.set!==e.target.value);});</script>"
@@ -339,7 +440,9 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
         "<!doctype html><html lang=en><meta charset=utf-8>",
         "<meta name=viewport content='width=device-width, initial-scale=1'>",
         f"<title>Layout benchmark</title><style>{CSS}</style>",
-        "<h1>Layout benchmark</h1>",
+    ]
+    hero = [
+        "<div class=hero><h1>Layout benchmark</h1>",
         (
             "<p class=meta>Per model: the reference layout (brown box, where there is one), then every computed "
             "layout, from the expected most promising to the least (by group, before any scoring); scroll sideways. "
@@ -350,7 +453,7 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
             "SBMLNetwork, and cytoscape.js's compound layouts (with compartments: reactions are placed in the "
             "compartment of their reactants and products, transports between). The Escher-based tools have none. "
             "Click a picture to open it full size. Under each model, its scores (a table; on the drawing as shown, "
-            "in each tool's own coordinates); the summary page ranks the layouts over all models.</p>"
+            "in each tool's own coordinates); the summary page ranks the layouts over all models.</p></div>"
         ),
     ]
     models = list(dict.fromkeys(r["model"] for r in rows))
@@ -363,7 +466,7 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
         grouped.setdefault(model_set(first_row[m]), []).append(m)
     order, descriptions = _set_order(out, list(grouped))
     by_set = {name: grouped[name] for name in order}
-    nav = ["<nav>"]
+    nav = ["<header class=top><a class=brand href='#'>Layout benchmark</a><nav>"]
     for set_name, ms in by_set.items():
         anchor = "set-" + "".join(c if c.isalnum() else "-" for c in set_name.lower())
         items = "".join(
@@ -376,7 +479,7 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
         )
     if any(_number(r.get(m.column)) is not None for r in rows for m in METRICS):
         nav.append("<a href='summary.html'><b>Summary of scores</b></a>")
-    nav.append("</nav>")
+    nav.append("</nav></header>")
     # a menu closes on a click outside it, on a model chosen in it, and on Escape (one menu open at a time)
     nav.append(
         "<script>"
@@ -388,6 +491,8 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
         "</script>"
     )
     parts.extend(nav)
+    parts.append("<main>")
+    parts.extend(hero)
     for set_name, ms in by_set.items():
         anchor = "set-" + "".join(c if c.isalnum() else "-" for c in set_name.lower())
         n_ref = sum(has_ref[m] for m in ms)
@@ -399,6 +504,7 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
             parts.append(f"<p class=meta>{escape(descriptions[set_name])}</p>")
         for model in ms:
             _model_section(parts, model, rows, out, local)
+    parts.append("</main>")
     parts.append(SORT_SCRIPT)
     write_summary(out, rows, by_set)
     path = out / "index.html"
