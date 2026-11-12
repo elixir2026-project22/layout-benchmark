@@ -103,7 +103,10 @@ For each model and layout:
   arc class and route);
 - a row in `results.csv` (time, error, nodes not placed).
 
-An HTML report shows, per model, the reference layout and then every layout side by side.
+An HTML report shows, per model, the reference layout and then every layout side by side, with a table of their
+scores under it (sortable; the best value per metric in bold). Its summary page (`summary.html`) gives, per layout
+and metric, the median rank over the models (all, or one set), with the number of models ranked, the models laid
+out and the median time; there is no combined score yet.
 
 ## Setup
 

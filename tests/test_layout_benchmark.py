@@ -657,3 +657,35 @@ def test_brenda_map_reference(tmp_path):
     assert g6p == ["Glc6P@m2"]  # one map node shared by both reactions
     assert d.graph.has_edge("BR1", "Glc6P@m2") and d.graph.has_edge("Glc6P@m2", "BR2")  # directions from the model
     assert d.graph.nodes["BR1"]["own_width"] == 60
+
+
+def test_ranks_share_ties_and_skip_missing_values():
+    from layout_benchmark.report import ranks
+
+    rows = [
+        {"model": "m", "layout": "a", "crossings": "0", "species_drawn": "1"},
+        {"model": "m", "layout": "b", "crossings": "0", "species_drawn": "0.5"},
+        {"model": "m", "layout": "c", "crossings": "4", "species_drawn": ""},
+        {"model": "m", "layout": "d", "crossings": "9", "error": "timeout"},  # failed: not ranked
+        {"model": "m", "layout": "reference", "crossings": "0"},  # the reference: not ranked
+    ]
+    r = ranks(rows)
+    assert r[("m", "crossings")] == {"a": 1.5, "b": 1.5, "c": 3}  # lower is better; a tie shares 1 and 2
+    assert r[("m", "species_drawn")] == {"a": 1, "b": 2}  # higher is better; no value: not ranked
+
+
+def test_report_has_score_tables_and_a_summary(tmp_path):
+    from layout_benchmark.report import write_report
+
+    rows = [
+        {"model": "m", "layout": "graphviz-dot", "seconds": "1", "crossings": "3", "edge_orthogonality": "0.9"},
+        {"model": "m", "layout": "igraph-fr", "seconds": "2", "crossings": "1", "edge_orthogonality": "0.5"},
+    ]
+    for r in rows:
+        r.update(species="2", reactions="1", edges="2")
+    index = write_report(tmp_path, rows).read_text()
+    assert "<table class=sortable>" in index and "summary.html" in index
+    assert '<td data-v="1.0" class=best>1</td>' in index  # igraph-fr's crossings: the fewest
+    assert '<td data-v="0.9" class=best>0.9</td>' in index  # graphviz-dot's orthogonality: the highest
+    summary = (tmp_path / "summary.html").read_text()
+    assert "median rank" in summary and "igraph-fr" in summary

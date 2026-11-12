@@ -1,13 +1,17 @@
 """The HTML report: per model, the reference layout in its own box and the computed layouts in a scrolling strip
-next to it, with links to the source files."""
+next to it, with links to the source files, and a table of their scores; and a summary page (``summary.html``):
+per layout, its median rank per metric over the models."""
 
 from __future__ import annotations
 
 import json
+import math
+import statistics
 from html import escape
 from pathlib import Path
 
 from .layouts import GROUP, LINKS, expected_rank
+from .metrics import METRICS
 
 REFERENCE = "reference"
 
@@ -41,9 +45,200 @@ figure { flex: 0 0 600px; box-sizing: border-box; margin: 0; border: 1px solid v
 figure img { width: 100%; height: 520px; object-fit: contain; background: #fff; display: block; }
 figcaption { font-size: 12px; margin-top: 4px; }
 figcaption .t { color: var(--muted); }
+details.scores { margin-top: 8px; font-size: 12px; }
+details.scores summary { cursor: pointer; color: var(--muted); }
+table.sortable { border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+table.sortable th, table.sortable td { border: 1px solid var(--line); padding: 2px 6px; text-align: right; }
+table.sortable th { background: var(--bg); cursor: pointer; position: sticky; top: 0; }
+table.sortable th.group { cursor: default; text-align: center; }
+table.sortable td:first-child, table.sortable th:first-child { text-align: left; white-space: nowrap; }
+table.sortable td.best { font-weight: 700; }
+table.sortable tr.ref td { color: var(--ref); }
+.scroll { overflow-x: auto; }
 .error { height: 520px; display: flex; align-items: center; justify-content: center; text-align: center;
          font-size: 12px; color: #a40e26; background: #fff; padding: 8px; box-sizing: border-box; }
 """
+
+
+# click a header of a sortable table: sort by that column (again: the other way); cells without a value last
+SORT_SCRIPT = (
+    "<script>"
+    "document.addEventListener('click',e=>{const th=e.target.closest('table.sortable th[data-col]');if(!th)return;"
+    "const t=th.closest('table'),b=t.tBodies[0],i=+th.dataset.col,asc=th.dataset.dir!=='asc';"
+    "t.querySelectorAll('th[data-col]').forEach(h=>delete h.dataset.dir);th.dataset.dir=asc?'asc':'desc';"
+    "const v=r=>{const x=r.cells[i].dataset.v;return x===undefined||x===''?null:(isNaN(+x)?x:+x);};"
+    "[...b.rows].sort((r,s)=>{const a=v(r),c=v(s);if(a===null)return c===null?0:1;if(c===null)return -1;"
+    "return(a<c?-1:a>c?1:0)*(asc?1:-1);}).forEach(r=>b.appendChild(r));});"
+    "</script>"
+)
+COUNTS = {"crossings", "overlapping_pairs", "reference_nodes"}  # shown as whole numbers
+
+
+def _number(value) -> float | None:
+    try:
+        x = float(value)
+    except (TypeError, ValueError):
+        return None
+    return None if math.isnan(x) else x
+
+
+def _fmt(column: str, x: float | None) -> str:
+    if x is None:
+        return "–"
+    if column in COUNTS:
+        return str(round(x))
+    return f"{x:.3g}"
+
+
+def _anchor(model: str, layout: str) -> str:
+    return f"{model}--{layout}"
+
+
+def _best(rows: list[dict], column: str, better: str | None) -> float | None:
+    """The best value of a column among the layouts (not the reference), by its direction."""
+    values = [x for r in rows if r["layout"] != REFERENCE and (x := _number(r.get(column))) is not None]
+    if not better or not values:
+        return None
+    return min(values) if better == "lower" else max(values)
+
+
+def _header(first: str, columns: list[tuple]) -> str:
+    """Two header rows: the metrics' groups, then each column (sortable, with its description)."""
+    groups: list[list] = []
+    for _, _, group, _, _ in columns:
+        if groups and groups[-1][0] == group:
+            groups[-1][1] += 1
+        else:
+            groups.append([group, 1])
+    top = "<th></th>" + "".join(f"<th class=group colspan={n}>{escape(g)}</th>" for g, n in groups)
+    cells = [f"<th data-col=0>{escape(first)}</th>"]
+    for i, (_, label, _, better, description) in enumerate(columns, start=1):
+        direction = {"lower": " (lower is better)", "higher": " (higher is better)"}.get(better, "")
+        cells.append(f'<th data-col={i} title="{escape(description + direction)}">{escape(label)}</th>')
+    return f"<thead><tr>{top}</tr><tr>{''.join(cells)}</tr></thead>"
+
+
+def _scores_table(model: str, mr: list[dict]) -> str:
+    """A model's scores: a row per layout (the reference first), a column per metric; best values bold."""
+    columns = [m for m in METRICS if any(r.get(m[0]) not in (None, "") for r in mr)]
+    if not columns:
+        return ""
+    columns.append(("seconds", "seconds", "run", "lower", "time to lay out"))
+    best = {c: _best(mr, c, better) for c, _, _, better, _ in columns}
+    body = []
+    for r in sorted(mr, key=lambda r: (r["layout"] != REFERENCE, expected_rank(r["layout"]))):
+        layout = r["layout"]
+        name = "Reference" if layout == REFERENCE else layout
+        failure = r.get("error") or r.get("metrics_error")
+        title = f' title="{escape(failure)}"' if failure else ""
+        cells = [
+            (
+                f'<td data-v="{-1 if layout == REFERENCE else expected_rank(layout)}"{title}>'
+                f'<a href="#{escape(_anchor(model, layout))}">{escape(name)}</a>{" ✗" if failure else ""}</td>'
+            )
+        ]
+        for column, *_ in columns:
+            x = None if r.get("error") and column != "seconds" else _number(r.get(column))
+            mark = " class=best" if x is not None and x == best[column] and layout != REFERENCE else ""
+            cells.append(f'<td data-v="{"" if x is None else x}"{mark}>{_fmt(column, x)}</td>')
+        body.append(f"<tr{' class=ref' if layout == REFERENCE else ''}>{''.join(cells)}</tr>")
+    return (
+        "<details class=scores><summary>Scores (click a column to sort; best values bold; hover a header for what it "
+        "measures)</summary><div class=scroll><table class=sortable>"
+        f"{_header('layout', columns)}<tbody>{''.join(body)}</tbody></table></div></details>"
+    )
+
+
+def ranks(rows: list[dict]) -> dict[tuple[str, str], dict[str, float]]:
+    """Per (model, metric with a direction): each layout's rank among that model's layouts with a value (1 = best;
+    ties share the mean rank). References and failed runs are not ranked."""
+    out: dict[tuple[str, str], dict[str, float]] = {}
+    for model in dict.fromkeys(r["model"] for r in rows):
+        mr = [r for r in rows if r["model"] == model and r["layout"] != REFERENCE and not r.get("error")]
+        for column, _, _, better, _ in METRICS:
+            if not better:
+                continue
+            values = {r["layout"]: x for r in mr if (x := _number(r.get(column))) is not None}
+            if not values:
+                continue
+            ordered = sorted(values.values(), reverse=better == "higher")
+            first: dict[float, int] = {}
+            for i, x in enumerate(ordered, start=1):
+                first.setdefault(x, i)
+            count = {x: ordered.count(x) for x in first}
+            out[(model, column)] = {name: first[x] + (count[x] - 1) / 2 for name, x in values.items()}
+    return out
+
+
+def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Path:
+    """Write ``out/summary.html``: per layout, its median rank per metric over the models (all, or one set's), how
+    many models it laid out, its failures and median time. No combined score."""
+    ranked = ranks(rows)
+    columns = [m for m in METRICS if m[3]]
+    layouts = sorted({r["layout"] for r in rows if r["layout"] != REFERENCE}, key=expected_rank)
+    tables = []
+    for i, (set_name, models) in enumerate([("All sets", [m for ms in sets.values() for m in ms]), *sets.items()]):
+        chosen = set(models)
+        body = []
+        for layout in layouts:
+            runs = [r for r in rows if r["layout"] == layout and r["model"] in chosen]
+            if not runs:
+                continue
+            ok = [r for r in runs if not r.get("error")]
+            seconds = [x for r in ok if (x := _number(r.get("seconds"))) is not None]
+            cells = [
+                (
+                    f'<td data-v="{expected_rank(layout)}">{escape(layout)}'
+                    f"{' <span class=t>(' + escape(GROUP[layout]) + ')</span>' if layout in GROUP else ''}</td>"
+                ),
+                f'<td data-v="{len(ok)}">{len(ok)} / {len(runs)}</td>',
+                (
+                    f'<td data-v="{statistics.median(seconds) if seconds else ""}">'
+                    f"{_fmt('seconds', statistics.median(seconds) if seconds else None)}</td>"
+                ),
+            ]
+            for column, *_ in columns:
+                values = [ranked[(m, column)][layout] for m in models if layout in ranked.get((m, column), {})]
+                median = statistics.median(values) if values else None
+                shown = f"{median:.3g} <span class=t>({len(values)})</span>" if median is not None else "–"
+                cells.append(f'<td data-v="{"" if median is None else median}">{shown}</td>')
+            body.append(f"<tr>{''.join(cells)}</tr>")
+        extra = [
+            ("laid_out", "laid out", "runs", None, "models laid out / attempted (failures: errors, timeouts)"),
+            ("seconds", "median s", "runs", "lower", "median time to lay out"),
+        ]
+        hidden = "" if i == 0 else " hidden"
+        tables.append(
+            f"<div class=scroll data-set='{escape(set_name)}'{hidden}><table class=sortable>"
+            f"{_header('layout', extra + columns)}<tbody>{''.join(body)}</tbody></table></div>"
+        )
+    options = "".join(f"<option>{escape(name)}</option>" for name in ["All sets", *sets])
+    parts = [
+        "<!doctype html><html lang=en><meta charset=utf-8>",
+        "<meta name=viewport content='width=device-width, initial-scale=1'>",
+        f"<title>Layout benchmark: summary</title><style>{CSS}</style>",
+        "<h1>Layout benchmark: summary of scores</h1>",
+        "<p class=meta><a href='index.html'>Back to the layouts</a></p>",
+        (
+            "<p class=meta>Per layout and metric: its <b>median rank</b> over the models (1 = the best of that model's "
+            "layouts; ties share the mean rank), with the number of models ranked in brackets. A layout is ranked on a "
+            "model only where it has a value: not where it failed, nor where a metric doesn't apply (overlaps without "
+            "node sizes, compartments without boxes, similarity without a reference). Every metric is taken on the "
+            "drawing as shown, in the tool's own coordinates (see the README). There is no combined score yet: the "
+            "weights of the metrics are still to be decided. Click a column to sort; hover a header for what it "
+            "measures.</p>"
+        ),
+        f"<p class=meta>Models: <select id=set>{options}</select></p>",
+        *tables,
+        (
+            "<script>document.getElementById('set').addEventListener('change',e=>{"
+            "document.querySelectorAll('[data-set]').forEach(d=>d.hidden=d.dataset.set!==e.target.value);});</script>"
+        ),
+        SORT_SCRIPT,
+    ]
+    path = out / "summary.html"
+    path.write_text("\n".join(parts))
+    return path
 
 
 def model_links(row: dict, local: bool = True) -> dict[str, str]:
@@ -107,9 +302,10 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
             "tool's own, drawn at a common scale (nearest neighbours 1.5 species widths apart); the layouts "
             "themselves are not changed. Species are coloured by compartment (models with more than one; legend in each "
             "picture). Compartment boxes are drawn only where the reference or the tool has them: the references, "
-            "and cytoscape.js's compound layouts (with compartments: reactions are placed in the compartment of "
-            "their reactants and products, transports between). MetaCarto and sbml2map have none. "
-            "Click a picture to open it full size.</p>"
+            "SBMLNetwork, and cytoscape.js's compound layouts (with compartments: reactions are placed in the "
+            "compartment of their reactants and products, transports between). The Escher-based tools have none. "
+            "Click a picture to open it full size. Under each model, its scores (a table; on the drawing as shown, "
+            "in each tool's own coordinates); the summary page ranks the layouts over all models.</p>"
         ),
     ]
     models = list(dict.fromkeys(r["model"] for r in rows))
@@ -133,6 +329,8 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
             f"<details><summary>{escape(set_name)} ({len(ms)})</summary>"
             f'<ul><li><a href="#{anchor}"><b>Jump to the start of {escape(set_name)}</b></a></li>{items}</ul></details>'
         )
+    if any(_number(r.get(m[0])) is not None for r in rows for m in METRICS):
+        nav.append("<a href='summary.html'><b>Summary of scores</b></a>")
     nav.append("</nav>")
     # a menu closes on a click outside it, on a model chosen in it, and on Escape (one menu open at a time)
     nav.append(
@@ -156,6 +354,8 @@ def write_report(out: Path, rows: list[dict], local: bool = True) -> Path:
             parts.append(f"<p class=meta>{escape(descriptions[set_name])}</p>")
         for model in ms:
             _model_section(parts, model, rows, out, local)
+    parts.append(SORT_SCRIPT)
+    write_summary(out, rows, by_set)
     path = out / "index.html"
     path.write_text("\n".join(parts))
     return path
@@ -195,7 +395,9 @@ def _model_section(parts: list, model: str, rows: list[dict], out: Path, local: 
             ref_url = links.get("model") or ref_url
         origin = f': <a href="{escape(ref_url)}" target="_blank">{name}</a>' if ref_url and name else ""
         caption = caption.replace(f"<b>{REFERENCE}</b>", f"<b>Reference</b>{origin}", 1)
-        parts.append(f"<figure class=ref>{body}<figcaption>{caption}</figcaption></figure>")
+        parts.append(
+            f"<figure class=ref id='{escape(_anchor(model, REFERENCE))}'>{body}<figcaption>{caption}</figcaption></figure>"
+        )
     else:
         parts.append("<figure class='ref none'>No reference layout</figure>")
     parts.append("<div class=strip>")
@@ -203,8 +405,12 @@ def _model_section(parts: list, model: str, rows: list[dict], out: Path, local: 
         if r["layout"] == REFERENCE:
             continue
         body, caption = _figure(model, r, out)
-        parts.append(f"<figure>{body}<figcaption>{caption}</figcaption></figure>")
-    parts.append("</div></div></section>")
+        parts.append(
+            f"<figure id='{escape(_anchor(model, r['layout']))}'>{body}<figcaption>{caption}</figcaption></figure>"
+        )
+    parts.append("</div></div>")
+    parts.append(_scores_table(model, mr))
+    parts.append("</section>")
 
 
-__all__ = ["model_links", "write_report"]
+__all__ = ["model_links", "ranks", "write_report", "write_summary"]
