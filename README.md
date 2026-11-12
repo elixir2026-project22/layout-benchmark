@@ -10,7 +10,7 @@ a pathway map needs, and its similarity to the reference. Report: <https://elixi
 (per model the pictures and a table of scores; a summary page with each layout's median rank per metric).
 
 > Status: 38 layouts on 48 models in 6 sets, all scored. No combined score yet: the weights of the metrics are
-> still to be decided. Planned: reproducibility metrics (issue #4: Graphviz fdp isn't reproducible from its seed),
+> still to be decided. Planned: reproducibility with different seeds (the same seed twice: `layout-benchmark reproducibility`),
 > SBML Layout + Render output per layout, cofactor clones and a split by pathway.
 
 ## Input
@@ -105,7 +105,7 @@ calculated.
 | Place participants consistently | this package: pathway maps | reactants and products on opposite sides of their reaction, by the direction each edge leaves it (`participant_consistency`; higher). A reaction drawn as a corner (in at the bottom, out at the side, as sbml2map's grid routes do) scores 0 |
 | Respect compartments | this package: pathway maps | where the tool draws compartment boxes (the compound cytoscape.js layouts, SBMLNetwork, references): species outside their compartment's box, boxes that overlap without one holding the other (`species_outside_compartment`, `compartments_overlapping`; lower) |
 | Close to the reference | this package: reference (standard measures) | on the model nodes both draw, after alignment: remaining distance (`procrustes`; lower), rank correlation of distances (`distance_correlation`; higher), shared 5 nearest neighbours (`knn_preservation`; higher) |
-| Reproducibility | | planned: the same seed twice, and different seeds |
+| Reproducibility | this package: `layout-benchmark reproducibility` (its own table, not a column of `results.csv`) | the same model and seed laid out twice, each run in its own process, and the drawn nodes compared in the tool's own coordinates: `verdict` exact (the same coordinates), congruent (the same drawing moved, scaled, turned or mirrored: Procrustes disparity below 1e-6; `mirrored` says whether a cycle comes back the other way round) or differs; how far nodes moved as a share of the drawing's diagonal (`max_shift`, `median_shift`; lower). Planned: different seeds |
 | Build on a previous layout | | planned: how far nodes move when a few reactions are removed |
 | Scale | | runtime and timeouts are in `results.csv`; not scored yet |
 
@@ -187,6 +187,7 @@ uv run layout-benchmark score results/all --manifest benchmark.yaml --layouts sb
 uv run layout-benchmark render results/all --manifest benchmark.yaml   # redraw pictures and report from the JSON
 uv run layout-benchmark report results/all                            # the report only, from results.csv
 uv run layout-benchmark run path/to/model.xml -o results/run1         # any SBML files
+uv run layout-benchmark reproducibility benchmark.yaml -o reproducibility.csv   # each layout twice with one seed: the same drawing?
 ```
 
 `--append` keeps the other models' rows in `results.csv`; with `--layouts`, only those layouts' rows are replaced
