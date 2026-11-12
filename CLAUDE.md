@@ -5,7 +5,7 @@ Guidance for Claude Code in this repository.
 ## What this is
 
 **layout-benchmark**: a benchmark of automatic layout algorithms for pathway maps in SBML, from BioHackathon Europe
-2026, project 22 (*Open Pathway Maps*). Every model is laid out with many algorithms (34), drawn the same way, and
+2026, project 22 (*Open Pathway Maps*). Every model is laid out with many algorithms (38), drawn the same way, and
 shown side by side with its reference layout where it has one. The report is published at
 <https://elixir2026-project22.github.io/layout-benchmark/>. `README.md` is the user documentation: keep it in step
 with changes (layouts, options, output).
@@ -14,10 +14,11 @@ with changes (layouts, options, output).
 
 - `graph.py`: an SBML model as a graph (`Pathway`): species and reactions as nodes, one edge per participant;
   SBGN class per species (from SBO terms), SBGN arc per edge, fixed node sizes per class.
-- `layouts.py`: Graphviz, igraph, networkx and cytoscape.js adapters and the registry: `REGISTRY`, one `LayoutSpec`
+- `layouts.py`: Graphviz, igraph, networkx, cytoscape.js, graphology and Reagraph adapters and the registry: `REGISTRY`, one `LayoutSpec`
   per layout (name, function, group, documentation link, `sizes` for the overlap metrics, `tool` under `.tools/`),
   in the expected order (also the report's order); `LAYOUTS`, `GROUP`, `LINKS`, `expected_rank` are derived from
-  it. `js/layout.mjs` runs the cytoscape.js layouts headless in Node.
+  it. `js/layout.mjs` runs the cytoscape.js layouts headless in Node, `js/graph.mjs` graphology's (Sigma.js) and
+  Reagraph's.
 - `external.py`: MetaCarto, sbml2map, ecmapper (`ecmapper-brenda`, `-packed`) and sbml_pathway_layout
   (`rules-claude`); all write Escher maps, read back as drawings (clones of metabolites and reactions, routes kept).
   `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's auto layout and its reader for SBML Layout; the helper runs
@@ -175,6 +176,12 @@ time), check the report, and publish only on the user's go-ahead.
   SBML doesn't put in compartments, except an optional Level 3 attribute) get the compartment of their reactants
   and products (`graph.reaction_compartment`; the `reactions` option of `_cytoscape`), transports none.
 - `js/layout.mjs` must exit after writing its output: cola and ELK leave timers or workers that keep Node alive.
+- `js/graph.mjs` runs graphology's ForceAtlas2 (+ noverlap) and Reagraph's `layoutProvider` headless (importing
+  `reagraph` pulls in React and three.js, which load in Node without a display). Reagraph lays out with node radius
+  1 (sizes are set after the layout) and draws spheres of radius 10: those are its own sizes. Plain ForceAtlas2 has
+  none (Sigma.js sizes nodes in screen pixels). Reagraph's tree/radial (d3-force DAG modes) and hierarchical
+  (d3-hierarchy) layouts aren't used: they need acyclic graphs or trees. NVL (Neo4j) is left out: its licence allows
+  it only with Neo4j's commercial products.
 - Downloads use a short timeout: where IPv6 is unreachable, Python tries it first and waits.
 
 ## Git

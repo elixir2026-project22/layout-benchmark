@@ -146,6 +146,43 @@ def _cytoscape(algorithm: str, compound: bool = False, reactions: bool = True) -
     return run
 
 
+def _graphology(algorithm: str) -> Callable[[Pathway, int], Drawing]:
+    """A graphology (Sigma.js) or Reagraph layout run by ``js/graph.mjs`` (Node, ``npm ci`` in ``js/``). Nodes keep
+    the sizes the layout works with, in its units: Reagraph's spheres (radius 10), noverlap's circles; none for
+    plain ForceAtlas2 (Sigma sizes nodes in screen pixels). With compartments (Reagraph's ``clusterAttribute``),
+    species are grouped by compartment and reactions by ``graph.reaction_compartment``."""
+
+    def run(pathway: Pathway, seed: int) -> Drawing:
+        if not (JS_DIR / "node_modules").exists():
+            raise RuntimeError(f"graphology and Reagraph layouts need: cd {JS_DIR} && npm ci")
+        g = pathway.graph
+
+        def group(n, d):
+            return reaction_compartment(pathway, n) if d["kind"] == REACTION else d.get("compartment")
+
+        payload = {
+            "algorithm": algorithm,
+            "seed": seed,
+            "nodes": [
+                {"id": n, "width": d["width"], "height": d["height"], "group": group(n, d)}
+                for n, d in g.nodes(data=True)
+            ],
+            "edges": [{"source": u, "target": v} for u, v in g.edges() if u != v],
+        }
+        result = subprocess.run(
+            ["node", str(JS_DIR / "graph.mjs")], input=json.dumps(payload), capture_output=True, text=True, check=False
+        )
+        if result.returncode:
+            raise RuntimeError(result.stderr.strip()[-500:])
+        out = json.loads(result.stdout)
+        drawing = Drawing.of(pathway, {n: (float(x), float(y)) for n, (x, y) in out["positions"].items()})  # y up
+        for n, r in out.get("sizes", {}).items():
+            drawing.graph.nodes[n].update(own_shape="circle", own_width=2 * r, own_height=2 * r)
+        return drawing
+
+    return run
+
+
 # --- The registry ---------------------------------------------------------------------------------------------
 
 
@@ -170,6 +207,8 @@ _ELK = "https://eclipse.dev/elk/reference/algorithms/org-eclipse-elk-"
 _ECMAPPER = "https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md"
 _FCOSE = "https://github.com/iVis-at-Bilkent/cytoscape.js-fcose"
 _COSE_BILKENT = "https://github.com/cytoscape/cytoscape.js-cose-bilkent"
+_FA2 = "https://graphology.github.io/standard-library/layout-forceatlas2.html"
+_REAGRAPH = "https://reagraph.dev/docs/getting-started/Layouts"
 
 
 def _gv(prog: str, group: str) -> LayoutSpec:
@@ -220,6 +259,9 @@ REGISTRY: list[LayoutSpec] = [
     ),
     _cy("fcose-compartments", "compartments as groups", _FCOSE, "fcose", compound=True),
     _cy("cose-bilkent-compartments", "compartments as groups", _COSE_BILKENT, "cose-bilkent", compound=True),
+    LayoutSpec(
+        "reagraph-force-compartments", _graphology("reagraph-force-compartments"), "compartments as groups", _REAGRAPH
+    ),
     _cy("fcose", "compound-capable force-directed", _FCOSE),
     _cy("cose-bilkent", "compound-capable force-directed", _COSE_BILKENT),
     _cy("elk-layered", "layered", _ELK + "layered.html"),
@@ -238,6 +280,9 @@ REGISTRY: list[LayoutSpec] = [
     _nx("spring", "force-directed"),
     _cy("cose", "force-directed", "https://js.cytoscape.org/#layouts/cose"),
     _cy("elk-force", "force-directed", _ELK + "force.html"),
+    LayoutSpec("graphology-forceatlas2", _graphology("forceatlas2"), "force-directed", _FA2),
+    LayoutSpec("graphology-forceatlas2-noverlap", _graphology("forceatlas2-noverlap"), "force-directed", _FA2),
+    LayoutSpec("reagraph-force", _graphology("reagraph-force"), "force-directed", _REAGRAPH),
     _ig("graphopt", "layout_graphopt", "force-directed"),
     _ig("drl", "layout_drl", "for large graphs"),
     _ig("lgl", "layout_lgl", "for large graphs"),
