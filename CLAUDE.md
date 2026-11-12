@@ -36,7 +36,8 @@ with changes (layouts, options, output).
   local files), references, links and credits; the cache paths (`<data>/<set>/<name>`) and the lock file.
 - `metrics.py`: gdMetriX's general metrics plus our pathway-specific ones, on the drawing as shown (`score`,
   `run --metrics`); `METRICS`: one `Metric` per column (label, group, direction, what it measures, source, how it is
-  calculated), `SOURCES`: where metrics come from (shown in the report's headers and summary).
+  calculated), `SOURCES`: where metrics come from (shown in the report's headers and summary). `rules.py`: the
+  project's layout rules (`rule_*` columns), called from `all_metrics`.
 - `reproducibility.py`: the same model and seed laid out twice and compared (`compare_runs`: exact, congruent, differs;
   `check`: one row per model and layout); the `reproducibility` command writes its own table. Two runs, not one
   drawing, so it is not in `metrics.METRICS`.
@@ -165,6 +166,20 @@ time), check the report, and publish only on the user's go-ahead.
     counted as wrong);
   - stress dropped for now (a sum over pairs, not comparable between models); area per node left out (it would
     depend on our scale).
+  - **the project's layout rules** (`rules.py`, user 2026-11-12): raw values only (no thresholds, scores or
+    overall), written from the definitions of the scorer's `core.js` and `svg_layout_metrics.py` (no code copied:
+    neither has a licence). Where they differ: the shared definition; else the one measuring the layout itself (not
+    the file format, not what else a tool draws, not a computing limit); else core.js's. So: no crossing cap; lines
+    through species only (not reactions); cycles without cofactors (scorer's names) and Escher secondary nodes;
+    aspect/density on the drawn nodes' extent (no compartment boxes); bends = turns over 25 degrees. Each `how`
+    says which. "Line through a node" uses the exact shape (`THROUGH_SHRINK` 0; the tools shrink by 2 px). Labels:
+    not applicable (our renderer). Checked against core.js on the IMD Escher maps: through-nodes, cofactor hubs,
+    cycles and placement equal; crossings, aspect, density close; bends and longest line differ by definition.
+  - **one "pathway maps" band** (user 2026-11-12): `METRICS` ordered by the project's rules (hard: cycles,
+    cofactors, crossing, through, placement, aspect; soft: long lines, bends, density, overlaps), then our own
+    checks (drawn, compartments); each column keeps its source (project rule or this package). Placement keeps
+    both `rule_opposite_share` and our `participant_consistency` (it sees routed corners). Bands and groups are
+    spans: keep each contiguous (tested).
 - **Licences**: code MIT. Gallery maps CC BY 4.0 (credited per model in the report). BRENDA (its pathway map
   included) CC BY 4.0. MetaboMAPS' uploaded maps CC BY 4.0 (terms of use, "License for uploaded pathways"). The Stress Knowledge Map (PSS)
   data CC BY-NC 4.0. IMD maps: Jadzia Murphy's, mostly unpublished, for the VMH (2026-11-12, Slack): only the

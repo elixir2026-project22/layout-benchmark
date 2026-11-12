@@ -792,17 +792,27 @@ def test_report_has_score_tables_and_a_summary(tmp_path):
         r.update(species="2", reactions="1", edges="2")
     index = write_report(tmp_path, rows).read_text()
     assert "<table class=sortable>" in index and "summary.html" in index
-    assert '<td data-v="1.0" class=best>1</td>' in index  # igraph-fr's crossings: the fewest
-    assert '<td data-v="0.9" class=best>0.9</td>' in index  # graphviz-dot's orthogonality: the highest
+    assert '<td data-v="1.0" class="c-gd first best">1</td>' in index  # igraph-fr's crossings: the fewest
+    assert '<td data-v="0.9" class="c-gd best">0.9</td>' in index  # graphviz-dot's orthogonality: the highest
     summary = (tmp_path / "summary.html").read_text()
     assert "median rank" in summary and "igraph-fr" in summary
     # where each metric comes from, in the headers; what each measures and how, on the summary page
-    assert "general graph drawing (gdMetriX)" in index and "pathway maps (this package)" in summary
+    assert (
+        "general graph drawing (gdMetriX)" in index
+        and "pathway maps (project 22&#x27;s layout rules and this benchmark&#x27;s checks)" in summary
+    )
     assert "<h2 id=metrics>The metrics</h2>" in summary and "number_of_crossings on the drawn edge pieces" in summary
 
 
 def test_every_metric_says_where_it_comes_from_and_how():
+    from itertools import groupby
+
     from layout_benchmark.metrics import METRICS, SOURCES
+
+    # the report's header bands and groups are spans: each must be one contiguous run of columns
+    bands = [k for k, _ in groupby(SOURCES[m.source][0] for m in METRICS)]
+    groups = [k for k, _ in groupby((SOURCES[m.source][0], m.group) for m in METRICS)]
+    assert len(bands) == len(set(bands)) and len(groups) == len(set(groups))
 
     assert len({m.column for m in METRICS}) == len(METRICS)
     for m in METRICS:
