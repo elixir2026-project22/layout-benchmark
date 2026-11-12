@@ -102,11 +102,19 @@ sets:
 
   - name: Inborn metabolic disorders (IMD maps)
     description: >-
-      Escher maps of the pathways of inborn metabolic disorders, drawn by hand on the Recon3D model; each map is
-      its reference layout, and its reactions and metabolites are the model.
-    models: "https://github.com/elixir2026-project22/data_shared/blob/main/IMD Maps/**/*.json"
+      Escher maps of the pathways of inborn metabolic disorders, drawn by hand on the Recon3D model for the VMH; each
+      map is its reference layout, and its reactions and metabolites are the model. Only maps already online in the
+      VMH (the others are unpublished).
+    # only these: Jadzia Murphy, 2026-11-12 (the amino acid metabolism folder, and three maps proposed by Lohith
+    # Venkatachala; not Beta Oxidation, which isn't online yet)
+    models:
+      - "https://github.com/elixir2026-project22/data_shared/blob/main/IMD Maps/Amino Acid Metabolism Disorders/*.json"
+      - "https://github.com/elixir2026-project22/data_shared/blob/main/IMD Maps/Carbohydrate Metabolism Disorders/Glycolysis.json"
+      - "https://github.com/elixir2026-project22/data_shared/blob/main/IMD Maps/Carbohydrate Metabolism Disorders/Pentose Metabolism.json"
+      - "https://github.com/elixir2026-project22/data_shared/blob/main/IMD Maps/Disorders of Energy Metabolism/Pyruvate metabolism and the Krebs cycle.json"
     convert: escher
-    credit: "Maps: jadziaann, data_shared (BioHackathon 2026, project 22)"
+    page: https://vmh.life/maps
+    credit: "Maps: Jadzia Murphy, VMH (vmh.life/maps); shown with permission, not for reuse"
 
   - name: Stress Knowledge Map (PSS)
     description: >-
@@ -138,10 +146,22 @@ sets:
 
   - name: Genome-scale and core models
     models:
-      - https://github.com/elixir2026-project22/data_shared/blob/main/e_coli_core.sbml
-      - https://github.com/elixir2026-project22/data_shared/blob/main/e_coli_iCH360.sbml
-      - https://github.com/elixir2026-project22/data_shared/blob/main/Mycoplasma_genitalium-Opt243273_1.sbml
+      - name: e_coli_core                 # BiGG's export, via data_shared (Sébastien Moretti)
+        url: https://github.com/elixir2026-project22/data_shared/blob/main/e_coli_core.sbml
+        page: http://bigg.ucsd.edu/models/e_coli_core
+        credit: "BiGG Models, © 2019 The Regents of the University of California; educational, research and non-profit use"
+        licence: https://bigg.ucsd.edu/
+      - name: e_coli_iCH360               # via data_shared; iCH360's repository is MIT (copy not confirmed)
+        url: https://github.com/elixir2026-project22/data_shared/blob/main/e_coli_iCH360.sbml
+        page: https://github.com/marco-corrao/iCH360
+        credit: "iCH360 (github.com/marco-corrao/iCH360), MIT, © 2024 marco-corrao"
+        licence: https://github.com/marco-corrao/iCH360/blob/main/LICENSE
+      - name: Mycoplasma_genitalium-Opt243273_1   # The SEED, 2013 version (site gone), via data_shared
+        url: https://github.com/elixir2026-project22/data_shared/blob/main/Mycoplasma_genitalium-Opt243273_1.sbml
+        credit: "The SEED (2013 version); licence not stated"
       - name: iML1515
         url: http://bigg.ucsd.edu/static/models/iML1515.xml
         files: [http://bigg.ucsd.edu/static/models/iML1515.json]
         page: http://bigg.ucsd.edu/models/iML1515
+        credit: "BiGG Models, © 2019 The Regents of the University of California; educational, research and non-profit use"
+        licence: https://bigg.ucsd.edu/

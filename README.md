@@ -9,7 +9,7 @@ reference layout where there is one. Every drawing is then scored: general graph
 a pathway map needs, and its similarity to the reference. Report: <https://elixir2026-project22.github.io/layout-benchmark/>
 (per model the pictures and a table of scores; a summary page with each layout's median rank per metric).
 
-> Status: 38 layouts on 81 models in 6 sets, all scored. No combined score yet: the weights of the metrics are
+> Status: 38 layouts on 48 models in 6 sets, all scored. No combined score yet: the weights of the metrics are
 > still to be decided. Planned: reproducibility metrics (issue #4: Graphviz fdp isn't reproducible from its seed),
 > SBML Layout + Render output per layout, cofactor clones and a split by pathway.
 
@@ -20,11 +20,11 @@ All inputs are listed, with where they come from, in [`benchmark.yaml`](benchmar
 | Set | Models | Size (species, reactions) | Reference layout | Source, licence |
 |---|---|---|---|---|
 | metabolismregulation gallery | 22 | 10–58, 2–26 | the gallery's hand-drawn SBGN-ML map | [metabolismregulation.github.io](https://metabolismregulation.github.io/gallery/), CC BY 4.0 |
-| Inborn metabolic disorders (IMD maps) | 44 | 9–74, 4–47 | the Escher map itself | project's `data_shared` (Escher maps drawn on Recon3D); no licence stated |
+| Inborn metabolic disorders (IMD maps) | 11 | 15–54, 5–22 | the Escher map itself | Jadzia Murphy's Escher maps drawn on Recon3D for the [VMH](https://vmh.life/maps), via the project's `data_shared`; shown with permission, not for reuse. Only maps already online in the VMH: amino acid metabolism, glycolysis, pentose metabolism, pyruvate metabolism and the Krebs cycle; the others are unpublished |
 | Stress Knowledge Map (PSS) | 2 (JA, SA pathways) | 117–193, 82–159 | – | [skm.nib.si](https://skm.nib.si), CC BY-NC 4.0 |
 | BRENDA pathways | 8 | 13–102, 5–103 | the pathway on BRENDA's pathway map | project's `data_shared`; map: BRENDA, CC BY 4.0 |
 | Reactome | 1 | 101, 47 | Reactome's diagram (the model's own SBML Layout) | [Reactome](https://reactome.org/content/detail/R-HSA-77289) |
-| Genome-scale and core models | 4 (E. coli core, iCH360, *Mycoplasma*, iML1515) | 72–1877, 95–2712 | – | project's `data_shared`; [iML1515](http://bigg.ucsd.edu/models/iML1515) from BiGG |
+| Genome-scale and core models | 4 (E. coli core, iCH360, *Mycoplasma*, iML1515) | 72–1877, 95–2712 | – | [BiGG Models](http://bigg.ucsd.edu/) (e_coli_core via `data_shared`, iML1515 directly; educational, research and non-profit use); [iCH360](https://github.com/marco-corrao/iCH360) (MIT) and *Mycoplasma genitalium* from The SEED (2013 version; licence not stated), via `data_shared` |
 
 [`data_shared`](https://github.com/elixir2026-project22/data_shared) is private to the project. Left out as too
 large for most layouts (hours per layout, mostly timeouts): Human2, the whole PSS and CKN.
@@ -232,8 +232,10 @@ Step-by-step notes are in `CLAUDE.md` ("How to add").
 
 MIT (code). The input data keep their own licences, credited per model in the report: the metabolismregulation
 gallery maps and BRENDA's pathway map are CC BY 4.0 (<https://metabolismregulation.github.io/about/>,
-<https://www.brenda-enzymes.org/copy.php>); the Stress Knowledge Map data are CC BY-NC 4.0; the IMD maps state no
-licence yet. gdMetriX, used for the general metrics, is GPL-3.0: it is imported, not included; a bundle that
+<https://www.brenda-enzymes.org/copy.php>); the Stress Knowledge Map data are CC BY-NC 4.0; the IMD maps are Jadzia
+Murphy's, for the VMH, shown with permission and not for reuse; BiGG Models (e_coli_core, iML1515) are © 2019 The
+Regents of the University of California, free for educational, research and non-profit use
+(<https://bigg.ucsd.edu/>); iCH360 is MIT; the *Mycoplasma* model (The SEED, 2013) states no licence. gdMetriX, used for the general metrics, is GPL-3.0: it is imported, not included; a bundle that
 includes it must follow the GPL. The JavaScript layout libraries (cytoscape.js and its extensions, graphology,
 Reagraph) are installed from npm with their own licences: MIT, Reagraph Apache-2.0, ELK (elkjs) EPL-2.0 and KLay
 (klayjs) EPL-1.0.

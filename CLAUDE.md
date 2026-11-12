@@ -157,7 +157,14 @@ time), check the report, and publish only on the user's go-ahead.
     depend on our scale).
 - **Licences**: code MIT. Gallery maps CC BY 4.0 (credited per model in the report). BRENDA (its pathway map
   included) CC BY 4.0. MetaboMAPS' uploaded maps CC BY 4.0 (terms of use, "License for uploaded pathways"). The Stress Knowledge Map (PSS)
-  data CC BY-NC 4.0. The IMD maps (data_shared, by jadziaann) state no licence: credited, licence to be asked.
+  data CC BY-NC 4.0. IMD maps: Jadzia Murphy's, mostly unpublished, for the VMH (2026-11-12, Slack): only the
+  "Amino Acid Metabolism Disorders" folder, Glycolysis, Pentose Metabolism and Pyruvate metabolism and the Krebs
+  cycle (11 maps, online in the VMH; not Beta Oxidation) may be run and shown, credit "shown with permission, not
+  for reuse"; VMH states no licence for its maps. The other 33 maps' results are in `results/removed-imd/` (local
+  only). BiGG Models (e_coli_core, iML1515): © 2019 UC
+  Regents, educational, research and non-profit use, the notice with every copy. iCH360: MIT (its repository;
+  which copy data_shared holds is unconfirmed). Mycoplasma: The SEED 2013 (site gone), licence not stated (Sébastien
+  Moretti). A model's own `credit`/`licence` in the manifest win over its set's.
 
 ## Known tool limits
 

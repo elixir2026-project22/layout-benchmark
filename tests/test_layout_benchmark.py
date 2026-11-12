@@ -408,6 +408,23 @@ def test_escher_to_sbml(tmp_path):
     assert d.routes[("M_man1p_c@1", "R_PMANM")] == [(0.0, -50.0)]  # through the multimarker
 
 
+def test_manifest_model_credit_and_licence_win_over_the_set(tmp_path):
+    from layout_benchmark.manifest import load
+
+    for m in ("a", "b"):
+        make_sbml(tmp_path / f"{m}.xml", [("r", ["S"], ["P"], [])])
+    (tmp_path / "benchmark.yaml").write_text(
+        "sets:\n  - name: Models\n    credit: Set credit\n    licence: https://set.example/licence\n    models:\n"
+        f"      - name: a\n        url: {tmp_path / 'a.xml'}\n        credit: Own credit\n"
+        "        licence: https://own.example/licence\n"
+        f"      - {tmp_path / 'b.xml'}\n"
+    )
+    _, specs = load(tmp_path / "benchmark.yaml")
+    by_name = {s.name or s.path.stem: s for s in specs}
+    assert (by_name["a"].credit, by_name["a"].licence) == ("Own credit", "https://own.example/licence")
+    assert (by_name["b"].credit, by_name["b"].licence) == ("Set credit", "https://set.example/licence")
+
+
 def test_manifest_escher_reference(tmp_path):
     """A reference pattern ending in .json is an Escher map; a plain model file finds <stem>.escher.json."""
     from layout_benchmark.manifest import load
