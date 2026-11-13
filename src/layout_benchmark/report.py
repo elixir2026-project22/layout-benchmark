@@ -12,10 +12,20 @@ from pathlib import Path
 
 from .layouts import GROUP, LINKS, expected_rank
 from .metrics import METRICS, SOURCES, Metric
+from .scorer import RULES as SCORER_RULES
+from .scorer import SCORER, SCORER_COMMIT, THRESHOLDS, WEIGHTS
+from .scorer import evaluate as scorer_evaluate
 
 REFERENCE = "reference"
 # a colour per source band (CSS classes gd, pw, rf; run: the runs' own columns)
-BAND_CLASS = {"gdMetriX": "gd", "gdMetriX definition": "gd", "pathway": "pw", "project rules": "pw", "reference": "rf"}
+BAND_CLASS = {
+    "gdMetriX": "gd",
+    "gdMetriX definition": "gd",
+    "scorer": "pw",
+    "pathway": "pw",
+    "project rules": "pw",
+    "reference": "rf",
+}
 
 
 def _band(m: Metric) -> str:
@@ -86,12 +96,84 @@ def _with_reproducible(columns: list[Metric]) -> list[Metric]:
     return [*columns[:at], REPRODUCIBLE, *columns[at:]]
 
 
+def _thresholds() -> str:
+    parts = []
+    for rule in SCORER_RULES:
+        t = THRESHOLDS[rule.id]
+        if rule.form == "band":
+            limits = f"1 in {t['lo']}-{t['hi']}, 0 at {t['flo']} and {t['fhi']}" + (" (log scale)" if rule.log else "")
+        else:
+            limits = f"1 at {t['pass']}, 0 at {t['fail']}"
+        parts.append(f"{rule.name} ({rule.kind}; {limits})")
+    return "; ".join(parts)
+
+
+SCORE = Metric(
+    "scorer_overall",
+    "score",
+    "scorer",
+    "higher",
+    "the pathway layout scorer's combined score of the layout rules (0-100)",
+    "scorer",
+    f"as the project's pathway layout scorer (core.js at {SCORER_COMMIT}) scores: each rule 0-100 from its value, "
+    f"linear between the scorer's pass (100) and fail (0) values, or a band; the score is the weighted mean over the "
+    f"rules that apply (hard rules weight {WEIGHTS['hard']}, soft {WEIGHTS['soft']}). The values are this "
+    f"benchmark's (where its definition of a rule differs from the scorer's, the score follows ours); a rule "
+    f"without a value doesn't apply (labels at fixed positions never: our renderer places the labels). Rules: "
+    f"{_thresholds()}. Summary: the median over the models a layout drew (failed runs left out)",
+)
+HARD_RULES = Metric(
+    "scorer_hard",
+    "hard rules",
+    "scorer",
+    "higher",
+    "the hard rules the scorer passes / the hard rules that apply",
+    "scorer",
+    "a hard rule passes where its score is 100 (as the scorer: its value at or beyond the pass value). Summary: the "
+    "median share passed over the models a layout drew",
+)
+SCORE_COLUMNS = (SCORE, HARD_RULES)
+
+
+def _with_scores(columns: list[Metric]) -> list[Metric]:
+    """The columns with the scorer's score first in the pathway-maps band."""
+    at = next((i for i, m in enumerate(columns) if _band(m) == "pw"), len(columns))
+    return [*columns[:at], *SCORE_COLUMNS, *columns[at:]]
+
+
+def _scorer(row: dict, repro_row: dict | None) -> dict | None:
+    """The scorer's scores of a drawing (``scorer.evaluate``); None for a failed run."""
+    if row.get("error"):
+        return None
+    return scorer_evaluate(row, _reproduced(repro_row) if repro_row else None)
+
+
+def _score_cells(e: dict | None, classes: dict[str, str], best: float | None) -> list[str]:
+    """The two score cells of a drawing: its score (each rule's score on hover) and the hard rules passed."""
+    if e is None or e["overall"] is None:
+        return [f'<td data-v="" class="{classes[m.column]}">–</td>' for m in SCORE_COLUMNS]
+    names = {r.id: r.name for r in SCORER_RULES}
+    title = "; ".join(f"{names[k]} {v}" for k, v in e["rules"].items() if v is not None)
+    missing = [names[k] for k, v in e["rules"].items() if v is None]
+    if missing:
+        title += f". Not applying: {', '.join(missing)}"
+    mark = " best" if e["overall"] == best else ""
+    share = e["hard_pass"] / e["hard_total"] if e["hard_total"] else ""
+    return [
+        (
+            f'<td data-v="{e["overall"]}" class="{classes[SCORE.column]}{mark}" title="{escape(title)}">'
+            f"{e['overall']}</td>"
+        ),
+        f'<td data-v="{share}" class="{classes[HARD_RULES.column]}">{e["hard_pass"]} / {e["hard_total"]}</td>',
+    ]
+
+
 def _legend() -> str:
     """What the column colours mean."""
     items = [
-        ("gd", "general graph drawing (gdMetriX)"),
         ("pw", "pathway maps: project 22's layout rules and this benchmark's checks"),
         ("rf", "comparison with the reference"),
+        ("gd", "general graph drawing (gdMetriX)"),
         ("run", "the runs"),
     ]
     return (
@@ -279,8 +361,14 @@ def _scores_table(model: str, mr: list[dict], repro: dict | None = None) -> str:
         columns = _with_reproducible(columns)
     if not columns:
         return ""
+    columns = _with_scores(columns)
     columns.append(Metric("seconds", "seconds", "run", "lower", "time to lay out"))
-    best = {m.column: _best(mr, m.column, m.better) for m in columns if m is not REPRODUCIBLE}
+    scored = {r["layout"]: _scorer(r, repro.get(r["layout"])) for r in mr}
+    overall = [e["overall"] for name, e in scored.items() if name != REFERENCE and e and e["overall"] is not None]
+    best_score = max(overall) if overall else None
+    best = {
+        m.column: _best(mr, m.column, m.better) for m in columns if m is not REPRODUCIBLE and m not in SCORE_COLUMNS
+    }
     classes = dict(zip((m.column for m in columns), _cell_classes(columns)))
     body = []
     for r in sorted(mr, key=lambda r: (r["layout"] != REFERENCE, expected_rank(r["layout"]))):
@@ -297,6 +385,11 @@ def _scores_table(model: str, mr: list[dict], repro: dict | None = None) -> str:
         for column in (m.column for m in columns):
             if column == REPRODUCIBLE.column:
                 cells.append(_verdict_cell(repro.get(layout), classes[column]))
+                continue
+            if column == SCORE.column:
+                cells.extend(_score_cells(scored[layout], classes, best_score if layout != REFERENCE else None))
+                continue
+            if column == HARD_RULES.column:
                 continue
             x = None if r.get("error") and column != "seconds" else _number(r.get(column))
             mark = " best" if x is not None and x == best[column] and layout != REFERENCE else ""
@@ -335,7 +428,7 @@ def ranks(rows: list[dict]) -> dict[tuple[str, str], dict[str, float]]:
 def _metrics_table() -> str:
     """Every metric: what it measures, where it comes from, how it is calculated, and which way is better."""
     body = []
-    for m in _with_reproducible(METRICS):
+    for m in _with_scores(_with_reproducible(METRICS)):
         better = {"lower": "lower", "higher": "higher"}.get(m.better, "– (not ranked)")
         body.append(
             f"<tr class=c-{_band(m)}><td><b>{escape(m.label)}</b> <span class=t>({escape(m.group)}; <code>{escape(m.column)}</code>)"
@@ -358,19 +451,35 @@ def _metrics_table() -> str:
 
 def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Path:
     """Write ``out/summary.html``: per layout, its median rank per metric over the models (all, or one set's), how
-    many models it laid out, its failures and median time. No combined score."""
+    many models it laid out, its failures and median time, and the median of the pathway layout scorer's score."""
     ranked = ranks(rows)
     repro = read_reproducibility(out)
     columns = [m for m in METRICS if m.better]
     if repro:
         columns = _with_reproducible(columns)
+    columns = _with_scores(columns)
+    scored = {(r["model"], r["layout"]): e for r in rows if (e := _scorer(r, repro.get((r["model"], r["layout"]))))}
     layouts = sorted({r["layout"] for r in rows if r["layout"] != REFERENCE}, key=expected_rank)
     tables = []
     for i, (set_name, models) in enumerate([("All sets", [m for ms in sets.values() for m in ms]), *sets.items()]):
         chosen = set(models)
         classes = dict(zip((m.column for m in columns), _cell_classes(columns)))
         best_rank = {}  # per column, the lowest median rank among the layouts
-        for column in (m.column for m in columns if m is not REPRODUCIBLE):
+        score_medians = {}  # per layout: (median score, median share of hard rules passed, models scored)
+        for layout in layouts:
+            es = [e for m in models if (e := scored.get((m, layout))) and e["overall"] is not None]
+            if es:
+                shares = [e["hard_pass"] / e["hard_total"] for e in es if e["hard_total"]]
+                score_medians[layout] = (
+                    statistics.median(e["overall"] for e in es),
+                    statistics.median(shares) if shares else None,
+                    len(es),
+                )
+        for k, column in enumerate((SCORE.column, HARD_RULES.column)):
+            values = [v[k] for v in score_medians.values() if v[k] is not None]
+            if values:
+                best_rank[column] = max(values)
+        for column in (m.column for m in columns if m is not REPRODUCIBLE and m not in SCORE_COLUMNS):
             medians = []
             for layout in layouts:
                 values = [ranked[(m, column)][layout] for m in models if layout in ranked.get((m, column), {})]
@@ -400,6 +509,19 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
                 ),
             ]
             for column in (m.column for m in columns):
+                if column in (SCORE.column, HARD_RULES.column):
+                    k = 0 if column == SCORE.column else 1
+                    v = score_medians.get(layout, (None, None, 0))
+                    x = v[k]
+                    if x is None:
+                        shown = "–"
+                    elif k == 0:
+                        shown = f"{x:.3g} <span class=t>({v[2]})</span>"
+                    else:
+                        shown = f"{x:.0%}"
+                    mark = " best" if x is not None and x == best_rank.get(column) else ""
+                    cells.append(f'<td data-v="{"" if x is None else x}" class="{classes[column]}{mark}">{shown}</td>')
+                    continue
                 if column == REPRODUCIBLE.column:
                     seen = [
                         ok for m in models if (row := repro.get((m, layout))) and (ok := _reproduced(row)) is not None
@@ -441,8 +563,12 @@ def write_summary(out: Path, rows: list[dict], sets: dict[str, list[str]]) -> Pa
             "layouts; ties share the mean rank), with the number of models ranked in brackets. A layout is ranked on a "
             "model only where it has a value: not where it failed, nor where a metric doesn't apply (overlaps without "
             "node sizes, compartments without boxes, similarity without a reference). Every metric is taken on the "
-            "drawing as shown, in the tool's own coordinates (see the README). There is no combined score yet: the "
-            "weights of the metrics are still to be decided. Click a column to sort; hover a header for what it "
+            "drawing as shown, in the tool's own coordinates (see the README). The <b>score</b> is the combined score "
+            f"of the project's <a href='{SCORER}' style='margin:0'>pathway layout scorer</a> (its thresholds and "
+            "weights, its own choices; at "
+            f"{SCORER_COMMIT}), on this benchmark's values of the rules: per layout the median over the models it "
+            "drew, failed runs left out (see laid out), with the number of models in brackets; hard rules: the median "
+            "share passed. Click a column to sort; hover a header for what it "
             "measures. The header's top row says where each metric comes from; "
             "<a href='#metrics' style='margin:0'>the metrics</a> below says what each measures and how. The best "
             "median rank per column is highlighted.</p></div>"

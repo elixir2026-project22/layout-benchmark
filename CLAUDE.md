@@ -37,7 +37,9 @@ with changes (layouts, options, output).
 - `metrics.py`: gdMetriX's general metrics plus our pathway-specific ones, on the drawing as shown (`score`,
   `run --metrics`); `METRICS`: one `Metric` per column (label, group, direction, what it measures, source, how it is
   calculated), `SOURCES`: where metrics come from (shown in the report's headers and summary). `rules.py`: the
-  project's layout rules (`rule_*` columns), called from `all_metrics`.
+  project's layout rules (`rule_*` columns), called from `all_metrics`. `scorer.py`: the pathway layout scorer's
+  combined score (core.js's thresholds and weights at c1f2ef7, as data) from the `rule_*` values and the
+  reproducibility check; computed in the report (`report._scorer`), not stored in `results.csv`.
 - `reproducibility.py`: the same model and seed laid out twice and compared (`compare_runs`: exact, congruent, differs;
   `check`: one row per model and layout); the `reproducibility` command writes its own table. `--against OUT`: a
   run's saved drawings are the first runs (one more run each). Models are read as `run` reads them
@@ -168,6 +170,10 @@ time), check the report, and publish only on the user's go-ahead.
     counted as wrong);
   - stress dropped for now (a sum over pairs, not comparable between models); area per node left out (it would
     depend on our scale).
+  - **the scorer's combined score** (`scorer.py`, user 2026-11-13, issue #26): the scorer's thresholds and weights
+    re-implemented in Python, pinned to core.js c1f2ef7 (cross-checked: equal to core.js's `evaluate()` on all 1,785
+    drawings of the full run); JavaScript rounding (halves up). Summary: median over the models a layout drew,
+    failed runs left out (the "laid out" column shows them). The raw values and ranks stay next to it.
   - **the project's layout rules** (`rules.py`, user 2026-11-12): raw values only (no thresholds, scores or
     overall), written from the definitions of the scorer's `core.js` and `svg_layout_metrics.py` (no code copied:
     neither has a licence). Where they differ: the shared definition; else the one measuring the layout itself (not
