@@ -847,3 +847,23 @@ def test_report_shows_the_reproducibility_check_where_it_was_run(tmp_path):
     assert '<td data-v="mirrored" class="c-pw first no"' in index
     summary = (tmp_path / "summary.html").read_text()
     assert ">1 / 1</td>" in summary and ">0 / 1</td>" in summary
+
+
+def test_sbmlnetwork_layout_has_only_the_runs_timeout(monkeypatch, tiny_sbml):
+    """SBMLNetwork's layout has no timeout of its own (the run's timeout applies, as to every layout); reading an
+    SBML Layout keeps one (it runs outside a layout run)."""
+    from layout_benchmark import sbmlnet
+    from layout_benchmark.graph import read_sbml
+
+    timeouts = []
+
+    def fake_helper(*args, timeout=600):
+        timeouts.append((args[0], timeout))
+        raise RuntimeError("stop")
+
+    monkeypatch.setattr(sbmlnet, "_helper", fake_helper)
+    pathway = read_sbml(tiny_sbml)
+    for call in (lambda: sbmlnet.autolayout(pathway, 0), lambda: sbmlnet.read_layout(pathway, tiny_sbml)):
+        with pytest.raises(RuntimeError, match="stop"):
+            call()
+    assert timeouts == [("layout", None), ("read", 600)]
