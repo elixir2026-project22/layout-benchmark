@@ -24,7 +24,7 @@ All inputs are listed, with where they come from, in [`benchmark.yaml`](benchmar
 | Inborn metabolic disorders (IMD maps) | 11 | 15–54, 5–22 | the Escher map itself | Jadzia Murphy's Escher maps drawn on Recon3D for the [VMH](https://vmh.life/maps), via the project's `data_shared`; shown with permission, not for reuse. Only maps already online in the VMH: amino acid metabolism, glycolysis, pentose metabolism, pyruvate metabolism and the Krebs cycle; the others are unpublished |
 | Stress Knowledge Map (PSS) | 2 (JA, SA pathways) | 117–193, 82–159 | – | [skm.nib.si](https://skm.nib.si), CC BY-NC 4.0 |
 | BRENDA pathways | 8 | 13–102, 5–103 | the pathway on BRENDA's pathway map | project's `data_shared`; map: BRENDA, CC BY 4.0 |
-| Reactome | 1 | 101, 47 | Reactome's diagram (the model's own SBML Layout) | [Reactome](https://reactome.org/content/detail/R-HSA-77289) |
+| Reactome | 1 | 101, 47 | Reactome's diagram (the model's own SBML Layout) | [Reactome](https://reactome.org/content/detail/R-HSA-77289): data CC0, pathway diagram CC BY 4.0 ([licence](https://reactome.org/license)) |
 | Genome-scale and core models | 4 (E. coli core, iCH360, *Mycoplasma*, iML1515) | 72–1877, 95–2712 | – | [BiGG Models](http://bigg.ucsd.edu/) (e_coli_core via `data_shared`, iML1515 directly; educational, research and non-profit use); [iCH360](https://github.com/marco-corrao/iCH360) (MIT) and *Mycoplasma genitalium* from The SEED (2013 version; licence not stated), via `data_shared` |
 
 [`data_shared`](https://github.com/elixir2026-project22/data_shared) is private to the project. Left out as too
@@ -267,7 +267,8 @@ Step-by-step notes are in `CLAUDE.md` ("How to add").
 MIT (code). The input data keep their own licences, credited per model in the report: the metabolismregulation
 gallery maps and BRENDA's pathway map are CC BY 4.0 (<https://metabolismregulation.github.io/about/>,
 <https://www.brenda-enzymes.org/copy.php>); the Stress Knowledge Map data are CC BY-NC 4.0; the IMD maps are Jadzia
-Murphy's, for the VMH, shown with permission and not for reuse; BiGG Models (e_coli_core, iML1515) are © 2019 The
+Murphy's, for the VMH, shown with permission and not for reuse; Reactome's data are CC0 and its pathway diagrams CC BY
+4.0 (<https://reactome.org/license>; the diagram is the reference, redrawn by this benchmark); BiGG Models (e_coli_core, iML1515) are © 2019 The
 Regents of the University of California, free for educational, research and non-profit use
 (<https://bigg.ucsd.edu/>); iCH360 is MIT; the *Mycoplasma* model (The SEED, 2013) states no licence. gdMetriX, used for the general metrics, is GPL-3.0: it is imported, not included; a bundle that
 includes it must follow the GPL. The JavaScript layout libraries (cytoscape.js and its extensions, graphology,
