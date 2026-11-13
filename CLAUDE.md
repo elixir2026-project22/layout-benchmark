@@ -5,7 +5,7 @@ Guidance for Claude Code in this repository.
 ## What this is
 
 **layout-benchmark**: a benchmark of automatic layout algorithms for pathway maps in SBML, from BioHackathon Europe
-2026, project 22 (*Open Pathway Maps*). Every model is laid out with many algorithms (38), drawn the same way, and
+2026, project 22 (*Open Pathway Maps*). Every model is laid out with many algorithms (39), drawn the same way, and
 shown side by side with its reference layout where it has one. The report is published at
 <https://elixir2026-project22.github.io/layout-benchmark/>. `README.md` is the user documentation: keep it in step
 with changes (layouts, options, output).
