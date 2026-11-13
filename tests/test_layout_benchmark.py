@@ -843,8 +843,10 @@ def test_report_shows_the_reproducibility_check_where_it_was_run(tmp_path):
             | {"model": "m", "layout": "igraph-fr", "verdict": "congruent", "mirrored": "True", "max_shift": "0.4"}
         )
     index = write_report(tmp_path, rows).read_text()
-    assert '<td data-v="exact" class="c-pw first yes"' in index
-    assert '<td data-v="mirrored" class="c-pw first no"' in index
+    # after the scorer's score (first in the pathway band), which counts the check as its "reproducible" rule
+    assert '<td data-v="exact" class="c-pw yes"' in index
+    assert '<td data-v="mirrored" class="c-pw no"' in index
+    assert '<td data-v="100" class="c-pw first best" title="reproducible 100' in index
     summary = (tmp_path / "summary.html").read_text()
     assert ">1 / 1</td>" in summary and ">0 / 1</td>" in summary
 

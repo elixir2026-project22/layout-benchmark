@@ -7,12 +7,12 @@ Visualization of Metabolic Networks*.
 Every model is laid out with every algorithm, drawn the same way and shown side by side, next to a hand-drawn
 reference layout where there is one. Every drawing is then scored: general graph-drawing metrics, metrics for what
 a pathway map needs, and its similarity to the reference. Report: <https://elixir2026-project22.github.io/layout-benchmark/>
-(per model the pictures and a table of scores; a summary page with each layout's median rank per metric).
+(per model the pictures and a table of scores; a summary page with each layout's median rank per metric, and the median
+of project 22's pathway layout scorer's combined score).
 
 > Status: 39 layouts on 48 models in 6 sets, all scored, each drawing checked for reproducibility (the same seed
-> twice: `layout-benchmark reproducibility`). No combined score yet
-> ([#26](https://github.com/elixir2026-project22/layout-benchmark/issues/26)). Planned: reproducibility with different
-> seeds, SBML Layout + Render output per layout, cofactor clones and a split by pathway.
+> twice: `layout-benchmark reproducibility`), with the pathway layout scorer's combined score. Planned: reproducibility
+> with different seeds, SBML Layout + Render output per layout, cofactor clones and a split by pathway.
 
 ## Input
 
@@ -107,6 +107,14 @@ the layout itself (not the file format, not what else a tool draws, not a comput
 Next to the rules, a few checks of our own (whole model drawn, compartments, placement by edge direction). The
 comparison with the reference is this package's. The report says which is which (the top row of each score table's
 header), and the summary page lists every metric with its source and how it is calculated.
+
+The **score** (first in the pathway-maps columns) is the scorer's combined score, applied to these rule values
+(`scorer.py`, the thresholds and weights of `core.js` at c1f2ef7, its own choices; checked equal to `core.js` on every
+drawing of the full run): each rule 0–100, linear between the scorer's pass and fail values (a band for aspect ratio
+and density), and the score the weighted mean over the rules that apply (hard rules 2, soft 1; a rule without a value
+doesn't apply, "labels at fixed positions" never). Next to it, the hard rules passed. In the summary: the median score
+over the models a layout drew (failed runs left out: see "laid out") and the median share of hard rules passed. The
+raw values and the median ranks stay.
 
 | What it checks | Source | Metric (column; better) |
 |---|---|---|

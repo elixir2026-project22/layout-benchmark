@@ -81,6 +81,14 @@ SOURCES = {
             "where the two differ, the choice is stated"
         ),
     ),
+    "scorer": (
+        "pathway maps (project 22's layout rules and this benchmark's checks)",
+        "project 22's pathway layout scorer: its thresholds and weights, on this benchmark's rule values",
+        (
+            "the combined score of BioHackathon Europe 2026 project 22's pathway layout scorer (core.js, its "
+            "thresholds and weights: its own choices), applied to the rule values this benchmark computes"
+        ),
+    ),
     "reference": (
         "comparison with the reference",
         "this benchmark: comparison with the reference",
@@ -427,6 +435,10 @@ METRICS = [
         "the model nodes placed in both the layout and the reference",
     ),
 ]
+# the report's order of the sources: the pathway maps (the project's rules, then our own checks), the comparison
+# with the reference, general graph drawing last; within a source, as listed above
+_SOURCE_ORDER = {"project rules": 0, "pathway": 0, "reference": 1, "gdMetriX": 2, "gdMetriX definition": 2}
+METRICS.sort(key=lambda m: _SOURCE_ORDER[m.source])
 
 
 # --- graphs from the drawing -------------------------------------------------------------------------------------
