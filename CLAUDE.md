@@ -190,7 +190,8 @@ time), check the report, and publish only on the user's go-ahead.
     both `rule_opposite_share` and our `participant_consistency` (it sees routed corners). Bands and groups are
     spans: keep each contiguous (tested).
 - **Licences**: code MIT. Gallery maps CC BY 4.0 (credited per model in the report). BRENDA (its pathway map
-  included) CC BY 4.0. The Stress Knowledge Map (PSS)
+  included) CC BY 4.0. Reactome (reactome.org/license, read 2026-11-13): data CC0, pathway diagrams CC BY 4.0 with
+  credit, a link to the licence and modifications marked (our reference is its diagram, redrawn). The Stress Knowledge Map (PSS)
   data CC BY-NC 4.0. IMD maps: Jadzia Murphy's, mostly unpublished, for the VMH (2026-11-12, Slack): only the
   "Amino Acid Metabolism Disorders" folder, Glycolysis, Pentose Metabolism and Pyruvate metabolism and the Krebs
   cycle (11 maps, online in the VMH; not Beta Oxidation) may be run and shown, credit "shown with permission, not
