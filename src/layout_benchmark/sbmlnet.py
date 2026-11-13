@@ -24,7 +24,9 @@ def available() -> bool:
     return (TOOL / ".venv" / "bin" / "python").exists()
 
 
-def _helper(*args: str, timeout: float = 600) -> None:
+def _helper(*args: str, timeout: float | None = 600) -> None:
+    """Run ``sbmlnetwork_helper.py`` in SBMLNetwork's environment. ``timeout``: seconds, or None for no limit of its
+    own (a layout run: the runner's timeout stops it, with the processes it started)."""
     if not available():
         raise RuntimeError(f"SBMLNetwork is not set up in {TOOL} (see the README)")
     result = subprocess.run(
@@ -80,12 +82,13 @@ def _to_drawing(pathway: Pathway, data: dict) -> Drawing:
 
 
 def autolayout(pathway: Pathway, seed: int) -> Drawing:
-    """SBMLNetwork's auto layout (it adds aliases for well-connected species). ``seed`` is not used."""
+    """SBMLNetwork's auto layout (it adds aliases for well-connected species). ``seed`` is not used. No timeout of
+    its own: it gets the run's timeout, as every layout does."""
     if pathway.source is None:
         raise RuntimeError("SBMLNetwork needs the SBML file")
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "drawing.json"
-        _helper("layout", str(Path(pathway.source).resolve()), str(out))
+        _helper("layout", str(Path(pathway.source).resolve()), str(out), timeout=None)
         return _to_drawing(pathway, json.loads(out.read_text()))
 
 
