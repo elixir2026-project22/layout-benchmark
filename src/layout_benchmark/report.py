@@ -315,7 +315,9 @@ def _anchor(model: str, layout: str) -> str:
 
 def _best(rows: list[dict], column: str, better: str | None) -> float | None:
     """The best value of a column among the layouts (not the reference), by its direction."""
-    values = [x for r in rows if r["layout"] != REFERENCE and (x := _number(r.get(column))) is not None]
+    values = [
+        x for r in rows if r["layout"] != REFERENCE and not r.get("error") and (x := _number(r.get(column))) is not None
+    ]
     if not better or not values:
         return None
     return min(values) if better == "lower" else max(values)

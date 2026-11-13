@@ -8,8 +8,6 @@ from xml.etree import ElementTree as ET
 from .drawing import Positions
 from .graph import Pathway
 
-SBGN_NS = {"s": "http://sbgn.org/libsbgn/0.2", "s3": "http://sbgn.org/libsbgn/0.3"}
-
 
 def _glyph_for(node_id: str, glyphs) -> str | None:
     """The gallery SBGN glyph of an SBML id: s_<glyph> / re_<glyph>; a component of a complex: s_n2_n0 is

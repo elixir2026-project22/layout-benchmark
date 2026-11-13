@@ -83,7 +83,9 @@ are kept. Known limits:
 - ecmapper draws only the reactions it can match to the BRENDA map (by EC number, or added next to matched ones),
   and puts subsystems drawn elsewhere already on a separate map (`set_aside`), which isn't read; its `--split` mode
   (several maps, no common coordinates) isn't used.
-- Graphviz fdp isn't reproducible from its seed (#4).
+- SBMLNetwork's auto layout takes no seed: it gives a different drawing on every run. (The Graphviz layouts run in a
+  clean process, so fdp too gives one drawing per seed:
+  [#21](https://github.com/elixir2026-project22/layout-benchmark/pull/21).)
 - MetaCarto has no seed of its own, but its map depends on the order of Python's sets, which changes from process to
   process: the tools' Python runs with `PYTHONHASHSEED` set to the run's seed, so that a seed gives one map.
 
@@ -202,7 +204,7 @@ The full cycle:
 uv run layout-benchmark fetch benchmark.yaml                     # 1. download the models into data/<set>/
 uv run layout-benchmark run benchmark.yaml -o results/all        # 2. lay out (hours on the big models)
 uv run layout-benchmark score results/all --manifest benchmark.yaml --jobs 6   # 3. the metrics
-uv run layout-benchmark publish results/all site --name all      # 4. a copy for GitHub Pages (no local paths)
+uv run layout-benchmark publish results/all results/site --name all   # 4. a copy for GitHub Pages (no local paths)
 ```
 
 Partial runs and redrawing:

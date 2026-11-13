@@ -68,10 +68,11 @@ with changes (layouts, options, output).
   2. `uv run layout-benchmark render results/all --manifest benchmark.yaml`: redraws every picture and the page from
      the saved positions in seconds, without rerunning layouts.
      `uv run layout-benchmark score results/all --manifest benchmark.yaml`: the metrics, from the saved drawings,
-     into `results.csv` (`--only`, `--layouts` for part; `--jobs 6` on this machine, 8 cores; each drawing in its own
+     into `results.csv` (`--only`, `--layouts` for part; `--jobs N` drawings at once; each drawing in its own
      process with `--timeout`, 600 s; failures in `metrics_error`).
   3. `uv run layout-benchmark publish results/all results/site --name all`: a copy without local paths.
-  4. Publish: `results/site` as the single commit of the `gh-pages` branch, force-pushed (it replaces the site).
+  4. Publish: `results/site` copied over a worktree of the `gh-pages` branch and committed as a normal commit (a
+     force-push that would replace the branch's history is refused); only on the user's go-ahead.
 - `results.csv` is written after every model, so a stopped run keeps everything that finished. Each command
   reads it once and rewrites it whole, so only one command per OUT folder at a time (`locked`, `OUT/.lock`; ad hoc
   scripts must not call `_apply_manifest` on a partial set of rows: it writes them back). `run --append --layouts X`
@@ -131,7 +132,7 @@ time), check the report, and publish only on the user's go-ahead.
 3. A test with a drawing whose value is known; the README Metrics table (rule, metric, column, direction) and, for
    a decision about it, Decisions below.
 4. `score results/all --manifest benchmark.yaml --jobs 6` (all drawings: the new column for every model; about
-   an hour on this machine), then check the report.
+   an hour with `--jobs 6`), then check the report.
 
 ## Decisions (from the project lead)
 
@@ -189,12 +190,12 @@ time), check the report, and publish only on the user's go-ahead.
     both `rule_opposite_share` and our `participant_consistency` (it sees routed corners). Bands and groups are
     spans: keep each contiguous (tested).
 - **Licences**: code MIT. Gallery maps CC BY 4.0 (credited per model in the report). BRENDA (its pathway map
-  included) CC BY 4.0. MetaboMAPS' uploaded maps CC BY 4.0 (terms of use, "License for uploaded pathways"). The Stress Knowledge Map (PSS)
+  included) CC BY 4.0. The Stress Knowledge Map (PSS)
   data CC BY-NC 4.0. IMD maps: Jadzia Murphy's, mostly unpublished, for the VMH (2026-11-12, Slack): only the
   "Amino Acid Metabolism Disorders" folder, Glycolysis, Pentose Metabolism and Pyruvate metabolism and the Krebs
   cycle (11 maps, online in the VMH; not Beta Oxidation) may be run and shown, credit "shown with permission, not
-  for reuse"; VMH states no licence for its maps. The other 33 maps' results are in `results/removed-imd/` (local
-  only). BiGG Models (e_coli_core, iML1515): © 2019 UC
+  for reuse"; VMH states no licence for its maps. The other 33 maps were removed from the
+  benchmark and its results. BiGG Models (e_coli_core, iML1515): © 2019 UC
   Regents, educational, research and non-profit use, the notice with every copy. iCH360: MIT (its repository;
   which copy data_shared holds is unconfirmed). Mycoplasma: The SEED 2013 (site gone), licence not stated (Sébastien
   Moretti). A model's own `credit`/`licence` in the manifest win over its set's.

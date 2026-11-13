@@ -644,7 +644,10 @@ def reference_similarity(pos: Positions, reference: Positions, k: int = 5) -> di
         return {"procrustes": None, "distance_correlation": None, "knn_preservation": None, "reference_nodes": None}
     a = np.array([pos[n] for n in common], dtype=float)
     b = np.array([reference[n] for n in common], dtype=float)
-    _, _, disparity = procrustes(b, a)
+    try:
+        disparity = float(procrustes(b, a)[2])
+    except ValueError:  # all common nodes at one point (in either drawing): no shape to compare
+        disparity = None
     corr = spearmanr(pdist(a), pdist(b)).statistic
     k = min(k, len(common) - 1)
 
@@ -656,7 +659,7 @@ def reference_similarity(pos: Positions, reference: Positions, k: int = 5) -> di
     ka, kb = knn(a), knn(b)
     preservation = float(np.mean([len(x & y) / k for x, y in zip(ka, kb)]))
     return {
-        "procrustes": float(disparity),
+        "procrustes": disparity,
         "distance_correlation": float(corr),
         "knn_preservation": preservation,
         "reference_nodes": float(len(common)),

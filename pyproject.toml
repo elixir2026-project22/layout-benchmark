@@ -14,6 +14,11 @@ build-backend = "setuptools.build_meta"
 name = "layout-benchmark"
 description = "Benchmark of automatic layout algorithms for pathway maps in SBML"
 readme = "README.md"
+authors = [
+    { name = "Carissa Bleker" },
+    { name = "Lohith Venkatachala" },
+    { name = "Soroush Sehat" },
+]
 maintainers = [
     { name = "Carissa Bleker", email = "carissarobyn.bleker@nib.si" },
 ]
@@ -23,7 +28,7 @@ license-files = ["LICEN[CS]E*"]
 license = "MIT"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Operating System :: OS Independent",
+    "Operating System :: POSIX :: Linux",
 ]
 dependencies = [
     "click",
@@ -41,13 +46,17 @@ dependencies = [
 [project.optional-dependencies]
 tests = [
     "pytest",
-    "pytest-cov",
 ]
 docs = [
     "sphinx",
     "sphinx_mdinclude",
     "sphinx_rtd_theme",
 ]
+
+[project.urls]
+Repository = "https://github.com/elixir2026-project22/layout-benchmark"
+Report = "https://elixir2026-project22.github.io/layout-benchmark/"
+Issues = "https://github.com/elixir2026-project22/layout-benchmark/issues"
 
 # Command line scripts installed as part of the installation
 [project.scripts]
