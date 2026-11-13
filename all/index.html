@@ -27,7 +27,9 @@ nav summary:hover { color: #fff; }
 nav details ul { position: absolute; background: #fff; border: 1px solid var(--line); border-radius: 8px;
                  padding: 8px 14px; margin: 8px 0 0; list-style: none; max-height: 60vh; overflow-y: auto;
                  white-space: nowrap; box-shadow: 0 8px 24px rgba(16,24,40,.14); }
-nav details ul a { color: var(--accent); }
+/* .top nav: more specific than .top a (white on the dark bar), so the menu's links show on its white panel */
+.top nav details ul a { color: var(--accent); }
+.top nav details ul a:hover { color: var(--nav); }
 nav details li { margin: 2px 0; }
 .hero { background: var(--bg); border-bottom: 1px solid var(--line); padding: 22px 24px 16px; margin: 0 -24px 8px; }
 h1 { font-size: 26px; margin: 0 0 8px; }
