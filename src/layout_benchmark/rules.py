@@ -1,9 +1,9 @@
 """The project's layout rules, calculated on a drawing (raw values: no thresholds, no scores).
 
 BioHackathon Europe 2026 project 22 has two implementations of its layout rules, now aligned on one rule set: the
-browser scorer (``build/core.js`` in elixir2026-project22/frontend-tool-pathway-scorer) and
-``svg_layout_metrics.py`` in sbml_pathway_layout. This module computes the same rules on our ``Drawing`` (the
-drawing as shown, in the tool's own coordinates, at the tool's own node sizes), written from their definitions.
+browser scorer (``build/core.js`` in elixir2026-project22/frontend-tool-pathway-scorer) and ``svg_layout_metrics.py`` in
+automatic_layout_following_our_rules. This module computes the same rules on our ``Drawing`` (the drawing as shown, in
+the tool's own coordinates, at the tool's own node sizes), written from their definitions.
 Where the two define a rule differently, we choose (see ``metrics.METRICS`` for each choice):
 
 1. the shared definition, where they agree;

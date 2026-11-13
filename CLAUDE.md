@@ -19,10 +19,10 @@ with changes (layouts, options, output).
   in the expected order (also the report's order); `LAYOUTS`, `GROUP`, `LINKS`, `expected_rank` are derived from
   it. `js/layout.mjs` runs the cytoscape.js layouts headless in Node, `js/graph.mjs` graphology's (Sigma.js) and
   Reagraph's.
-- `external.py`: MetaCarto, sbml2map, ecmapper (`ecmapper-brenda`, `-packed`), sbml_pathway_layout
-  (`rules-claude`) and small-pathway-layout; all write Escher maps, read back as drawings (clones of metabolites and reactions, routes kept).
-  `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's auto layout and its reader for SBML Layout; the helper runs
-  in SBMLNetwork's own environment.
+- `external.py`: MetaCarto, sbml2map, ecmapper (`ecmapper-brenda`, `-packed`), automatic_layout_following_our_rules
+  (`proj22-rules`) and small-pathway-layout; all write Escher maps, read back as drawings (clones of metabolites and
+  reactions, routes kept). `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's auto layout and its reader for SBML
+  Layout; the helper runs in SBMLNetwork's own environment.
 - `versions.py`: each layout's tool and package versions (`LayoutSpec.tool` and `.packages`), recorded by `run`
   in `tool_version`; `versions OUT` fills rows made before (only while the tools are still at those versions). A
   `.tools/` folder that is no clone of its own (SBMLNetwork) gets its pip version, never the benchmark's commit.
@@ -51,9 +51,9 @@ with changes (layouts, options, output).
 
 - `uv sync --extra tests`; `(cd src/layout_benchmark/js && npm ci)`; `uv run pytest` (unit tests need no external
   tools; the tools' layouts are skipped in the per-layout test).
-- External tools live in `.tools/` (untracked), each in its own uv environment: MetaCarto (v2.0.0), sbml2map,
-  ecmapper, sbml_pathway_layout, small-pathway-layout, SBMLNetwork (0.5.12, needs IPython and Skia). Setup commands are in the README.
-  Without a tool, its layout reports an error.
+- External tools live in `.tools/` (untracked), each in its own uv environment: MetaCarto (v2.0.0), sbml2map, ecmapper,
+  automatic_layout_following_our_rules, small-pathway-layout, SBMLNetwork (0.5.12, needs IPython and Skia). Setup
+  commands are in the README. Without a tool, its layout reports an error.
 - Graphviz from the system (`pygraphviz`). Distribution builds may lack GTS: the force-directed programs use
   `overlap=scale`, and sfdp prints "not built with triangulation library" but still returns a layout.
 - Data: `uv run layout-benchmark fetch benchmark.yaml` caches every model in `data/<set>/` and writes
@@ -202,8 +202,8 @@ time), check the report, and publish only on the user's go-ahead.
 - sbml2map replaced sbml2escher (2026-11-11: the sbml2escher repository is gone; same options and output). Its
   optimisation stops at a time limit (`--time-limit`, 60 s), so results can depend on the machine's speed.
 - ecmapper draws only what it matches to the BRENDA map; subsystems it sets aside go to a separate map (not read);
-  `--split` (several maps without common coordinates) isn't used. sbml_pathway_layout writes cofactors inside
-  reaction boxes (fewer nodes placed), is slow on large models in one drawing, and ignores the seed. It refuses
+  `--split` (several maps without common coordinates) isn't used. automatic_layout_following_our_rules writes cofactors
+  inside reaction boxes (fewer nodes placed), is slow on large models in one drawing, and ignores the seed. It refuses
   drawings that break its rules; we pass `--write-failing` (its PR #3) so they are shown.
 - small-pathway-layout (Anja Tietz) runs with its defaults: more than 150 reactions refused (`--max-reactions`);
   modifiers, protons, exchange reactions and pseudo-reactions (biomass: small drains, not read) not drawn; species

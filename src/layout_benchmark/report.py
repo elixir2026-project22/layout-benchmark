@@ -346,8 +346,9 @@ def _metrics_table() -> str:
         "General graph-drawing metrics come from <a href='https://github.com/livus/gdMetriX' style='margin:0'>gdMetriX</a>; the "
         "pathway-map metrics follow the layout rules of BioHackathon Europe 2026 project 22 (Open Pathway Maps), as its "
         "<a href='https://github.com/elixir2026-project22/frontend-tool-pathway-scorer' style='margin:0'>pathway layout "
-        "scorer</a> and sbml_pathway_layout define them, computed by this benchmark (raw values, no thresholds), next to "
-        "a few checks of this benchmark's own; the comparison with the reference is this benchmark's.</p>"
+        "scorer</a> and automatic_layout_following_our_rules define them, computed by this benchmark (raw values, no "
+        "thresholds), next to a few checks of this benchmark's own; the comparison with the reference is this "
+        "benchmark's.</p>"
         "<div class=scroll><table class=metrics><thead><tr><th>metric</th><th>source</th><th>what it measures</th>"
         f"<th>how it is calculated</th><th>better</th></tr></thead><tbody>{''.join(body)}</tbody></table></div>"
     )

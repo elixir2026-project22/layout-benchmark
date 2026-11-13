@@ -76,8 +76,9 @@ SOURCES = {
         "layout rule of BioHackathon 2026 project 22, computed by this benchmark",
         (
             "a layout rule of BioHackathon Europe 2026 project 22 (Open Pathway Maps), as defined by its two "
-            "implementations (the project's browser pathway layout scorer, core.js, and sbml_pathway_layout's "
-            "svg_layout_metrics.py), computed by this benchmark on the drawing; where the two differ, the choice is stated"
+            "implementations (the project's browser pathway layout scorer, core.js, and "
+            "automatic_layout_following_our_rules's svg_layout_metrics.py), computed by this benchmark on the drawing; "
+            "where the two differ, the choice is stated"
         ),
     ),
     "reference": (

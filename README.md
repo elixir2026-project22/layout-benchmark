@@ -46,7 +46,7 @@ each modifier its SBGN arc (catalysis, inhibition, stimulation, …).
 
 | Family | Algorithms |
 |---|---|
-| [sbml_pathway_layout](https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude) (`rules-claude`) | the project's layout rules: cycles as rings, pathways as layered backbones, cofactors written inside the reaction box (whole model in one drawing) |
+| [automatic_layout_following_our_rules](https://github.com/elixir2026-project22/automatic_layout_following_our_rules) (`proj22-rules`) | the project's layout rules: cycles as rings, pathways as layered backbones, cofactors written inside the reaction box (whole model in one drawing) |
 | [small-pathway-layout](https://github.com/elixir2026-project22/small-pathway-layout) | pathway-sized maps (up to 150 reactions): a main line (a known pathway such as glycolysis, else the longest chain) with branches off it, curated cycles (TCA, urea, methionine, Calvin, glyoxylate) as rings, main metabolites and cofactors from the source's annotations, cofactors as clones |
 | [ecmapper](https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md) (`ecmapper-brenda`, `-packed`) | draft maps from the BRENDA pathway map, matched by EC number: the subsystems arranged with few crossing links, or packed without them |
 | [MetaCarto](https://github.com/forxhunter/MetaCarto) | constructive layout of metabolic maps (whole-model canvas) |
@@ -75,11 +75,10 @@ are kept. Known limits:
 - small-pathway-layout runs with its defaults: it refuses models of more than 150 reactions (an error row), and
   doesn't draw modifiers, protons, exchange reactions or biomass and other pseudo-reactions (it draws those as small
   drains, which aren't read). It merges species that share a name or annotation.
-- sbml_pathway_layout writes cofactors inside the reaction boxes instead of drawing them as nodes (our pictures
-  don't show that text).
-  It doesn't write a drawing that breaks its own rules; the benchmark runs it with `--write-failing`
-  ([its PR #3](https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude/pull/3)), so such
-  drawings are shown (the picture doesn't say which of its rules failed).
+- automatic_layout_following_our_rules writes cofactors inside the reaction boxes instead of drawing them as nodes (our
+  pictures don't show that text). It doesn't write a drawing that breaks its own rules; the benchmark runs it with
+  `--write-failing` ([its PR #3](https://github.com/elixir2026-project22/automatic_layout_following_our_rules/pull/3)),
+  so such drawings are shown (the picture doesn't say which of its rules failed).
 - ecmapper draws only the reactions it can match to the BRENDA map (by EC number, or added next to matched ones),
   and puts subsystems drawn elsewhere already on a separate map (`set_aside`), which isn't read; its `--split` mode
   (several maps, no common coordinates) isn't used.
@@ -94,20 +93,19 @@ does the same during a run) and writes the report with them. Each drawing is sco
 timeout (`--timeout`, 600 s), several at once with `--jobs N`; a drawing whose metrics fail or time out has no
 metrics and the reason in the `metrics_error` column.
 
-Every metric is taken on **the drawing as shown**, in the tool's own coordinates: a clone is a node with its own
-edges, nodes a tool leaves out are absent, and routed edges count as the polylines drawn (a piece several edges
-share counts once). No metric depends on our common drawing scale: the general ones don't change under a uniform
-scale, and overlaps use each tool's own node sizes. The general graph-drawing metrics come from
+Every metric is taken on **the drawing as shown**, in the tool's own coordinates: a clone is a node with its own edges,
+nodes a tool leaves out are absent, and routed edges count as the polylines drawn (a piece several edges share counts
+once). No metric depends on our common drawing scale: the general ones don't change under a uniform scale, and overlaps
+use each tool's own node sizes. The general graph-drawing metrics come from
 [gdMetriX](https://github.com/livus/gdMetriX). The pathway-map metrics follow the layout rules of BioHackathon 2026
-project 22, as raw values (no thresholds or scores), as its two implementations define them: the browser
-[pathway layout scorer](https://github.com/elixir2026-project22/frontend-tool-pathway-scorer) (`core.js`) and
-sbml_pathway_layout's `svg_layout_metrics.py`; where they differ, we take the definition that measures the layout
-itself (not the file format, not what else a tool draws, not a computing limit), else the scorer's. "Reproducible"
-is the reproducibility check; "labels at fixed positions" doesn't apply (our renderer places the labels). Next to
-the rules, a few checks of our own (whole model drawn, compartments, placement by edge direction). The comparison
-with the reference is this package's. The report says which is which (the
-top row of each score table's header), and the summary page lists every metric with its source and how it is
-calculated.
+project 22, as raw values (no thresholds or scores), as its two implementations define them: the browser [pathway layout
+scorer](https://github.com/elixir2026-project22/frontend-tool-pathway-scorer) (`core.js`) and
+automatic_layout_following_our_rules's `svg_layout_metrics.py`; where they differ, we take the definition that measures
+the layout itself (not the file format, not what else a tool draws, not a computing limit), else the scorer's.
+"Reproducible" is the reproducibility check; "labels at fixed positions" doesn't apply (our renderer places the labels).
+Next to the rules, a few checks of our own (whole model drawn, compartments, placement by edge direction). The
+comparison with the reference is this package's. The report says which is which (the top row of each score table's
+header), and the summary page lists every metric with its source and how it is calculated.
 
 | What it checks | Source | Metric (column; better) |
 |---|---|---|
@@ -168,9 +166,9 @@ git clone --depth 1 --branch v2.0.0 https://github.com/forxhunter/MetaCarto.git 
 git clone https://github.com/elixir2026-project22/sbml2map.git .tools/sbml2map
 (cd .tools/sbml2map && uv venv --python 3.12 && uv pip install -r requirements-layout.txt -r requirements-escher.txt)
 
-# sbml_pathway_layout (the project's layout rules)
-git clone https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude.git .tools/sbml_pathway_layout
-(cd .tools/sbml_pathway_layout && uv venv --python 3.12 && uv pip install networkx numpy matplotlib)
+# automatic_layout_following_our_rules (the project's layout rules)
+git clone https://github.com/elixir2026-project22/automatic_layout_following_our_rules.git .tools/automatic_layout_following_our_rules
+(cd .tools/automatic_layout_following_our_rules && uv venv --python 3.12 && uv pip install networkx numpy matplotlib)
 
 # small-pathway-layout (Anja Tietz; pathway-sized maps)
 git clone https://github.com/elixir2026-project22/small-pathway-layout.git .tools/small-pathway-layout
