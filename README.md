@@ -9,9 +9,10 @@ reference layout where there is one. Every drawing is then scored: general graph
 a pathway map needs, and its similarity to the reference. Report: <https://elixir2026-project22.github.io/layout-benchmark/>
 (per model the pictures and a table of scores; a summary page with each layout's median rank per metric).
 
-> Status: 38 layouts on 48 models in 6 sets, all scored. No combined score yet: the weights of the metrics are
-> still to be decided. Planned: reproducibility with different seeds (the same seed twice: `layout-benchmark reproducibility`),
-> SBML Layout + Render output per layout, cofactor clones and a split by pathway.
+> Status: 39 layouts on 48 models in 6 sets, all scored, each drawing checked for reproducibility (the same seed
+> twice: `layout-benchmark reproducibility`). No combined score yet
+> ([#26](https://github.com/elixir2026-project22/layout-benchmark/issues/26)). Planned: reproducibility with different
+> seeds, SBML Layout + Render output per layout, cofactor clones and a split by pathway.
 
 ## Input
 
