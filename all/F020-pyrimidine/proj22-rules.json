@@ -1,0 +1,135 @@
+{
+ "nodes": [
+  {
+   "id": "species_2@1",
+   "of": "species_2",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "carbamoyl-P",
+   "x": 189.613,
+   "y": -203.874,
+   "width": 28.799999999999997,
+   "height": 14.399999999999999,
+   "own_shape": "circle",
+   "own_width": 20.0,
+   "own_height": 20.0
+  },
+  {
+   "id": "species_0@2",
+   "of": "species_0",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": 99.914,
+   "y": -68.25,
+   "width": 60.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 40.0,
+   "own_height": 40.0
+  },
+  {
+   "id": "species_1@3",
+   "of": "species_1",
+   "kind": "species",
+   "sbgn": "macromolecule",
+   "label": "CAD",
+   "x": 99.914,
+   "y": -173.0,
+   "width": 60.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 40.0,
+   "own_height": 40.0
+  },
+  {
+   "id": "species_9@4",
+   "of": "species_9",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamate",
+   "x": 259.467,
+   "y": -173.0,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 40.0,
+   "own_height": 40.0
+  },
+  {
+   "id": "species_6@5",
+   "of": "species_6",
+   "kind": "species",
+   "sbgn": "simple chemical",
+   "label": "glutamine",
+   "x": 259.467,
+   "y": -68.25,
+   "width": 48.0,
+   "height": 24.0,
+   "own_shape": "circle",
+   "own_width": 40.0,
+   "own_height": 40.0
+  },
+  {
+   "id": "re_n13",
+   "of": "re_n13",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n13",
+   "x": 99.914,
+   "y": -120.625,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "circle",
+   "own_width": 10.0,
+   "own_height": 10.0
+  },
+  {
+   "id": "re_n9",
+   "of": "re_n9",
+   "kind": "reaction",
+   "sbgn": "process",
+   "label": "re_n9",
+   "x": 259.467,
+   "y": -120.625,
+   "width": 10.0,
+   "height": 10.0,
+   "own_shape": "circle",
+   "own_width": 10.0,
+   "own_height": 10.0
+  }
+ ],
+ "edges": [
+  {
+   "source": "species_0@2",
+   "target": "re_n13",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "species_6@5",
+   "target": "re_n9",
+   "arc": "consumption",
+   "route": []
+  },
+  {
+   "source": "re_n13",
+   "target": "species_1@3",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_9@4",
+   "arc": "production",
+   "route": []
+  },
+  {
+   "source": "re_n9",
+   "target": "species_2@1",
+   "arc": "production",
+   "route": []
+  }
+ ],
+ "compartments": {}
+}
