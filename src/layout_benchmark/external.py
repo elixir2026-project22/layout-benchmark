@@ -67,6 +67,8 @@ def escher_drawing(pathway: Pathway, escher_map: list | dict) -> Drawing:
     for nid, node in nodes.items():
         if node.get("node_type") != "metabolite" or node.get("bigg_id") not in lookup:
             continue
+        if pathway.graph.nodes[lookup[node["bigg_id"]]]["kind"] != SPECIES:  # an id that is a reaction's
+            continue
         sid = lookup[node["bigg_id"]]
         primary = bool(node.get("node_is_primary"))
         d = pathway.graph.nodes[sid]

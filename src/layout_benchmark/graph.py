@@ -27,15 +27,6 @@ NECESSARY_STIMULATION, MODULATION = "necessary stimulation", "modulation"
 SIMPLE_CHEMICAL, MACROMOLECULE, NUCLEIC_ACID_FEATURE = "simple chemical", "macromolecule", "nucleic acid feature"
 COMPLEX, PERTURBING_AGENT, PHENOTYPE = "complex", "perturbing agent", "phenotype"
 UNSPECIFIED_ENTITY, PROCESS = "unspecified entity", "process"
-SBGN_CLASSES = (
-    SIMPLE_CHEMICAL,
-    MACROMOLECULE,
-    NUCLEIC_ACID_FEATURE,
-    COMPLEX,
-    PERTURBING_AGENT,
-    PHENOTYPE,
-    UNSPECIFIED_ENTITY,
-)
 _SPECIES_SBO = {
     247: SIMPLE_CHEMICAL,
     327: SIMPLE_CHEMICAL,
@@ -117,10 +108,6 @@ _MODIFIER_SBO = {
 def _modifier_arc(sbo: int) -> str:
     """The SBGN arc class of a modifier from its SBO term."""
     return _MODIFIER_SBO.get(sbo, MODULATION)
-    for term, arc in ((13, CATALYSIS), (20, INHIBITION), (461, NECESSARY_STIMULATION), (459, STIMULATION)):
-        if sbo == term or libsbml.SBO.isChildOf(sbo, term):
-            return arc
-    return MODULATION
 
 
 @dataclass

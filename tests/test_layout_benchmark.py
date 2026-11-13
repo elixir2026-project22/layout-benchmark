@@ -193,6 +193,23 @@ def test_compartment_metrics_use_the_drawn_boxes(tmp_path):
     assert compartment_metrics(d, p)["compartments_overlapping"] == 1
 
 
+def test_reference_similarity_survives_a_drawing_on_one_point():
+    ref = {"a": (0, 0), "b": (1, 0), "c": (0, 2)}
+    m = reference_similarity(dict.fromkeys(ref, (5.0, 5.0)), ref)
+    assert m["procrustes"] is None and m["reference_nodes"] == 3
+
+
+def test_best_value_leaves_out_failed_runs():
+    from layout_benchmark.report import _best
+
+    rows = [
+        {"layout": "a", "seconds": "0.05", "error": "not set up"},
+        {"layout": "b", "seconds": "2"},
+        {"layout": "reference", "seconds": "0"},
+    ]
+    assert _best(rows, "seconds", "lower") == 2
+
+
 def test_reference_similarity_invariances():
     ref = {"a": (0, 0), "b": (1, 0), "c": (0, 2), "d": (3, 1), "e": (2, 4)}
     # rotated 90°, scaled 5x, mirrored, moved

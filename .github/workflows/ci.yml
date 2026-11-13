@@ -27,7 +27,7 @@ jobs:
       with:
         node-version: "22"
 
-    - name: Install cytoscape.js layouts
+    - name: Install the JavaScript layouts (cytoscape.js, graphology, Reagraph)
       working-directory: src/layout_benchmark/js
       run: npm ci
 
@@ -35,5 +35,6 @@ jobs:
       uses: astral-sh/setup-uv@v7
 
     - name: Run tests
-      # the external tools (MetaCarto, sbml2escher, SBMLNetwork) need their own environments (.tools/), not set up here
+      # the external tools (MetaCarto, sbml2map, ecmapper, automatic_layout_following_our_rules, small-pathway-layout,
+      # SBMLNetwork) need their own environments in .tools/, not set up here: their layouts are skipped
       run: uv run --extra tests pytest

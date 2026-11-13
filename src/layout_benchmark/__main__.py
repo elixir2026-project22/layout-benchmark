@@ -84,10 +84,13 @@ def list_layouts():
 def run(models, layouts, out, seed, timeout, metrics, append, only, data):
     """Lay out SBML MODELS: a benchmark manifest (.yaml: sets, models, references, credits; fetched first with
     `fetch`), or SBML files (a <model>.sbgn or <model>.escher.json next to a model is its reference layout)."""
+    from .layouts import LAYOUTS
     from .manifest import load
     from .runner import run as run_all
 
     names = [x.strip() for x in layouts.split(",")] if layouts else None
+    if unknown := [n for n in names or [] if n not in LAYOUTS]:
+        raise click.UsageError(f"unknown layouts: {', '.join(unknown)}")
     sets = None
     if len(models) == 1 and models[0].suffix in (".yaml", ".yml"):
         sets, specs = load(models[0], data)
