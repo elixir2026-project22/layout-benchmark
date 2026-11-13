@@ -6,8 +6,8 @@
   (an exact optimisation, heuristic placement on large models), written as an Escher map.
 - ecmapper (https://github.com/elixir2026-project22/ecmapper, GPL-3.0): draft maps from the BRENDA pathway map,
   matched by EC number; the subsystems arranged with few crossing links, or packed. An Escher map.
-- sbml_pathway_layout
-  (https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude): the project's layout
+- automatic_layout_following_our_rules
+  (https://github.com/elixir2026-project22/automatic_layout_following_our_rules): the project's layout
   rules (cycles as rings, pathways as layered backbones, cofactors written in the reaction box). An Escher map.
 
 Escher maps are read back as a ``Drawing`` (``escher_drawing``): every metabolite node, clones included, and
@@ -260,12 +260,12 @@ def rules_layout(pathway: Pathway, seed: int) -> Drawing:
     """sbml_pathway_layout.py, the whole model in one drawing (``--max-cluster`` above any model's size; by default
     models of more than 60 reactions are split into several drawings), read from its Escher map; drawings that break
     its rules too (``--write-failing``, its PR #3). Deterministic: ``seed`` is ignored."""
-    python = _python("sbml_pathway_layout")
+    python = _python("automatic_layout_following_our_rules")
     if pathway.source is None:
-        raise RuntimeError("sbml_pathway_layout needs the SBML file")
+        raise RuntimeError("automatic_layout_following_our_rules needs the SBML file")
     with tempfile.TemporaryDirectory() as tmp:
         args = [
-            str(TOOLS_DIR / "sbml_pathway_layout" / "sbml_pathway_layout.py"),
+            str(TOOLS_DIR / "automatic_layout_following_our_rules" / "sbml_pathway_layout.py"),
             str(Path(pathway.source).resolve()),
             "--out",
             str(Path(tmp) / "model"),

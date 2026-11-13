@@ -281,12 +281,12 @@ def _nx(name: str, group: str) -> LayoutSpec:
 # tree; baselines.
 REGISTRY: list[LayoutSpec] = [
     LayoutSpec(
-        "rules-claude",
+        "proj22-rules",
         rules_layout,
         "pathway-specific",
-        "https://github.com/elixir2026-project22/automatic_layout_following_our_rules-claude",
+        "https://github.com/elixir2026-project22/automatic_layout_following_our_rules",
         "escher",
-        "sbml_pathway_layout",
+        "automatic_layout_following_our_rules",
     ),
     LayoutSpec(
         "small-pathway-layout",
