@@ -19,7 +19,15 @@ import igraph as ig
 import networkx as nx
 
 from .drawing import Drawing, Positions
-from .external import ecmapper, ecmapper_packed, metacarto, rules_layout, sbml2map, small_pathway_layout
+from .external import (
+    ecmapper,
+    ecmapper_packed,
+    metacarto,
+    open_meta_maps,
+    rules_layout,
+    sbml2map,
+    small_pathway_layout,
+)
 from .graph import REACTION, Pathway, reaction_compartment
 from .sbmlnet import autolayout
 
@@ -308,6 +316,14 @@ REGISTRY: list[LayoutSpec] = [
         "https://github.com/elixir2026-project22/sbml2map",
         "escher",
         "sbml2map",
+    ),
+    LayoutSpec(
+        "open-meta-maps",
+        open_meta_maps,
+        "pathway-specific",
+        "https://github.com/elixir2026-project22/Open-Meta-Maps",
+        "escher",
+        "Open-Meta-Maps",
     ),
     # SBMLNetwork's drawings carry their own glyph sizes
     LayoutSpec(

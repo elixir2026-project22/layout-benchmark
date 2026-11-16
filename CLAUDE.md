@@ -5,7 +5,7 @@ Guidance for Claude Code in this repository.
 ## What this is
 
 **layout-benchmark**: a benchmark of automatic layout algorithms for pathway maps in SBML, from BioHackathon Europe
-2026, project 22 (*Open Pathway Maps*). Every model is laid out with many algorithms (39), drawn the same way, and
+2026, project 22 (*Open Pathway Maps*). Every model is laid out with many algorithms (40), drawn the same way, and
 shown side by side with its reference layout where it has one. The report is published at
 <https://elixir2026-project22.github.io/layout-benchmark/>. `README.md` is the user documentation: keep it in step
 with changes (layouts, options, output).
@@ -20,9 +20,9 @@ with changes (layouts, options, output).
   it. `js/layout.mjs` runs the cytoscape.js layouts headless in Node, `js/graph.mjs` graphology's (Sigma.js) and
   Reagraph's.
 - `external.py`: MetaCarto, sbml2map, ecmapper (`ecmapper-brenda`, `-packed`), automatic_layout_following_our_rules
-  (`proj22-rules`) and small-pathway-layout; all write Escher maps, read back as drawings (clones of metabolites and
-  reactions, routes kept). `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's auto layout and its reader for SBML
-  Layout; the helper runs in SBMLNetwork's own environment.
+  (`proj22-rules`), small-pathway-layout and Open Meta Maps (`open-meta-maps`); all write Escher maps, read back as
+  drawings (clones of metabolites and reactions, routes kept). `sbmlnet.py` + `sbmlnetwork_helper.py`: SBMLNetwork's
+  auto layout and its reader for SBML Layout; the helper runs in SBMLNetwork's own environment.
 - `versions.py`: each layout's tool and package versions (`LayoutSpec.tool` and `.packages`), recorded by `run`
   in `tool_version`; `versions OUT` fills rows made before (only while the tools are still at those versions). A
   `.tools/` folder that is no clone of its own (SBMLNetwork) gets its pip version, never the benchmark's commit.
@@ -54,8 +54,9 @@ with changes (layouts, options, output).
 - `uv sync --extra tests`; `(cd src/layout_benchmark/js && npm ci)`; `uv run pytest` (unit tests need no external
   tools; the tools' layouts are skipped in the per-layout test).
 - External tools live in `.tools/` (untracked), each in its own uv environment: MetaCarto (v2.0.0), sbml2map, ecmapper,
-  automatic_layout_following_our_rules, small-pathway-layout, SBMLNetwork (0.5.12, needs IPython and Skia). Setup
-  commands are in the README. Without a tool, its layout reports an error.
+  automatic_layout_following_our_rules, small-pathway-layout, Open-Meta-Maps (`project.py setup`: Atlas DB, Node,
+  libavoid), SBMLNetwork (0.5.12, needs IPython and Skia). Setup commands are in the README. Without a tool, its
+  layout reports an error.
 - Graphviz from the system (`pygraphviz`). Distribution builds may lack GTS: the force-directed programs use
   `overlap=scale`, and sfdp prints "not built with triangulation library" but still returns a layout.
 - Data: `uv run layout-benchmark fetch benchmark.yaml` caches every model in `data/<set>/` and writes
@@ -219,6 +220,10 @@ time), check the report, and publish only on the user's go-ahead.
   Escher map keeps the SBML ids (since its c3f77d8; before, most metabolites didn't match the model). Not used: its
   `--previous` (extend an existing map, issue #18) and `--notation sbgn`. Don't take models from its `examples/`
   (an IMD map not cleared for publishing, PSS data).
+- Open Meta Maps (`open-meta-maps`) runs `project.py compose --gem … --out … --source-paths` under
+  `.tools/Open-Meta-Maps` and reads the Escher JSON. Needs Atlas DB / Node / libavoid (`project.py setup`). Coverage
+  follows Atlas matches (unmatched nodes may be absent). Its job process pins `PYTHONHASHSEED=0`; the parent tool
+  env still gets the run seed via `_tool_env`.
 - The tools' Python runs with `PYTHONHASHSEED` set to the seed (`external._tool_env`): MetaCarto's map depends on the
   order of Python's sets (e_coli_core: a different map in every process without it, the same map with it; another
   seed, another map). graphology's random start takes `rng` explicitly (`js/graph.mjs`): its default is the
