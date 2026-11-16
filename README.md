@@ -10,7 +10,7 @@ a pathway map needs, and its similarity to the reference. Report: <https://elixi
 (per model the pictures and a table of scores; a summary page with each layout's median rank per metric, and the median
 of project 22's pathway layout scorer's combined score).
 
-> Status: 39 layouts on 48 models in 6 sets, all scored, each drawing checked for reproducibility (the same seed
+> Status: 40 layouts on 48 models in 6 sets, all scored, each drawing checked for reproducibility (the same seed
 > twice: `layout-benchmark reproducibility`), with the pathway layout scorer's combined score. Planned: reproducibility
 > with different seeds, SBML Layout + Render output per layout, cofactor clones and a split by pathway.
 
@@ -52,6 +52,7 @@ each modifier its SBGN arc (catalysis, inhibition, stimulation, …).
 | [ecmapper](https://github.com/elixir2026-project22/ecmapper/blob/main/DRAFT_MAP.md) (`ecmapper-brenda`, `-packed`) | draft maps from the BRENDA pathway map, matched by EC number: the subsystems arranged with few crossing links, or packed without them |
 | [MetaCarto](https://github.com/forxhunter/MetaCarto) | constructive layout of metabolic maps (whole-model canvas) |
 | [sbml2map](https://github.com/elixir2026-project22/sbml2map) | constraint-based, on a grid (an exact optimisation with a time limit; heuristic placement on large models) |
+| [Open Meta Maps](https://github.com/elixir2026-project22/Open-Meta-Maps) (`open-meta-maps`) | Atlas-matched curated fragments completed with Bézier routing (`project.py compose`) |
 | [SBMLNetwork](https://github.com/sys-bio/SBMLNetwork) | its auto layout |
 | cytoscape.js | fCoSE and CoSE-Bilkent (also with compartments as groups: reactions are placed in the compartment of their reactants and products, or their SBML Level 3 compartment where set; transports stay between), CoSE, cola, dagre, klay, ELK (layered, stress, force, mrtree) |
 | [Sigma.js](https://www.sigmajs.org/) / [graphology](https://graphology.github.io/) | ForceAtlas2, the layout Sigma.js uses (from graphology, with its inferred settings, 500 iterations), alone and followed by noverlap (overlap removal, with our node sizes) |
@@ -73,6 +74,9 @@ are kept. Known limits:
   modifiers (enzymes, regulators). sbml2map also leaves out inorganic species (water, protons, O2, CO2, phosphate,
   ammonium) and the reactions with nothing else, fails on variable stoichiometry (the PSS models), and its
   optimisation stops at a time limit, so its result can depend on the machine's speed.
+- Open Meta Maps needs its Atlas DB, Node layout backend and libavoid routers (`project.py setup`); coverage
+  depends on Atlas matches, so some model nodes may be left out. Its job process pins `PYTHONHASHSEED=0`
+  (the benchmark still sets the parent tool env from the run seed).
 - small-pathway-layout runs with its defaults: it refuses models of more than 150 reactions (an error row), and
   doesn't draw modifiers, protons, exchange reactions or biomass and other pseudo-reactions (it draws those as small
   drains, which aren't read). It merges species that share a name or annotation.
@@ -188,6 +192,10 @@ git clone https://github.com/elixir2026-project22/small-pathway-layout.git .tool
 # ecmapper (GPL-3.0): draft maps from the BRENDA map
 git clone https://github.com/elixir2026-project22/ecmapper.git .tools/ecmapper
 (cd .tools/ecmapper && uv venv --python 3.12 && uv pip install -e ".[draft-map]")
+
+# Open Meta Maps (Atlas match + compose; needs Node and libavoid as in its README)
+git clone https://github.com/elixir2026-project22/Open-Meta-Maps.git .tools/Open-Meta-Maps
+(cd .tools/Open-Meta-Maps && python3.12 project.py setup)
 
 # SBMLNetwork: its auto layout (a layout), and its reader for layouts stored in SBML
 mkdir -p .tools/sbmlnetwork && (cd .tools/sbmlnetwork && uv venv --python 3.12 && uv pip install sbmlnetwork==0.5.12 ipython)

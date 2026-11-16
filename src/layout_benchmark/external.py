@@ -9,6 +9,8 @@
 - automatic_layout_following_our_rules
   (https://github.com/elixir2026-project22/automatic_layout_following_our_rules): the project's layout
   rules (cycles as rings, pathways as layered backbones, cofactors written in the reaction box). An Escher map.
+- Open Meta Maps (https://github.com/elixir2026-project22/Open-Meta-Maps): Atlas match + Bézier completion
+  via ``project.py compose``, written as an Escher map.
 
 Escher maps are read back as a ``Drawing`` (``escher_drawing``): every metabolite node, clones included, and
 every reaction (at its midmarker), with each participant's edge routed through the map's markers as drawn.
@@ -281,3 +283,27 @@ def rules_layout(pathway: Pathway, seed: int) -> Drawing:
             [str(python), *args], capture_output=True, text=True, check=False, cwd=tmp, env=_tool_env(seed)
         )
         return _escher_file(pathway, Path(tmp) / "model.escher.json", result)
+
+
+def open_meta_maps(pathway: Pathway, seed: int) -> Drawing:
+    """Open Meta Maps Composer (``project.py compose``): Atlas match + Bézier completion, written as an Escher map.
+
+    Clone or symlink under ``.tools/Open-Meta-Maps``. The pipeline pins ``PYTHONHASHSEED=0`` in its job process;
+    ``seed`` still fixes the parent tool env via ``_tool_env``. Needs the Atlas DB, Node layout backend and libavoid
+    routers (see Open-Meta-Maps README / ``project.py setup``)."""
+    python = _python("Open-Meta-Maps")
+    tool = TOOLS_DIR / "Open-Meta-Maps"
+    if pathway.source is None:
+        raise RuntimeError("open-meta-maps needs the SBML file")
+    model = str(Path(pathway.source).resolve())
+    with tempfile.TemporaryDirectory() as tmp:
+        result = subprocess.run(
+            [str(python), "project.py", "compose", "--gem", model, "--out", tmp, "--source-paths"],
+            cwd=tool,
+            capture_output=True,
+            text=True,
+            check=False,
+            env=_tool_env(seed),
+        )
+        maps = sorted(Path(tmp).glob("OpenMetaMaps_*_result.json"))
+        return _escher_file(pathway, maps[0] if maps else Path(tmp) / "OpenMetaMaps_result.json", result)
